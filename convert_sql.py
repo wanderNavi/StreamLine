@@ -155,20 +155,20 @@ def retrieve_from_sql(table_name):
         
         # check and fill in subscriptions
         # AMAZON
-        if item[6] is 1:
+        if item[6] == 1:
             parsed_loc['subscription']['amazon prime'].append(item[1])
         # NETFLIX
-        if item[7] is 1:
+        if item[7] == 1:
             parsed_loc['subscription']['netflix'].append(item[1])
         # HBO
-        if item[8] is 1:
+        if item[8] == 1:
             parsed_loc['subscription']['hbo'].append(item[1])
         # HULU
-        if item[9] is 1:
+        if item[9] == 1:
             parsed_loc['subscription']['hulu'].append(item[1])
         
         # check if nowhere
-        if item[10] is 1:
+        if item[10] == 1:
             parsed_loc['nowhere'].append(item[1])
            
     
