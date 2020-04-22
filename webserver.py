@@ -195,4 +195,4 @@ def bugs():
 
 
 ###############################
-app.run(host='0.0.0.0', port=5000, debug=True)
+app.run(host='35.245.57.180', port=5000, debug=True)
