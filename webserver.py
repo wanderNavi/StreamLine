@@ -1,274 +1,198 @@
-<!DOCTYPE HTML>
-<html>
+############################### RUNS THE SITE ###############################
 
-<head>
-    <meta charset="utf-8">
+# NOTE: KEEP THIS SCRIPT CLEAN AND BASICALLY IMPORT ALL METHODS FROM OTHER PYTHON FILES WE WRITE
 
-    <title>webserver.py (editing)</title>
-    <link id="favicon" rel="shortcut icon" type="image/x-icon" href="/static/base/images/favicon-file.ico?v=e2776a7f45692c839d6eea7d7ff6f3b2">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <link rel="stylesheet" href="/static/components/jquery-ui/themes/smoothness/jquery-ui.min.css?v=3c2a865c832a1322285c55c6ed99abb2" type="text/css" />
-    <link rel="stylesheet" href="/static/components/jquery-typeahead/dist/jquery.typeahead.min.css?v=7afb461de36accb1aa133a1710f5bc56" type="text/css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    
-<link rel="stylesheet" href="/static/components/codemirror/lib/codemirror.css?v=fc217d502b05f65616356459c0ec1d62">
-<link rel="stylesheet" href="/static/components/codemirror/addon/dialog/dialog.css?v=c89dce10b44d2882a024e7befc2b63f5">
+############# IMPORTS#############
+# LIBRARIES
+from flask import Flask, render_template, request
+from sqlalchemy import create_engine
 
-    <link rel="stylesheet" href="/static/style/style.min.css?v=e91a43337d7c294cc9fab2938fa723b3" type="text/css"/>
-    
+# FILES
+import landing
+import login
+import signup
+import profile_recom as pr
 
-    <link rel="stylesheet" href="/custom/custom.css" type="text/css" />
-    <script src="/static/components/es6-promise/promise.min.js?v=f004a16cb856e0ff11781d01ec5ca8fe" type="text/javascript" charset="utf-8"></script>
-    <script src="/static/components/react/react.production.min.js?v=34f96ffc962a7deecc83037ccb582b58" type="text/javascript"></script>
-    <script src="/static/components/react/react-dom.production.min.js?v=b14d91fb641317cda38dbc9dbf985ab4" type="text/javascript"></script>
-    <script src="/static/components/create-react-class/index.js?v=94feb9971ce6d26211729abc43f96cd2" type="text/javascript"></script>
-    <script src="/static/components/requirejs/require.js?v=951f856e81496aaeec2e71a1c2c0d51f" type="text/javascript" charset="utf-8"></script>
-    <script>
-      require.config({
-          
-          urlArgs: "v=20200129234416",
-          
-          baseUrl: '/static/',
-          paths: {
-            'auth/js/main': 'auth/js/main.min',
-            custom : '/custom',
-            nbextensions : '/nbextensions',
-            kernelspecs : '/kernelspecs',
-            underscore : 'components/underscore/underscore-min',
-            backbone : 'components/backbone/backbone-min',
-            jed: 'components/jed/jed',
-            jquery: 'components/jquery/jquery.min',
-            json: 'components/requirejs-plugins/src/json',
-            text: 'components/requirejs-text/text',
-            bootstrap: 'components/bootstrap/dist/js/bootstrap.min',
-            bootstraptour: 'components/bootstrap-tour/build/js/bootstrap-tour.min',
-            'jquery-ui': 'components/jquery-ui/jquery-ui.min',
-            moment: 'components/moment/min/moment-with-locales',
-            codemirror: 'components/codemirror',
-            termjs: 'components/xterm.js/xterm',
-            typeahead: 'components/jquery-typeahead/dist/jquery.typeahead.min',
-          },
-          map: { // for backward compatibility
-              "*": {
-                  "jqueryui": "jquery-ui",
-              }
-          },
-          shim: {
-            typeahead: {
-              deps: ["jquery"],
-              exports: "typeahead"
-            },
-            underscore: {
-              exports: '_'
-            },
-            backbone: {
-              deps: ["underscore", "jquery"],
-              exports: "Backbone"
-            },
-            bootstrap: {
-              deps: ["jquery"],
-              exports: "bootstrap"
-            },
-            bootstraptour: {
-              deps: ["bootstrap"],
-              exports: "Tour"
-            },
-            "jquery-ui": {
-              deps: ["jquery"],
-              exports: "$"
-            }
-          },
-          waitSeconds: 30,
-      });
+############# GLOBAL VARIABLES #############
+# CONNECT TO DATABASE
 
-      require.config({
-          map: {
-              '*':{
-                'contents': 'services/contents',
-              }
-          }
-      });
+############# METHODS #############
 
-      // error-catching custom.js shim.
-      define("custom", function (require, exports, module) {
-          try {
-              var custom = require('custom/custom');
-              console.debug('loaded custom.js');
-              return custom;
-          } catch (e) {
-              console.error("error loading custom.js", e);
-              return {};
-          }
-      })
+############# PAGES #############
+app = Flask(__name__)
 
-    document.nbjs_translations = {"domain": "nbjs", "locale_data": {"nbjs": {"": {"domain": "nbjs"}}}};
-    document.documentElement.lang = navigator.language.toLowerCase();
-    </script>
-
-    
-    
-
-</head>
-
-<body class="edit_app "
- 
-data-base-url="/"
-data-file-path="webserver.py"
-
-  
- 
-
-dir="ltr">
-
-<noscript>
-    <div id='noscript'>
-      Jupyter Notebook requires JavaScript.<br>
-      Please enable it to proceed. 
-  </div>
-</noscript>
-
-<div id="header" role="navigation" aria-label="Top Menu">
-  <div id="header-container" class="container">
-  <div id="ipython_notebook" class="nav navbar-brand"><a href="/tree" title='dashboard'>
-      <img src='/static/base/images/logo.png?v=641991992878ee24c6f3826e81054a0f' alt='Jupyter Notebook'/>
-  </a></div>
-
-  
-
-<span id="save_widget" class="pull-left save_widget">
-    <span class="filename"></span>
-    <span class="last_modified"></span>
-</span>
+# landing page
+@app.route('/')
+def home():
+    page = landing.bootstrap_landing()
+    return page
+# above is format for all methods below:
+    # actual render_template all done in main methods of individual py scripts
+    # that is returned up to this central file
 
 
-  
+# sign up page
+@app.route('/signup')
+def sign_up():
+    page = signup.main()
+    return render_template('LOGIN_TEMPLATE/signup.html')
 
-  
-  
-  
-  
+# sign up succeed page
+@app.route('/signup/success')
+def sign_up_success():
+    page = signup.success()
+    return page
 
-    <span id="login_widget">
-      
-        <button id="logout" class="btn btn-sm navbar-btn">Logout</button>
-      
-    </span>
-
-  
-
-  
-  
-  </div>
-  <div class="header-bar"></div>
-
-  
-
-<div id="menubar-container" class="container">
-  <div id="menubar">
-    <div id="menus" class="navbar navbar-default" role="navigation">
-      <div class="container-fluid">
-          <p  class="navbar-text indicator_area">
-          <span id="current-mode" >current mode</span>
-          </p>
-        <button type="button" class="btn btn-default navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-          <i class="fa fa-bars"></i>
-          <span class="navbar-text">Menu</span>
-        </button>
-        <ul class="nav navbar-nav navbar-right">
-          <li id="notification_area"></li>
-        </ul>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">File</a>
-              <ul id="file-menu" class="dropdown-menu">
-                <li id="new-file"><a href="#">New</a></li>
-                <li id="save-file"><a href="#">Save</a></li>
-                <li id="rename-file"><a href="#">Rename</a></li>
-                <li id="download-file"><a href="#">Download</a></li>
-              </ul>
-            </li>
-            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Edit</a>
-              <ul id="edit-menu" class="dropdown-menu">
-                <li id="menu-find"><a href="#">Find</a></li>
-                <li id="menu-replace"><a href="#">Find &amp; Replace</a></li>
-                <li class="divider"></li>
-                <li class="dropdown-header">Key Map</li>
-                <li id="menu-keymap-default"><a href="#">Default<i class="fa"></i></a></li>
-                <li id="menu-keymap-sublime"><a href="#">Sublime Text<i class="fa"></i></a></li>
-                <li id="menu-keymap-vim"><a href="#">Vim<i class="fa"></i></a></li>
-                <li id="menu-keymap-emacs"><a href="#">emacs<i class="fa"></i></a></li>
-              </ul>
-            </li>
-            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">View</a>
-              <ul id="view-menu" class="dropdown-menu">
-              <li id="toggle_header" title="Show/Hide the logo and notebook title (above menu bar)">
-              <a href="#">Toggle Header</a></li>
-              <li id="menu-line-numbers"><a href="#">Toggle Line Numbers</a></li>
-              </ul>
-            </li>
-            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Language</a>
-              <ul id="mode-menu" class="dropdown-menu">
-              </ul>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="lower-header-bar"></div>
+# import watchlist - sign up version
+@app.route('/signup/watchimport')
+def sign_up_watchImport():
+    page = "Sign Up through Importing list"
+    return page
 
 
-</div>
-
-<div id="site">
-
-
-<div id="texteditor-backdrop">
-<div id="texteditor-container" class="container"></div>
-</div>
-
-
-</div>
+# log in page
+@app.route('/login')
+def login():
+    page = "Login Page"
+    return render_template('LOGIN_TEMPLATE/login.html')
 
 
 
+# movie/show search page
+@app.route('/browse')
+def browse():
+    page = "Browse catalog page"
+    return page
+
+# movie/show profile page
+
+
+# NOTE: IF CREATE PUBLIC PROFILE KIND OF THING, CHANGE BELOW "PROFILE" ALL INTO "SETTINGS"
+# user profile main page
+@app.route('/profile')
+def profile():
+    # auto route to edit profile page
+    page = "Profile main page"
+#     return page
+    return render_template('profile-generic-UPDATED.html',page_title="Edit")
+
+# user profile edit profile page
+@app.route('/profile/edit')
+def profile_edit():
+    page = "Profile edit page" 
+#     return page
+    return render_template('profile-generic-UPDATED.html',page_title="Edit")
+
+# user profile history and watchlist page
+@app.route('/profile/history')
+def profile_history():
+    page = "Profile history page"
+    return render_template('profile-generic-UPDATED.html',page_title="History")
+
+# streaming service recommendation
+@app.route('/profile/recommendation')
+def profile_recommendation():
+#     page = "Profile recommendation page"
+    page = pr.main('profile-generic-UPDATED.html','Parsed_Watchlist_Sample')
+    return page
+
+# user profile security and login page
+@app.route('/profile/security')
+def profile_security():
+#    page = "Profile security page"
+    return render_template('profile-generic-UPDATED.html',page_title="Security")
+
+# user profile linked accounts page
+@app.route('/profile/linked')
+def profile_linked():
+#    page = "Profile linked page"
+    return render_template('profile-generic-UPDATED.html',page_title="Linked")
+
+# user profile content preferences page
+@app.route('/profile/preferences')
+def profile_preferences():
+#    page = "Profile preferences page"
+    return render_template('profile-generic-UPDATED.html',page_title="Preference")
+
+# import watchlist - user profile version
+@app.route('/profile/import')
+def profile_import():
+#    page = "Profile import page"
+    return render_template('profile-generic-UPDATED.html')
+
+# watchlist pages
+@app.route('/watchlist')
+def profile_watchlist():
+    # will have arguments in url for each unique watchlist
+#    page = "Profile watchlist page"
+    return render_template('profile-generic-UPDATED.html')
+
+# refining user preference page
+@app.route('/recommendation/refine')
+def profile_recommendation_refine():
+    page = "Profile recommentation refine page"
+    return page
+
+# results page
 
 
 
-    
+# OPTIONAL TEST PAGES
+# TESTING FOOTER
+@app.route('/test')
+def test_page():
+    return render_template('header-footer.html')
+
+@app.route('/test/bootstrap')
+def test_bootstrap():
+    return render_template('bootstrap_template.html')
+
+@app.route('/test/justwatch')
+def test_justwatch():
+    return render_template('test-justwatch.html')
+
+@app.route('/test/profile-gen-kitty')
+def test_profile_gen_kitty():
+    return render_template('profile-generic-UPDATED.html')
+
+# about us page
+@app.route('/about')
+def about():
+    page_content = ['This is the about page.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ultricies ullamcorper ante et placerat. Integer ut diam nec ipsum condimentum aliquet ut ac leo. Sed pretium velit nisi, sed pulvinar ante porta vel. Suspendisse et posuere ex. Etiam tincidunt tempor turpis, quis lacinia tellus ultricies ac. Nam rutrum orci nulla, vitae dictum nulla vulputate a. Morbi libero sapien, sollicitudin eu nisi id, posuere porta urna. Morbi gravida elit nisl, eu gravida arcu pretium id. Vivamus magna mi, fermentum in placerat vel, tincidunt tincidunt purus.', 'Integer condimentum magna mattis nisi condimentum, sollicitudin luctus ligula elementum. Sed rhoncus ante quis sollicitudin dictum. Pellentesque finibus lectus quis nibh ullamcorper aliquam. Cras sed aliquet sapien. Vivamus blandit tempor turpis nec condimentum. Phasellus ornare id dui a tincidunt. Morbi congue mi quis tempor cursus. In ac suscipit dui, id efficitur turpis. Phasellus varius leo eget dolor pellentesque consequat. Nam eu libero nisl. Sed consectetur ante elit, in commodo diam interdum quis. Aenean feugiat porta est vitae condimentum. Cras ornare ante tellus, sed mattis ligula egestas tempus. Donec sodales tellus mi, non ultricies diam auctor et. Quisque congue venenatis mauris, non convallis felis sodales a.', 'Donec aliquet lectus vitae mi consequat, vitae rutrum orci tempus. Suspendisse at erat quis nisl elementum molestie. Proin aliquet gravida posuere. Aenean vitae lobortis ipsum. Integer blandit massa enim. Donec consectetur tellus ut lorem venenatis gravida ac eu velit. Etiam auctor mauris nulla, sit amet euismod libero eleifend at. Ut risus est, elementum vitae augue dapibus, laoreet convallis sem. Vestibulum eget erat sapien. Curabitur non placerat libero, eu feugiat nisl.']
+    return render_template('one-column-footer-page.html', title="About Us", page_content=page_content)
+
+# contact us page
+@app.route('/contact')
+def contact():
+    page_content = ['This is the contact page.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ultricies ullamcorper ante et placerat. Integer ut diam nec ipsum condimentum aliquet ut ac leo. Sed pretium velit nisi, sed pulvinar ante porta vel. Suspendisse et posuere ex. Etiam tincidunt tempor turpis, quis lacinia tellus ultricies ac. Nam rutrum orci nulla, vitae dictum nulla vulputate a. Morbi libero sapien, sollicitudin eu nisi id, posuere porta urna. Morbi gravida elit nisl, eu gravida arcu pretium id. Vivamus magna mi, fermentum in placerat vel, tincidunt tincidunt purus.', 'Integer condimentum magna mattis nisi condimentum, sollicitudin luctus ligula elementum. Sed rhoncus ante quis sollicitudin dictum. Pellentesque finibus lectus quis nibh ullamcorper aliquam. Cras sed aliquet sapien. Vivamus blandit tempor turpis nec condimentum. Phasellus ornare id dui a tincidunt. Morbi congue mi quis tempor cursus. In ac suscipit dui, id efficitur turpis. Phasellus varius leo eget dolor pellentesque consequat. Nam eu libero nisl. Sed consectetur ante elit, in commodo diam interdum quis. Aenean feugiat porta est vitae condimentum. Cras ornare ante tellus, sed mattis ligula egestas tempus. Donec sodales tellus mi, non ultricies diam auctor et. Quisque congue venenatis mauris, non convallis felis sodales a.', 'Donec aliquet lectus vitae mi consequat, vitae rutrum orci tempus. Suspendisse at erat quis nisl elementum molestie. Proin aliquet gravida posuere. Aenean vitae lobortis ipsum. Integer blandit massa enim. Donec consectetur tellus ut lorem venenatis gravida ac eu velit. Etiam auctor mauris nulla, sit amet euismod libero eleifend at. Ut risus est, elementum vitae augue dapibus, laoreet convallis sem. Vestibulum eget erat sapien. Curabitur non placerat libero, eu feugiat nisl.']
+    return render_template('one-column-footer-page.html', title="Contact Us", page_content=page_content)
+
+# privacy policy page
+@app.route('/privacy')
+def privacy():
+    page_content = ['This is the privacy page.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ultricies ullamcorper ante et placerat. Integer ut diam nec ipsum condimentum aliquet ut ac leo. Sed pretium velit nisi, sed pulvinar ante porta vel. Suspendisse et posuere ex. Etiam tincidunt tempor turpis, quis lacinia tellus ultricies ac. Nam rutrum orci nulla, vitae dictum nulla vulputate a. Morbi libero sapien, sollicitudin eu nisi id, posuere porta urna. Morbi gravida elit nisl, eu gravida arcu pretium id. Vivamus magna mi, fermentum in placerat vel, tincidunt tincidunt purus.', 'Integer condimentum magna mattis nisi condimentum, sollicitudin luctus ligula elementum. Sed rhoncus ante quis sollicitudin dictum. Pellentesque finibus lectus quis nibh ullamcorper aliquam. Cras sed aliquet sapien. Vivamus blandit tempor turpis nec condimentum. Phasellus ornare id dui a tincidunt. Morbi congue mi quis tempor cursus. In ac suscipit dui, id efficitur turpis. Phasellus varius leo eget dolor pellentesque consequat. Nam eu libero nisl. Sed consectetur ante elit, in commodo diam interdum quis. Aenean feugiat porta est vitae condimentum. Cras ornare ante tellus, sed mattis ligula egestas tempus. Donec sodales tellus mi, non ultricies diam auctor et. Quisque congue venenatis mauris, non convallis felis sodales a.', 'Donec aliquet lectus vitae mi consequat, vitae rutrum orci tempus. Suspendisse at erat quis nisl elementum molestie. Proin aliquet gravida posuere. Aenean vitae lobortis ipsum. Integer blandit massa enim. Donec consectetur tellus ut lorem venenatis gravida ac eu velit. Etiam auctor mauris nulla, sit amet euismod libero eleifend at. Ut risus est, elementum vitae augue dapibus, laoreet convallis sem. Vestibulum eget erat sapien. Curabitur non placerat libero, eu feugiat nisl.']
+    return render_template('one-column-footer-page.html', title="Privacy Policy", page_content=page_content)
+
+# FAQ page
+@app.route('/faq')
+def faq():
+    page_content = ['This is the faq page.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ultricies ullamcorper ante et placerat. Integer ut diam nec ipsum condimentum aliquet ut ac leo. Sed pretium velit nisi, sed pulvinar ante porta vel. Suspendisse et posuere ex. Etiam tincidunt tempor turpis, quis lacinia tellus ultricies ac. Nam rutrum orci nulla, vitae dictum nulla vulputate a. Morbi libero sapien, sollicitudin eu nisi id, posuere porta urna. Morbi gravida elit nisl, eu gravida arcu pretium id. Vivamus magna mi, fermentum in placerat vel, tincidunt tincidunt purus.', 'Integer condimentum magna mattis nisi condimentum, sollicitudin luctus ligula elementum. Sed rhoncus ante quis sollicitudin dictum. Pellentesque finibus lectus quis nibh ullamcorper aliquam. Cras sed aliquet sapien. Vivamus blandit tempor turpis nec condimentum. Phasellus ornare id dui a tincidunt. Morbi congue mi quis tempor cursus. In ac suscipit dui, id efficitur turpis. Phasellus varius leo eget dolor pellentesque consequat. Nam eu libero nisl. Sed consectetur ante elit, in commodo diam interdum quis. Aenean feugiat porta est vitae condimentum. Cras ornare ante tellus, sed mattis ligula egestas tempus. Donec sodales tellus mi, non ultricies diam auctor et. Quisque congue venenatis mauris, non convallis felis sodales a.', 'Donec aliquet lectus vitae mi consequat, vitae rutrum orci tempus. Suspendisse at erat quis nisl elementum molestie. Proin aliquet gravida posuere. Aenean vitae lobortis ipsum. Integer blandit massa enim. Donec consectetur tellus ut lorem venenatis gravida ac eu velit. Etiam auctor mauris nulla, sit amet euismod libero eleifend at. Ut risus est, elementum vitae augue dapibus, laoreet convallis sem. Vestibulum eget erat sapien. Curabitur non placerat libero, eu feugiat nisl.']
+    return render_template('one-column-footer-page.html', title="FAQ", page_content=page_content)
+
+# Requires different template from above
+# sitemap page
+@app.route('/sitemap')
+def sitemap():
+    page = "Sitemap page"
+    return page
+
+# Requires different template form above
+# Report bugs page
+@app.route('/bugs')
+def bugs():
+    page = "Report bugs page"
+    return page
 
 
-<script src="/static/edit/js/main.min.js?v=8953b35ff72d1380d055f1668327fe2e" type="text/javascript" charset="utf-8"></script>
-
-
-<script type='text/javascript'>
-  function _remove_token_from_url() {
-    if (window.location.search.length <= 1) {
-      return;
-    }
-    var search_parameters = window.location.search.slice(1).split('&');
-    for (var i = 0; i < search_parameters.length; i++) {
-      if (search_parameters[i].split('=')[0] === 'token') {
-        // remote token from search parameters
-        search_parameters.splice(i, 1);
-        var new_search = '';
-        if (search_parameters.length) {
-          new_search = '?' + search_parameters.join('&');
-        }
-        var new_url = window.location.origin + 
-                      window.location.pathname + 
-                      new_search + 
-                      window.location.hash;
-        window.history.replaceState({}, "", new_url);
-        return;
-      }
-    }
-  }
-  _remove_token_from_url();
-</script>
-</body>
-
-</html>
+###############################
+app.run(host='0.0.0.0', port=5000, debug=True)

@@ -1,274 +1,186 @@
-<!DOCTYPE HTML>
-<html>
+#######################################################################################
 
-<head>
-    <meta charset="utf-8">
+'''
+This file containes the method to convert the recommendation results into sql.
 
-    <title>convert_sql.py (editing)</title>
-    <link id="favicon" rel="shortcut icon" type="image/x-icon" href="/static/base/images/favicon-file.ico?v=e2776a7f45692c839d6eea7d7ff6f3b2">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <link rel="stylesheet" href="/static/components/jquery-ui/themes/smoothness/jquery-ui.min.css?v=3c2a865c832a1322285c55c6ed99abb2" type="text/css" />
-    <link rel="stylesheet" href="/static/components/jquery-typeahead/dist/jquery.typeahead.min.css?v=7afb461de36accb1aa133a1710f5bc56" type="text/css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+Broadly, file handles conversion to and from sql for further processing in project,
+as in towards the recommendation algorithm or towards front-end.
+
+Created by Kitty - Apr 20
+Modified by Jessica, see notes - 04.21
+'''
+#######################################################################################
+
+from sqlalchemy import create_engine
+# import service_recc as sr - Jessica 04.21: as of now unnecessary
+
+CONN_STRING = 'mysql://{user}:{password}@{host}/{db}?charset={encoding}'.format(
+        host = '35.245.115.59', 
+        user = 'root',
+        db = 'streamline',
+        password = 'dwdstudent2015',
+        encoding = 'utf8mb4')
+
+#######################################################################################
+'''
+This method is to convert the recommendation results into sql.
+
+Input: dictionary parsed_loc, string table_name
+Returns:
+
+Created by Kitty - 04.20
+Modified by Jessica - 04.21: 
+    changing "watchlist" from pandas.Dataframe to output of sr.watchlist_parse()
+    filling out documentation head
+'''
+def convert_to_sql(parsed_loc, table_name):
+    # Get the parsed watchlist
+#     parsed_loc = sr.watchlist_parse(watchlist)
     
+    # Connect to database
+    engine = create_engine(CONN_STRING)
+    con = engine.connect()
     
-<link rel="stylesheet" href="/static/components/codemirror/lib/codemirror.css?v=fc217d502b05f65616356459c0ec1d62">
-<link rel="stylesheet" href="/static/components/codemirror/addon/dialog/dialog.css?v=c89dce10b44d2882a024e7befc2b63f5">
-
-    <link rel="stylesheet" href="/static/style/style.min.css?v=e91a43337d7c294cc9fab2938fa723b3" type="text/css"/>
+    # Drop the old table if exists
+    drop_table_query = '''DROP table IF EXISTS {table}'''.format(table=table_name)
+    con.execute(drop_table_query)
     
-
-    <link rel="stylesheet" href="/custom/custom.css" type="text/css" />
-    <script src="/static/components/es6-promise/promise.min.js?v=f004a16cb856e0ff11781d01ec5ca8fe" type="text/javascript" charset="utf-8"></script>
-    <script src="/static/components/react/react.production.min.js?v=34f96ffc962a7deecc83037ccb582b58" type="text/javascript"></script>
-    <script src="/static/components/react/react-dom.production.min.js?v=b14d91fb641317cda38dbc9dbf985ab4" type="text/javascript"></script>
-    <script src="/static/components/create-react-class/index.js?v=94feb9971ce6d26211729abc43f96cd2" type="text/javascript"></script>
-    <script src="/static/components/requirejs/require.js?v=951f856e81496aaeec2e71a1c2c0d51f" type="text/javascript" charset="utf-8"></script>
-    <script>
-      require.config({
-          
-          urlArgs: "v=20200129234416",
-          
-          baseUrl: '/static/',
-          paths: {
-            'auth/js/main': 'auth/js/main.min',
-            custom : '/custom',
-            nbextensions : '/nbextensions',
-            kernelspecs : '/kernelspecs',
-            underscore : 'components/underscore/underscore-min',
-            backbone : 'components/backbone/backbone-min',
-            jed: 'components/jed/jed',
-            jquery: 'components/jquery/jquery.min',
-            json: 'components/requirejs-plugins/src/json',
-            text: 'components/requirejs-text/text',
-            bootstrap: 'components/bootstrap/dist/js/bootstrap.min',
-            bootstraptour: 'components/bootstrap-tour/build/js/bootstrap-tour.min',
-            'jquery-ui': 'components/jquery-ui/jquery-ui.min',
-            moment: 'components/moment/min/moment-with-locales',
-            codemirror: 'components/codemirror',
-            termjs: 'components/xterm.js/xterm',
-            typeahead: 'components/jquery-typeahead/dist/jquery.typeahead.min',
-          },
-          map: { // for backward compatibility
-              "*": {
-                  "jqueryui": "jquery-ui",
-              }
-          },
-          shim: {
-            typeahead: {
-              deps: ["jquery"],
-              exports: "typeahead"
-            },
-            underscore: {
-              exports: '_'
-            },
-            backbone: {
-              deps: ["underscore", "jquery"],
-              exports: "Backbone"
-            },
-            bootstrap: {
-              deps: ["jquery"],
-              exports: "bootstrap"
-            },
-            bootstraptour: {
-              deps: ["bootstrap"],
-              exports: "Tour"
-            },
-            "jquery-ui": {
-              deps: ["jquery"],
-              exports: "$"
-            }
-          },
-          waitSeconds: 30,
-      });
-
-      require.config({
-          map: {
-              '*':{
-                'contents': 'services/contents',
-              }
-          }
-      });
-
-      // error-catching custom.js shim.
-      define("custom", function (require, exports, module) {
-          try {
-              var custom = require('custom/custom');
-              console.debug('loaded custom.js');
-              return custom;
-          } catch (e) {
-              console.error("error loading custom.js", e);
-              return {};
-          }
-      })
-
-    document.nbjs_translations = {"domain": "nbjs", "locale_data": {"nbjs": {"": {"domain": "nbjs"}}}};
-    document.documentElement.lang = navigator.language.toLowerCase();
-    </script>
-
+    # Create a new table
+    create_table_query = '''CREATE TABLE IF NOT EXISTS {table} (position int, 
+                         title varchar(255),
+                         google_rent real,
+                         google_buy real,
+                         itunes_rent real,
+                         itunes_buy real,
+                         amazon_prime bool,
+                         netflix bool,
+                         hbo bool,
+                         hulu bool,
+                         nowhere bool,
+                         PRIMARY KEY(position, title))'''.format(table=table_name)
+    con.execute(create_table_query)
     
+    # Insert head into the table
+    insert_query = '''INSERT IGNORE INTO {table} (position, title,google_rent, google_buy, itunes_rent, itunes_buy,
+                    amazon_prime, netflix, hbo, hulu, nowhere) 
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''.format(table=table_name)
+   
     
-
-</head>
-
-<body class="edit_app "
- 
-data-base-url="/"
-data-file-path="convert_sql.py"
-
-  
- 
-
-dir="ltr">
-
-<noscript>
-    <div id='noscript'>
-      Jupyter Notebook requires JavaScript.<br>
-      Please enable it to proceed. 
-  </div>
-</noscript>
-
-<div id="header" role="navigation" aria-label="Top Menu">
-  <div id="header-container" class="container">
-  <div id="ipython_notebook" class="nav navbar-brand"><a href="/tree" title='dashboard'>
-      <img src='/static/base/images/logo.png?v=641991992878ee24c6f3826e81054a0f' alt='Jupyter Notebook'/>
-  </a></div>
-
-  
-
-<span id="save_widget" class="pull-left save_widget">
-    <span class="filename"></span>
-    <span class="last_modified"></span>
-</span>
-
-
-  
-
-  
-  
-  
-  
-
-    <span id="login_widget">
-      
-        <button id="logout" class="btn btn-sm navbar-btn">Logout</button>
-      
-    </span>
-
-  
-
-  
-  
-  </div>
-  <div class="header-bar"></div>
-
-  
-
-<div id="menubar-container" class="container">
-  <div id="menubar">
-    <div id="menus" class="navbar navbar-default" role="navigation">
-      <div class="container-fluid">
-          <p  class="navbar-text indicator_area">
-          <span id="current-mode" >current mode</span>
-          </p>
-        <button type="button" class="btn btn-default navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-          <i class="fa fa-bars"></i>
-          <span class="navbar-text">Menu</span>
-        </button>
-        <ul class="nav navbar-nav navbar-right">
-          <li id="notification_area"></li>
-        </ul>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">File</a>
-              <ul id="file-menu" class="dropdown-menu">
-                <li id="new-file"><a href="#">New</a></li>
-                <li id="save-file"><a href="#">Save</a></li>
-                <li id="rename-file"><a href="#">Rename</a></li>
-                <li id="download-file"><a href="#">Download</a></li>
-              </ul>
-            </li>
-            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Edit</a>
-              <ul id="edit-menu" class="dropdown-menu">
-                <li id="menu-find"><a href="#">Find</a></li>
-                <li id="menu-replace"><a href="#">Find &amp; Replace</a></li>
-                <li class="divider"></li>
-                <li class="dropdown-header">Key Map</li>
-                <li id="menu-keymap-default"><a href="#">Default<i class="fa"></i></a></li>
-                <li id="menu-keymap-sublime"><a href="#">Sublime Text<i class="fa"></i></a></li>
-                <li id="menu-keymap-vim"><a href="#">Vim<i class="fa"></i></a></li>
-                <li id="menu-keymap-emacs"><a href="#">emacs<i class="fa"></i></a></li>
-              </ul>
-            </li>
-            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">View</a>
-              <ul id="view-menu" class="dropdown-menu">
-              <li id="toggle_header" title="Show/Hide the logo and notebook title (above menu bar)">
-              <a href="#">Toggle Header</a></li>
-              <li id="menu-line-numbers"><a href="#">Toggle Line Numbers</a></li>
-              </ul>
-            </li>
-            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Language</a>
-              <ul id="mode-menu" class="dropdown-menu">
-              </ul>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="lower-header-bar"></div>
-
-
-</div>
-
-<div id="site">
-
-
-<div id="texteditor-backdrop">
-<div id="texteditor-container" class="container"></div>
-</div>
-
-
-</div>
-
-
-
-
-
-
+    # creating set of all items - Jessica
+    all_set = set()
+    all_set.update(parsed_loc['individual']['google']['buy'].keys())
+    all_set.update(parsed_loc['individual']['itunes']['buy'].keys())
+    all_set.update(parsed_loc['subscription']['amazon prime'])
+    all_set.update(parsed_loc['subscription']['netflix'])
+    all_set.update(parsed_loc['subscription']['hbo'])
+    all_set.update(parsed_loc['subscription']['hulu'])
+    all_set.update(parsed_loc['nowhere'])
     
+    # slice the dictionary
+    for index, title in enumerate(all_set):
+        # position
+        position = index + 1
+        
+        # individual
+        # MODIFIED by Jessica to handle cases where no ind option
+        google_rent = None
+        google_buy = None
+        itunes_rent = None
+        itunes_buy = None
+        if title in parsed_loc['individual']['google']['rent']:
+            google_rent = parsed_loc['individual']['google']['rent'][title]
+        if title in parsed_loc['individual']['google']['buy']:
+            google_buy = parsed_loc['individual']['google']['buy'][title]
+        if title in parsed_loc['individual']['itunes']['rent']:
+            itunes_rent = parsed_loc['individual']['itunes']['rent'][title]
+        if title in parsed_loc['individual']['itunes']['buy']:
+            itunes_buy = parsed_loc['individual']['itunes']['buy'][title]
+        
+        # subscription
+        amazon_prime = True if title in parsed_loc['subscription']['amazon prime'] else False
+        netflix = True if title in parsed_loc['subscription']['netflix'] else False
+        hbo = True if title in parsed_loc['subscription']['hbo'] else False
+        hulu = True if title in parsed_loc['subscription']['hulu'] else False
+        nowhere = True if title in parsed_loc['nowhere'] else False
+        
+        # execute query
+        query_parameters = (position, title, google_rent, google_buy, itunes_rent, itunes_buy, amazon_prime, netflix, hbo, hulu, nowhere)
+        con.execute(insert_query, query_parameters)
+        
+        # end of method
+    
+'''
+Retrieving stored table information - potential input for recommendation methods
+
+Input: string table_name
+Returns: dictionary parsed_loc
+
+Created by Jessica - 04.21
+'''        
+def retrieve_from_sql(table_name):
+    # Connect to database
+    engine = create_engine(CONN_STRING)
+    con = engine.connect()
+    
+    # TO DO: proper try catch error handling
+    query = '''SELECT * FROM {table}'''.format(table=table_name)
+    query_ret = con.execute(query)
+    
+    # Constructing dictionary that will be returned
+    parsed_loc = {'individual':{'google':{'rent':dict(),'buy':dict()},
+                              'itunes':{'rent':dict(),'buy':dict()},
+                              'amazon instant':{'rent':dict(),'buy':dict()}},
+                'subscription':{'amazon prime':[],
+                                'netflix':[],
+                                'hbo':[],
+                                'hulu':[]},
+                'nowhere':[]}
+    
+    # headers: index, title, google_buy, google_rent, itunes_buy, 
+             # itunes_rent, amazon_prime, netflix, hbo, hulu, nowhere
+    # Going through each line of table 
+    # NOTE: there is definitely a better way to do this
+    for item in query_ret:
+        # check and fill in individual 
+        # GOOGLE
+        if item[2] is not None:
+            parsed_loc['individual']['google']['rent'][item[1]] = item[2]
+        if item[3] is not None:
+            parsed_loc['individual']['google']['buy'][item[1]] = item[3]
+        # ITUNES
+        if item[4] is not None:
+            parsed_loc['individual']['itunes']['rent'][item[1]] = item[4]
+        if item[5] is not None:
+            parsed_loc['individual']['itunes']['buy'][item[1]] = item[5]
+        
+        # check and fill in subscriptions
+        # AMAZON
+        if item[6] is 1:
+            parsed_loc['subscription']['amazon prime'].append(item[1])
+        # NETFLIX
+        if item[7] is 1:
+            parsed_loc['subscription']['netflix'].append(item[1])
+        # HBO
+        if item[8] is 1:
+            parsed_loc['subscription']['hbo'].append(item[1])
+        # HULU
+        if item[9] is 1:
+            parsed_loc['subscription']['hulu'].append(item[1])
+        
+        # check if nowhere
+        if item[10] is 1:
+            parsed_loc['nowhere'].append(item[1])
+           
+    
+    return parsed_loc
 
 
-<script src="/static/edit/js/main.min.js?v=8953b35ff72d1380d055f1668327fe2e" type="text/javascript" charset="utf-8"></script>
 
 
-<script type='text/javascript'>
-  function _remove_token_from_url() {
-    if (window.location.search.length <= 1) {
-      return;
-    }
-    var search_parameters = window.location.search.slice(1).split('&');
-    for (var i = 0; i < search_parameters.length; i++) {
-      if (search_parameters[i].split('=')[0] === 'token') {
-        // remote token from search parameters
-        search_parameters.splice(i, 1);
-        var new_search = '';
-        if (search_parameters.length) {
-          new_search = '?' + search_parameters.join('&');
-        }
-        var new_url = window.location.origin + 
-                      window.location.pathname + 
-                      new_search + 
-                      window.location.hash;
-        window.history.replaceState({}, "", new_url);
-        return;
-      }
-    }
-  }
-  _remove_token_from_url();
-</script>
-</body>
 
-</html>
+
+
+
+
+
+
