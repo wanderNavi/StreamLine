@@ -10,7 +10,7 @@ output: watchlist as a pandas dataframe with three columns: Position (index), Co
 
 def fetch_watchlist(db_watchlist):
     
-    conn_string = 'mysql://{user}:{password}@{host}/{db}?charset={encoding}'.format(
+    conn_string = 'mysql+pymysql://{user}:{password}@{host}/{db}?charset={encoding}'.format(
         host = '35.245.115.59', 
         user = 'root',
         db = 'streamline',

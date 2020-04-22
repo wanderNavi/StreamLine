@@ -14,7 +14,7 @@ Modified by Jessica, see notes - 04.21
 from sqlalchemy import create_engine
 # import service_recc as sr - Jessica 04.21: as of now unnecessary
 
-CONN_STRING = 'mysql://{user}:{password}@{host}/{db}?charset={encoding}'.format(
+CONN_STRING = 'mysql+pymysql://{user}:{password}@{host}/{db}?charset={encoding}'.format(
         host = '35.245.115.59', 
         user = 'root',
         db = 'streamline',

@@ -18,7 +18,7 @@ import convert_sql as cs
 # above from Jessica 04.20
 
 ############################### GLOBAL VARIABLES ###############################
-CONN_STRING = 'mysql://{user}:{password}@{host}/{db}?charset={encoding}'.format(
+CONN_STRING = 'mysql+pymysql://{user}:{password}@{host}/{db}?charset={encoding}'.format(
         host = '35.245.115.59', 
         user = 'root',
         db = 'streamline',
