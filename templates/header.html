@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<!-- imclude this html in all other templates for the site header -->
+<html>
+    <head>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&display=swap">
+        <style>
+            /* setting up the scroll look on the header bar */
+            .headerBar {
+                position: sticky;
+                top: 0;
+                width: 100%;
+            }
+            
+            /* font for the StreamLine home link */
+            .anton-font {
+                font-family: 'anton';
+                font-size: 25px;
+            }
+            
+            /* set up of cell items in lists on the bar */
+            ul {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                background-color: #90D0FF;
+            }
+            li {
+                float: left;
+            }
+            li a {
+                display: block;
+                color: black;
+                text-align: center;
+                padding: 10px;
+                text-decoration: none;
+            }
+        </style>
+    </head>
+    <body>
+        <ul class="headerBar">
+            <li class="anton-font"><a href="/">StreamLine</a></li>
+            <!-- eventually look into way to have a sign in button on right end of the bar that can appear and go away based on if the user is signed in or not -->
+        </ul>
+    </body>
+</html>

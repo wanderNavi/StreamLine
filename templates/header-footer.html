@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<!-- Page testing the header and footer creation and importation -->
+<html>
+    <head>
+        <style>
+            html, body {
+                height: 100%;
+            }
+            body {
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .content {
+                flex: 1 0 auto;
+            }
+            
+            .footer {
+                flex-shrink:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="content">
+        {% include 'header.html' %}
+        
+        <h3 class="body-font">Enough content to trigger scrolling</h3>
+        <p class="body-font">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque luctus purus eleifend hendrerit tempor. Mauris molestie aliquam metus eu lacinia. Ut a nunc orci. Ut eu gravida neque, sed feugiat urna. Integer commodo sit amet elit at sagittis. Mauris sed lectus ipsum. In hac habitasse platea dictumst.</p>
+        <p class="body-font">Curabitur dignissim faucibus velit ut imperdiet. Phasellus lobortis mauris eget libero imperdiet, eget lacinia lectus venenatis. Maecenas sed hendrerit purus, et viverra lectus. Nullam euismod pretium arcu, sit amet luctus sapien dictum eget. Sed faucibus sodales purus a posuere. Ut maximus, purus sed fermentum vestibulum, eros quam iaculis leo, sit amet molestie nisi arcu et nibh. Curabitur laoreet libero sed leo lacinia varius. Donec eros metus, gravida eget quam non, commodo accumsan purus.</p>
+        <p class="body-font">Nunc odio justo, volutpat at tincidunt id, ultrices in tortor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse tempor semper nibh sed varius. Donec dignissim, nisi in convallis placerat, lacus diam bibendum dolor, non scelerisque elit metus maximus purus. Maecenas sodales suscipit mollis. Vestibulum at finibus felis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nullam ullamcorper arcu quis rhoncus ullamcorper. Nunc semper leo mi, id ullamcorper orci varius maximus. Fusce dapibus purus id mi suscipit vestibulum. Sed porttitor venenatis est vitae molestie.</p>
+        <p class="body-font">Vestibulum at bibendum justo. Donec convallis neque at diam cursus facilisis. Maecenas sed justo odio. Etiam purus orci, pharetra et nunc porttitor, semper malesuada ante. Maecenas laoreet eget est ac rutrum. Curabitur dapibus, odio eu congue aliquet, purus odio rutrum ipsum, egestas placerat est metus vel nisl. Phasellus vel euismod purus, et convallis lorem. Nam nec turpis at ex aliquet semper. In hac habitasse platea dictumst. Nunc vehicula pharetra tellus sit amet tincidunt.</p>
+        <p class="body-font">Duis scelerisque mauris elit, et aliquam nibh sollicitudin suscipit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nullam ornare eros at ultricies porttitor. Mauris sit amet justo ut dolor tincidunt auctor. Cras molestie imperdiet pharetra. Nunc nisi augue, aliquam non risus quis, lobortis gravida lectus. Vivamus bibendum congue lacus. Vestibulum laoreet efficitur dui ac malesuada. Pellentesque sodales velit in interdum pretium. Duis dolor arcu, accumsan eget turpis vitae, mattis elementum tellus. Duis euismod posuere laoreet. Ut ultrices feugiat elit, nec facilisis elit viverra sed. Phasellus lobortis mattis pretium. Praesent maximus elit dolor, et laoreet dolor pellentesque sit amet. Praesent dapibus mollis sollicitudin.</p>
+        <p class="body-font">Donec volutpat augue id tortor tincidunt, non malesuada dui fermentum. Sed at neque arcu. Cras aliquet porttitor facilisis. Ut quis lacus enim. Sed et mauris feugiat, varius mauris ac, accumsan risus. Vivamus elementum vestibulum nulla sed iaculis. Morbi blandit enim nisi, id iaculis neque rutrum ut. Mauris at sapien facilisis, ultrices lectus ut, sagittis odio. Proin ut ultrices diam. In tristique convallis porttitor.</p>
+        <p class="body-font">Sed auctor velit finibus sapien tempus, eget tempor urna porttitor. Nullam convallis, justo vitae accumsan dignissim, lectus enim bibendum libero, quis vestibulum risus ipsum eu diam. Integer id velit vestibulum, tincidunt ante in, molestie lacus. Sed suscipit metus quis efficitur euismod. Pellentesque ut sem id nibh pretium aliquam et vel tortor. Fusce ut arcu euismod, fringilla leo sit amet, pharetra lacus. Vestibulum fermentum tincidunt sollicitudin. Fusce ac scelerisque elit. Aliquam rutrum egestas urna, quis feugiat elit. Aenean malesuada nisi faucibus tincidunt convallis. Nam convallis, nisl tincidunt maximus dapibus, augue sem suscipit tellus, non varius mauris neque nec turpis. Pellentesque sem est, tempor eu lectus ut, placerat venenatis tellus. Curabitur interdum pulvinar iaculis.</p>
+        <p class="body-font">Nam eget elementum sapien. Donec ligula velit, congue sit amet tellus vitae, suscipit interdum nulla. Nunc id orci risus. Donec interdum, nibh at semper tristique, tortor ante tempus turpis, a imperdiet lacus mauris placerat eros. Nulla nec enim fermentum, gravida tortor non, lacinia arcu. Nulla facilisi. Cras turpis nibh, tempus ut tellus eget, ornare viverra metus.</p>
+        <p class="body-font">Morbi hendrerit dui a convallis aliquet. Praesent rhoncus turpis et tincidunt dictum. Suspendisse sollicitudin pulvinar odio, ut mollis nisl maximus et. Proin posuere interdum nunc, id sodales justo vestibulum nec. Curabitur scelerisque, felis a venenatis placerat, leo mauris ornare tellus, vitae volutpat neque tellus nec diam. Integer interdum sem vitae nulla molestie, eget maximus tellus rutrum. Nunc dapibus varius nibh ac egestas. Pellentesque aliquet ante justo, ut scelerisque nulla blandit quis.</p>
+        <p class="body-font">Ut turpis nunc, facilisis in nulla sit amet, elementum tincidunt dolor. Suspendisse a consectetur lectus, a congue sapien. Interdum et malesuada fames ac ante ipsum primis in faucibus. Donec vitae lectus sapien. Donec sit amet nulla ante. Aenean ut massa euismod, sodales quam quis, convallis nunc. Phasellus arcu erat, porta id finibus eu, mattis finibus lorem. Vestibulum tincidunt tincidunt justo, sed pharetra nisi feugiat eget. Sed cursus nunc ut neque efficitur, at dapibus arcu scelerisque. Curabitur id augue justo.</p>
+        </div>
+        
+        <footer class="footer">
+            {% include 'footer.html' %}
+        </footer>
+    </body>
+</html>

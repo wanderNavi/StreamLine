@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<!-- Include this html into all other templates to create the site footer -->
+<html>
+    <head>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Work Sans">
+        <style>
+            /* set up font */
+            .body-font {
+                font-family: "work sans";
+                font-size: 20px;
+            }
+            
+            /* set up bar on bottom */
+            .footerBar {
+                bottom: 0;
+                width: 100%;
+                text-align: center;
+            }
+            
+            /* modifying footer tag in html */
+            footer {
+                overflow: hidden;
+                right: 2px;
+                bottom: 0;
+                width: 100%;
+            }
+            
+            /* handling cell blocks in bar */
+            ul {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                background-color: #90D0FF;
+            }
+            li {
+                float: left;
+            }
+            li a {
+                display: block;
+                color: black;
+                text-align: center;
+                padding: 10px;
+                text-decoration: none;
+            }
+        </style>
+    </head>
+    <body>
+        <footer>
+        <ul class="footerBar body-font">
+            <li><a href="about">About Us</a></li>
+            <li><a href="contact">Contact Us</a></li>
+            <li><a href="privacy">Privacy Policy</a></li>
+            <li><a href="faq">FAQ</a></li>
+            <li><a href="sitemap">Sitemap</a></li>
+            <li><a href="bugs">Report Bugs</a></li>
+        </ul>
+        </footer>
+    </body>
+</html>

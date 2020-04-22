@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<!-- This is specifically for the footer pages where textual content can be displayed in one column -->
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Work Sans">
+        <style type="text/css">
+            .body-text {
+                font-family: "work sans";
+                font-size: 20px;
+            }
+            
+            html, body {
+                height: 100%;
+            }
+            body {
+                display: flex;
+                flex-direction: column;
+            }
+            h1 {
+                font-family: "Noto Sans";
+                font-size: 45px;
+                padding-top: 75px;
+                padding-left: 100px;
+            }
+            div.content-column {
+                padding-left: 130px;
+                padding-right: 125px;
+                padding-bottom: 150px;
+            }
+            
+            .content {
+                flex: 1 0 auto;
+            }
+            
+            .footer {
+                flex-shrink:0;
+            }
+        </style>
+    </head>
+    
+    <body class="body-text">
+        <div class="content">
+            {% include 'header.html' %}
+
+            <h1>{{title}}</h1>
+            
+            <div class="content-column">
+                {% for cont in page_content %}
+                <p>{{cont}}</p>
+                {% endfor %}
+            </div>
+        </div>
+        <footer class="footer">
+            {% include 'footer.html' %}
+        </footer>
+    </body>
+</html>

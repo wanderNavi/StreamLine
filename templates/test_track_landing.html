@@ -1,30 +1,114 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
+<!-- Currently acting as a checklist for thing being done, when prototype goes live, change the file name and swap in the real landing.html page -->
 <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>StreamLine Landing Page</title>
+<!--         <link rel="stylesheet" type="text/css" href="../css/main.css" /> -->
+<!--         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Work Sans"> -->
+        <style type="text/css">
+            .body-text {
+                font-family: "work sans";
+                font-size: 20px;
+            }
+            .rTable {
+                display: table;
+                width: 75%;
+                padding-left: 50px;
+                padding-right: 50px;
+            }
+            .rTableRow {
+                display: table-row;
+            }
+            .rTableCell {
+                display: table-cell;
+            }
+            
+            html, body {
+                height: 100%;
+            }
+            body {
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .content {
+                flex: 1 0 auto;
+            }
+            
+            .footer {
+                flex-shrink:0;
+            }
+        </style>
+    </head>
+    
+    <body class="body-text">
+        <!-- due to trying to keep the footer firmly at the bottom of the page, must have the div.content -->
+        <div class="content">
+<!--             <div class="content-inside"> -->
+            {% include 'header.html' %}
+            <h2>Test Page Styles</h2>
 
-<head>
-  <meta charset="utf-8">
-  <title>test_track_landing.html</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-
-<body>
-  <style type="text/css">
-    html, body, #container {
-      height: 100%;
-    }
-    body, #container {
-      overflow: hidden;
-      margin: 0;
-    }
-    #iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-  </style>
-  <div id="container">
-    <iframe id="iframe" sandbox="allow-scripts" src="/files/templates/test_track_landing.html"></iframe>
-  </div>
-</body>
-
+            <div class="rTable">
+                <div class="rTableRow">
+                    <div class="rTableCell"><span style="font-weight: bold;">Page Links</span></div>
+                    <div class="rTableCell"><span style="font-weight: bold;">Checked? [Y/N]</span></div>
+                </div>
+                <div class="rTableRow">
+                    <div class="rTableCell"><a href="about">About Page</a></div>
+                    <div class="rTableCell">Y</div>
+                </div>
+                <div class="rTableRow">
+                    <div class="rTableCell"><a href="test">Test Header Footer</a></div>
+                    <div class="rTableCell">Y</div>
+                </div>
+                <div class="rTableRow">
+                    <div class="rTableCell"><a href="contact">Contact Page</a></div>
+                    <div class="rTableCell">Y</div>
+                </div>
+                <div class="rTableRow">
+                    <div class="rTableCell"><a href="privacy">Privacy Page</a></div>
+                    <div class="rTableCell">Y</div>
+                </div>
+                <div class="rTableRow">
+                    <div class="rTableCell"><a href="faq">FAQ Page</a></div>
+                    <div class="rTableCell">Y</div>
+                </div>
+                <div class="rTableRow">
+                    <div class="rTableCell"><a href="sitemap">Sitemap Page</a></div>
+                    <div class="rTableCell">N</div>
+                </div>
+                <div class="rTableRow">
+                    <div class="rTableCell"><a href="login">Login Form Buttons</a></div>
+                    <div class="rTableCell">N; Incomplete, come back later</div>
+                </div>
+                <div class="rTableRow">
+                    <div class="rTableCell"><a href="test/justwatch">Connect to JustWatch</a></div>
+                    <div class="rTableCell">N</div>
+                </div>
+                <div class="rTableRow">
+                    <div class="rTableCell"><a href="test/bootstrap">Test Bootstrap</a></div>
+                    <div class="rTableCell">N; <strong>until can fix the link issues with jupyter, setting to side for after prototype development</strong></div>
+                </div>
+                <div class="rTableRow">
+                    <div class="rTableCell"></div>
+                    <div class="rTableCell"></div>
+                </div>
+                <div class="rTableRow">
+                    <div class="rTableCell"><a href="profile/edit">Loading up profile pages for prototype</a></div>
+                    <div class="rTableCell">N; <strong>PRIORITY</strong></div>
+                </div>
+                
+                <div class="rTableRow">
+                    <div class="rTableCell"><a href="test/profile-gen-kitty">Building on Kitty's profile template</a></div>
+                    <div class="rTableCell">N; <strong>PRIORITY</strong></div>
+                </div>
+            </div>
+            <br>
+<!--             </div> -->
+        </div>
+        <footer class="footer">
+            {% include 'footer.html' %}
+        </footer>
+    </body>
 </html>
