@@ -1,0 +1,3 @@
+THIS IS AN EXAMPLE FILE TO DEMONSTRATE ASPECTS OF BRANCHS
+
+Here are some changes to demonstrate commits. 
