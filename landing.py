@@ -1,7 +1,7 @@
 from flask import render_template
 
 def bootstrap_landing():
-    ret = render_template('LANDING_TEMPLATE/landing.html')
+    ret = render_template('bootstrap-landing-landing.html')
     return ret
 
 def main():

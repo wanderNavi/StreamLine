@@ -11,7 +11,7 @@ def get_time():
 def test():
     username = str(request.args.get('username'))
     password = str(request.args.get('pass'))
-    conn_string = 'mysql://{user}:{password}@{host}/{db}?charset={encoding}'.format(
+    conn_string = 'mysql+pymysql://{user}:{password}@{host}/{db}?charset={encoding}'.format(
         host = '35.245.115.59:3306', 
         user = 'root',
         db = 'streamline',
@@ -27,7 +27,7 @@ def main():
     if test() == True:
         # pop up message on sign up screen
         message = "You already have an existing account. Please return to Login."
-        ret = render_template('../LOGIN_TEMPLATE/signup.html', message=message)
+        ret = render_template('bootstrap-login-signup.html', message=message)
     else:
         username = str(request.args.get('username'))
         password = str(request.args.get('pass'))
@@ -44,7 +44,7 @@ def main():
                                         join_date) 
                     VALUES (%s, %s, %s, %s, %s, %s)'''.format(db='streamline', table='all_user_data')
         con.execute(query_template, query_parameters)
-        ret=render_template('../LOGIN_TEMPLATE/signup.html',page_title="Success!",message=message)
+        ret=render_template('bootstrap-login-signup.html',page_title="Success!",message=message)
     con.close()
     return ret
     

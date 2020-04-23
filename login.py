@@ -10,7 +10,7 @@ def main():
         encoding = 'utf8mb4')
     engine = create_engine(conn_string)
     con = engine.connect()
-    ret = render_template('/LOGIN_TEMPLATE/login.html')
+    ret = render_template('bootstrap_login-login.html')
     return ret
 
 # Need function to get data user submits and compare it to SQL database
