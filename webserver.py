@@ -35,7 +35,7 @@ def home():
 @app.route('/signup')
 def sign_up():
     page = signup.main()
-    return render_template('LOGIN_TEMPLATE/signup.html')
+    return render_template('../bootstrap-login/signup.html')
 
 # sign up succeed page
 @app.route('/signup/success')
@@ -54,7 +54,7 @@ def sign_up_watchImport():
 @app.route('/login')
 def login():
     page = "Login Page"
-    return render_template('LOGIN_TEMPLATE/login.html')
+    return render_template('../bootstrap-login/login.html')
 
 
 
