@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<!-- setting up generic file for the profile pages; bring in details through jinja -->
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            /* set up font */
+            .body-font {
+                font-family: "work sans";
+                font-size: 20px;
+            }
+            
+            /* keep that footer where it belongs */
+            html, body {
+                height: 100%;
+            }
+            body {
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .content {
+                flex: 1 0 auto;
+            }
+            
+            .footer {
+                flex-shrink:0;
+            }
+            
+            /* setting up page's columns: NOTE - THIS IS NOT RESPONSIVE */
+            .column {
+                float: left;
+            }
+            
+            /* will always have this side, doesn't change */
+            .left-sidelinks {
+                width: 25%;
+                max-width: 300px;
+            }
+            
+            /* user icon in sidebar */
+            .user-icon {
+                vertical-align: middle;
+                width: 125px;
+                height: 125px;
+                border-radius: 50%;
+                display: block;
+                margin: auto;
+            }
+            
+            /* will always have, contents change depending on page */
+            .middle-main-page-content {
+                width: 55%;
+            }
+            
+            /* will sometimes be present, depending on page */ 
+            .right-side-content {
+                width: 20%;
+            }
+        </style>
+    </head>
+    <body class="body-font">
+        <div class="content">
+            {% include 'header.html' %}
+            
+            <!-- padding from top -->
+            <div style="padding:20px"></div>
+            
+            <!-- actual page content -->
+            <div class="row" style="margin-left:5%;margin-right:5%">
+                <!-- permanent left side bar -->
+                <div class="column left-sidelinks" style="background-color:#BFECFF">
+                    <div style="padding:10%">
+                        <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar" class="user-icon">
+                        <p style="text-align:center">JOHN DOE</p>
+                        <br>
+                        <p>Edit Profile</p>
+                        <p>History &amp Watchlists</p>
+                        <p>Securty &amp Login</p>
+                        <p>Linked Accounts</p>
+                        <p>Content Preferences</p>
+                    </div>
+                </div>
+                
+                
+            </div>
+            
+            <!-- padding from bottom -->
+            <div style="padding:45px"></div>
+        </div>
+        <footer class="footer">
+            {% include 'footer.html' %}
+        </footer>
+    </body>
+</html>
