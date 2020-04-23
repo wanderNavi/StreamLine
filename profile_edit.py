@@ -23,8 +23,15 @@ CONN_STRING = 'mysql+pymysql://{user}:{password}@{host}/{db}?charset={encoding}'
 '''
 Retrieve's user bio information
 
-'''
+Inputs:
+Returns:
 
+Created by Jessica - 04.22
+'''
+def retrieve_bio():
+	# filler text for now
+	filler = "Has a cat and a dog and likes to take long walks on the beach."
+	print()
 
 '''
 Main method rendering profile-generic.html template
