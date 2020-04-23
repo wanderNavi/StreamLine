@@ -31,6 +31,7 @@ Created by Jessica - 04.22
 def retrieve_bio():
 	# filler text for now
 	filler = "Has a cat and a dog and likes to take long walks on the beach."
+	# NOTE: NEED TO CREATE COLUMN FOR THIS 
 	print()
 
 '''
