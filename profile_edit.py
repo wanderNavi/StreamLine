@@ -9,14 +9,7 @@ from flask import Flask, render_template
 
 import service_recc as sr
 import convert_sql as cs
-
-############################### GLOBAL VARIABLES ###############################
-CONN_STRING = 'mysql+pymysql://{user}:{password}@{host}/{db}?charset={encoding}'.format(
-        host = '35.245.115.59', 
-        user = 'root',
-        db = 'streamline',
-        password = 'dwdstudent2015',
-        encoding = 'utf8mb4')
+import db_connect as db_conn
 
 #######################################################################################
 
