@@ -1,12 +1,13 @@
-{% extends "profile-generic.html" %}
+{% extends "profile/profile-generic.html" %}
 
 {% block content %}
 	<h2>Edit Profile</h2>
 	<hr>
 	<div style="margin-left:20px;padding-top:25px">
 		<h4>Bio</h4>
-		{% block bio %}{% endblock %}
-		<p>Edit</p> {## Needs link}
+		{## Retrieving bio info from database 
+			IN MYSQL TABLE all_user_data COLUMN user_data #}
+		<p>Edit</p> {## Needs link #}
 		<br>
 		<p>Most common genre:</p>
 	</div>
