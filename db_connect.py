@@ -22,7 +22,7 @@ def get_db():
         password = 'dwdstudent2015',
         encoding = 'utf8mb4')
   engine = create_engine(conn_string)
-  return engine.connet()
+  return engine.connect()
 
 
 '''

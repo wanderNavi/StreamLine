@@ -12,6 +12,8 @@ import landing
 import login
 import signup
 import profile_recom as pr
+import db_connect as db
+import profile_edit as prof_edit
 
 ############# GLOBAL VARIABLES #############
 # CONNECT TO DATABASE
@@ -73,9 +75,16 @@ def browse():
 @app.route('/profile')
 @app.route('/profile/edit')
 def profile_edit():
-    page = "Profile edit page" 
-#     return page
-    return render_template('profile/profile-edit.html')
+    # need to make this variable through login verification
+    username = "user1"
+
+    # get user bio
+    bio = prof_edit.get_bio(username)
+
+    # access
+    # page = prof_edit.main('profile/profile-edit.html', username)
+    # return page
+    return render_template('profile/profile-edit.html', bio=bio)
 
 # user profile history and watchlist page
 @app.route('/profile/history')
