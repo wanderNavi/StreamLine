@@ -75,45 +75,45 @@ def browse():
 def profile_edit():
     page = "Profile edit page" 
 #     return page
-    return render_template('profile-edit.html')
+    return render_template('profile/profile-edit.html')
 
 # user profile history and watchlist page
 @app.route('/profile/history')
 def profile_history():
     page = "Profile history page"
-    return render_template('profile-history.html')
+    return render_template('profile/profile-history.html')
 
 # streaming service recommendation
 @app.route('/profile/recommendation')
 def profile_recommendation():
 #     page = "Profile recommendation page"
-    page = pr.main('profile-recommendation.html','Parsed_Watchlist_Sample')
+    page = pr.main('profile/profile-recommendation.html','Parsed_Watchlist_Sample')
     return page
 
 # user profile security and login page
 @app.route('/profile/security')
 def profile_security():
 #    page = "Profile security page"
-    return render_template('profile-security.html')
+    return render_template('profile/profile-security.html')
 
 # user profile linked accounts page
 @app.route('/profile/linked')
 def profile_linked():
 #    page = "Profile linked page"
-    return render_template('profile-linked.html')
+    return render_template('profile/profile-linked.html')
 
 # user profile content preferences page
 @app.route('/profile/preferences')
 def profile_preferences():
 #    page = "Profile preferences page"
-    return render_template('profile-preference.html')
+    return render_template('profile/profile-preference.html')
 
 # import watchlist - user profile version
 # INCOMPLETE TEMPLATE
 @app.route('/profile/import')
 def profile_import():
 #    page = "Profile import page"
-    return render_template('profile-generic.html')
+    return render_template('profile/profile-generic.html')
 
 # watchlist pages
 # INCOMPLETE TEMPLATE
@@ -121,7 +121,7 @@ def profile_import():
 def profile_watchlist():
     # will have arguments in url for each unique watchlist
 #    page = "Profile watchlist page"
-    return render_template('profile-generic.html')
+    return render_template('profile/profile-generic.html')
 
 # refining user preference page
 # INCOMPLETE TEMPLATE
@@ -150,7 +150,7 @@ def test_justwatch():
 
 @app.route('/test/profile-gen-kitty')
 def test_profile_gen_kitty():
-    return render_template('profile-generic-UPDATED.html')
+    return render_template('profile/profile-generic.html')
 
 # about us page
 @app.route('/about')
