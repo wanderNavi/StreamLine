@@ -68,15 +68,8 @@ def browse():
 
 
 # NOTE: IF CREATE PUBLIC PROFILE KIND OF THING, CHANGE BELOW "PROFILE" ALL INTO "SETTINGS"
-# user profile main page
+# user profile main page; auto routes to edit profile page
 @app.route('/profile')
-def profile():
-    # auto route to edit profile page
-    page = "Profile main page"
-#     return page
-    return render_template('profile-edit.html')
-
-# user profile edit profile page
 @app.route('/profile/edit')
 def profile_edit():
     page = "Profile edit page" 
