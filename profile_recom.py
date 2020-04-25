@@ -112,7 +112,6 @@ def main(template, table_name):
     indiv_buys = compile_buy(recommends['individual'])
     
     return render_template(template,
-                           page_title="Recommendation",
                            service_recc=service_recc,
                            indiv_rents=indiv_rents,
                            indiv_buys=indiv_buys)
