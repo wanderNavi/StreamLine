@@ -68,59 +68,54 @@ def browse():
 
 
 # NOTE: IF CREATE PUBLIC PROFILE KIND OF THING, CHANGE BELOW "PROFILE" ALL INTO "SETTINGS"
-# user profile main page
+# user profile main page; auto routes to edit profile page
 @app.route('/profile')
-def profile():
-    # auto route to edit profile page
-    page = "Profile main page"
-#     return page
-    return render_template('profile-generic.html',page_title="Edit")
-
-# user profile edit profile page
 @app.route('/profile/edit')
 def profile_edit():
     page = "Profile edit page" 
 #     return page
-    return render_template('profile-generic.html',page_title="Edit")
+    return render_template('profile-edit.html')
 
 # user profile history and watchlist page
 @app.route('/profile/history')
 def profile_history():
     page = "Profile history page"
-    return render_template('profile-generic.html',page_title="History")
+    return render_template('profile-history.html')
 
 # streaming service recommendation
 @app.route('/profile/recommendation')
 def profile_recommendation():
 #     page = "Profile recommendation page"
-    page = pr.main('profile-generic.html','Parsed_Watchlist_Sample')
+    page = pr.main('profile-recommendation.html','Parsed_Watchlist_Sample')
     return page
 
 # user profile security and login page
 @app.route('/profile/security')
 def profile_security():
 #    page = "Profile security page"
-    return render_template('profile-generic.html',page_title="Security")
+    return render_template('profile-security.html')
 
 # user profile linked accounts page
 @app.route('/profile/linked')
 def profile_linked():
 #    page = "Profile linked page"
-    return render_template('profile-generic.html',page_title="Linked")
+    return render_template('profile-linked.html')
 
 # user profile content preferences page
 @app.route('/profile/preferences')
 def profile_preferences():
 #    page = "Profile preferences page"
-    return render_template('profile-generic.html',page_title="Preference")
+    return render_template('profile-preference.html')
 
 # import watchlist - user profile version
+# INCOMPLETE TEMPLATE
 @app.route('/profile/import')
 def profile_import():
 #    page = "Profile import page"
     return render_template('profile-generic.html')
 
 # watchlist pages
+# INCOMPLETE TEMPLATE
 @app.route('/watchlist')
 def profile_watchlist():
     # will have arguments in url for each unique watchlist
@@ -128,6 +123,7 @@ def profile_watchlist():
     return render_template('profile-generic.html')
 
 # refining user preference page
+# INCOMPLETE TEMPLATE
 @app.route('/recommendation/refine')
 def profile_recommendation_refine():
     page = "Profile recommentation refine page"

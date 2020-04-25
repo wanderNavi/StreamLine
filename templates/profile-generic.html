@@ -100,75 +100,12 @@
                 <!-- main page content -->
                 <div class="col-lg-8 pb-5">
                     <div class="wizard">
-                        <!-- make these offset styles below into class later -->
-                        {% if page_title == "Edit" %}
-                            <h2>Edit Profile</h2>
-                            <hr>
-                            <div style="margin-left:20px;padding-top:25px">
-                                <h4>Bio</h4>
-                                <br>
-                                <p>Most common genre:</p>
-                            </div>
-                        {% elif page_title == "History" %}
-                            <h2>History &amp Watchlists</h2>
-                            <hr>
-                            <p style="margin-left:20px;padding-top:25px"><big>Your Watchlists:</big></p>
-                            <div><!-- box of items in watchlist in list -->
-                            </div>
-                            <br>
-                            <hr>
-                            <div style="margin-left:20px;padding-top:25px">
-                                <p><big>Your recent watch history:</big></p>
-                                <div><!-- box of items in watchlist in list -->
-                                </div>
-                            </div>
-                        {% elif page_title == "Recommendation" %}
-                            <h2>Recommendation</h2>
-                            <hr>
-                            <div style="margin-left:20px;padding-top:25px">
-                                <p style="margin-left:-20px;text-align:center"><big>Your recommended streaming service:</big></p>
-                                <p style="margin-left:-20px;text-align:center"><strong>{{service_recc}}</strong></p>
-                            <!-- will want to add what you can watch on service later -->
-                            <!--<br>
-                            <br>
-                            <hr>
-                            <p style="text-align:center;padding-top:25px"><big>Can't find what you want by streaming?</big></p>
-                            fill in menu and button stuff later
-                            -->
-                            </div>
-                        {% elif page_title == "Security" %}
-                            <h2>Security &amp Login</h2>
-                            <hr>
-                            <div style="margin-left:20px;padding-top:25px">
-                                <p>Username</p> <!-- put in form boxes -->
-                                <p>Password</p>
-                            </div>
-                        {% elif page_title == "Linked" %}
-                            <h2>Linked Accounts</h2>
-                            <hr>
-                            <!-- change opacity of these buttons depending on if have link or not: if false offer to linki -->
-                            <div style="margin-left:20px;padding-top:25px">
-                                <ul style="list-style-type:none">
-                                    <!-- make each of these lists into a div block later -->
-                                    <li>Amazon Prime Videos</li>
-                                    <li>Netflix</li>
-                                    <li>HBO</li>
-                                    <li>Hulu</li>
-                                </ul>
-                            </div>
-                        {% elif page_title == "Preference" %}
-                            <h2>Content Preference</h2>
-                            <hr>
-                            <div style="margin-left:20px;padding-top:25px">
-                                <p>Rating Restrictions</p> <!-- put in form boxes -->
-                                <p>Language</p>
-                            </div>
-                        {% endif %}
+                        {% block content %}{% endblock %}
                     </div>
                 </div>
+                <!-- ./main page content -->
             </div>
         </div>
-        <!-- ./Left-side Profile -->
         
         <!-- ################### -->
         
