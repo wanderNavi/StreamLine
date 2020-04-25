@@ -68,6 +68,7 @@ def browse():
 
 
 # NOTE: IF CREATE PUBLIC PROFILE KIND OF THING, CHANGE BELOW "PROFILE" ALL INTO "SETTINGS"
+    # SET LOGIN VERIFICATION TO SEPARATE PUBLIC AND PRIVATE CODE
 # user profile main page; auto routes to edit profile page
 @app.route('/profile')
 @app.route('/profile/edit')

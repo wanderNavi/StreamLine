@@ -1,0 +1,20 @@
+{% extends "profile-generic.html" %}
+
+{% block content %}
+	<h2>Edit Profile</h2>
+	<hr>
+	<div style="margin-left:20px;padding-top:25px">
+		<h4>Bio</h4>
+		{% block bio %}{% endblock %}
+		<p>Edit</p> {## Needs link}
+		<br>
+		<p>Most common genre:</p>
+	</div>
+{% endblock %}
+
+
+{#
+	# want to figure out way to put "Bio" and "edit" on same line
+	<div style="display: flex; flex-direction: column; flex-wrap: wrap"></div>
+	<a class="action" href="{{ url_for('profile-bio.update') }}">Edit</a> 
+#}
