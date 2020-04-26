@@ -63,12 +63,12 @@ def update_sql_bio(username, bio):
 '''
 Calculates and returns most common genre
 
-Inputs: string username
+Inputs: string username - ADD BACK IN AFTER TESTING
 Returns:
 
 Created by Jessica - 04.25
 '''
-def common_genre(username):
+def common_genre():
 	# connect to database
 	conn = db.get_db()
 
@@ -79,6 +79,18 @@ def common_genre(username):
 		'SELECT	Genres FROM IMDb_Watchlist_Jenny').fetchall()
 
 	print(genres[0][0])
+
+	# parse genres in watchlist into dictionary
+		# key -> genre
+		# value -> incrementing
+	genre_dict = {}
+	for title in genres:
+		print(title[0])
+		title_tokens = nltk.word_tokenize(title[0])
+		for gen in title_tokens:
+			print(gen)
+
+	return
 
 
 '''
