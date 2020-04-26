@@ -12,18 +12,11 @@ from flask import Flask, render_template
 
 import service_recc as sr
 import convert_sql as cs
+# import db_connect as db_conn
 
 # import requests
 # import pandas as pd
 # above from Jessica 04.20
-
-############################### GLOBAL VARIABLES ###############################
-CONN_STRING = 'mysql+pymysql://{user}:{password}@{host}/{db}?charset={encoding}'.format(
-        host = '35.245.115.59', 
-        user = 'root',
-        db = 'streamline',
-        password = 'dwdstudent2015',
-        encoding = 'utf8mb4')
 
 #######################################################################################
 
@@ -112,7 +105,6 @@ def main(template, table_name):
     indiv_buys = compile_buy(recommends['individual'])
     
     return render_template(template,
-                           page_title="Recommendation",
                            service_recc=service_recc,
                            indiv_rents=indiv_rents,
                            indiv_buys=indiv_buys)
