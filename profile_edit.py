@@ -55,7 +55,7 @@ def update_sql_bio(username, bio):
 		'UPDATE all_user_data SET user_bio = %s WHERE username = %s',
 		(bio, username),
 		)
-	conn.commit()
+	# conn.commit()
 
 	return
 
@@ -81,9 +81,9 @@ Returns: render_template() of user's "Edit Profile" page
 
 Created by Jessica - 04.25
 '''
-def main(template, username):
-	bio = get_bio(username)
+def main(template, profile):
+	bio = get_bio(profile['username'])
 
 	print()
 
-	return render_template(template, bio=bio)
+	return render_template(template, profile=profile)

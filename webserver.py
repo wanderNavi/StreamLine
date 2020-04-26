@@ -4,7 +4,7 @@
 
 ############# IMPORTS#############
 # LIBRARIES
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from sqlalchemy import create_engine
 
 # FILES
@@ -68,9 +68,17 @@ def browse():
 
 # movie/show profile page
 
+##############################################################
+# PROFILE SEGMENT
 
 # NOTE: IF CREATE PUBLIC PROFILE KIND OF THING, CHANGE BELOW "PROFILE" ALL INTO "SETTINGS"
     # SET LOGIN VERIFICATION TO SEPARATE PUBLIC AND PRIVATE CODE
+
+# # PROFILE BLUEPRINT
+# import profile
+# app.register_blueprint(profile.bp)
+
+
 # user profile main page; auto routes to edit profile page
 @app.route('/profile')
 @app.route('/profile/edit')
@@ -81,10 +89,28 @@ def profile_edit():
     # get user bio
     bio = prof_edit.get_bio(username)
 
-    # access
+    profile = {'username':username,
+                'bio': bio}
+
     # page = prof_edit.main('profile/profile-edit.html', username)
     # return page
-    return render_template('profile/profile-edit.html', bio=bio)
+    return render_template('profile/profile-edit.html', profile=profile)
+
+@app.route('/profile/edit-bio', methods=('GET', 'POST'))
+def profile_edit_bio():
+    # come back and find way to pass this variable later, maybe /profile/edit-bio/<username>
+    username = "user1"
+
+    bio = prof_edit.get_bio(username)
+
+    if request.method == 'POST':
+        bio_body = request.form['bio_body']
+        prof_edit.update_sql_bio(username, bio_body)
+        return redirect(url_for('profile_edit'))
+
+    profile = {'username':username,
+                'bio': bio}
+    return render_template('profile/profile-edit-bio.html', profile=profile)
 
 # user profile history and watchlist page
 @app.route('/profile/history')
@@ -142,7 +168,7 @@ def profile_recommendation_refine():
 # results page
 
 
-
+##############################################################
 # OPTIONAL TEST PAGES
 # TESTING FOOTER
 @app.route('/test')

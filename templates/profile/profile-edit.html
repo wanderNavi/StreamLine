@@ -4,13 +4,16 @@
 	<h2>Edit Profile</h2>
 	<hr>
 	<div style="margin-left:20px;padding-top:25px">
-		<h4>Bio</h4>
-		{## Retrieving bio info from database 
-			IN MYSQL TABLE all_user_data COLUMN user_data #}
-		<p>{{ bio }}</p>
-		<p>Edit</p>
-		{# <a class="action" href="{{ url_for('profile/profile-edit-bio') }}">Edit</a> #} {## Needs link #}
-		<br>
+		<article>
+			<h4>Bio</h4>
+			{## Retrieving bio info from database 
+				IN MYSQL TABLE all_user_data COLUMN user_data #}
+			<p>{{ profile['bio'] }}</p>
+			<!-- <p>{{ profile['username'] }}</p> -->
+
+			<a class="action" href="{{ url_for('profile_edit_bio') }}">Edit</a> 
+			<br>
+		</article>
 		<p>Most common genre:</p>
 	</div>
 {% endblock %}
