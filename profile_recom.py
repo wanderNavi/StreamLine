@@ -94,8 +94,10 @@ def main(template, table_name):
     
     # call content from sql
     parsed_loc = cs.retrieve_from_sql(table_name)
+    # print(parsed_loc)
     # generate recommendations
     recommends = sr.platform_recommend_SQL(parsed_loc)
+    # print(recommends)
     
     # recommendation for streaming service
     service_recc = recommends['subscription'][0]

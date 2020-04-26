@@ -137,33 +137,33 @@ def retrieve_from_sql(table_name):
     for item in query_ret:
         # check and fill in individual 
         # GOOGLE
-        if item[2] is not None:
-            parsed_loc['individual']['google']['rent'][item[1]] = item[2]
         if item[3] is not None:
-            parsed_loc['individual']['google']['buy'][item[1]] = item[3]
-        # ITUNES
+            parsed_loc['individual']['google']['rent'][item[2]] = item[3]
         if item[4] is not None:
-            parsed_loc['individual']['itunes']['rent'][item[1]] = item[4]
+            parsed_loc['individual']['google']['buy'][item[3]] = item[4]
+        # ITUNES
         if item[5] is not None:
-            parsed_loc['individual']['itunes']['buy'][item[1]] = item[5]
+            parsed_loc['individual']['itunes']['rent'][item[2]] = item[5]
+        if item[6] is not None:
+            parsed_loc['individual']['itunes']['buy'][item[2]] = item[6]
         
         # check and fill in subscriptions
         # AMAZON
-        if item[6] == 1:
-            parsed_loc['subscription']['amazon prime'].append(item[1])
-        # NETFLIX
         if item[7] == 1:
-            parsed_loc['subscription']['netflix'].append(item[1])
-        # HBO
+            parsed_loc['subscription']['amazon prime'].append(item[2])
+        # NETFLIX
         if item[8] == 1:
-            parsed_loc['subscription']['hbo'].append(item[1])
-        # HULU
+            parsed_loc['subscription']['netflix'].append(item[2])
+        # HBO
         if item[9] == 1:
-            parsed_loc['subscription']['hulu'].append(item[1])
+            parsed_loc['subscription']['hbo'].append(item[2])
+        # HULU
+        if item[10] == 1:
+            parsed_loc['subscription']['hulu'].append(item[2])
         
         # check if nowhere
-        if item[10] == 1:
-            parsed_loc['nowhere'].append(item[1])
+        if item[11] == 1:
+            parsed_loc['nowhere'].append(item[2])
            
     
     return parsed_loc

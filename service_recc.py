@@ -286,9 +286,9 @@ def compare_ind_rent(content, inds):
     
     # find values of variables comparing
     if content in inds['google']['rent']: 
-        google_rent = inds['google']['rent'][content]
+        google_rent = float(inds['google']['rent'][content])
     if content in inds['itunes']['rent']: 
-        itunes_rent = inds['itunes']['rent'][content]
+        itunes_rent = float(inds['itunes']['rent'][content])
         
     # compare values
     if google_rent > itunes_rent and itunes_rent != 0.0:
@@ -316,9 +316,9 @@ def compare_ind_buy(content, inds):
     
     # find values of variables comparing
     if content in inds['google']['buy']: 
-        google_buy = inds['google']['buy'][content]
+        google_buy = float(inds['google']['buy'][content])
     if content in inds['itunes']['buy']: 
-        itunes_buy = inds['itunes']['buy'][content]
+        itunes_buy = float(inds['itunes']['buy'][content])
         
     # compare values
     if google_buy > itunes_buy and itunes_buy != 0.0:

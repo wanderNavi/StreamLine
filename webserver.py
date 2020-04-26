@@ -81,7 +81,7 @@ def browse():
 # import profile
 # app.register_blueprint(profile.bp)
 
-
+################# EDIT #################
 # user profile main page; auto routes to edit profile page
 @app.route('/profile')
 @app.route('/profile/edit')
@@ -121,6 +121,7 @@ def profile_edit_bio():
                 'bio': bio}
     return render_template('profile/profile-edit-bio.html', profile=profile)
 
+################# HISTORY #################
 # user profile history and watchlist page
 @app.route('/profile/history')
 def profile_history():
@@ -154,6 +155,7 @@ def profile_watchlist_each(watch_name):
 def profile_watchlist_add():
     return render_template('/profile/profile-watchlist-add.html')
 
+################# RECOMMENDATION #################
 # streaming service recommendation
 @app.route('/profile/recommendation')
 def profile_recommendation():
