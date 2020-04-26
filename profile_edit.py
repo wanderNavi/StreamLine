@@ -6,7 +6,6 @@ Created by Jessica - 04.22
 ############################### IMPORTS ###############################
 from sqlalchemy import create_engine
 from flask import Flask, render_template
-import nltk
 
 import service_recc as sr
 import convert_sql as cs
@@ -61,14 +60,40 @@ def update_sql_bio(username, bio):
 	return
 
 '''
-Calculates and returns most common genre
+Sure we could use word tokenizers and regex, but what if I just wrote a recussive function to parse this instead
 
-Inputs: string username - ADD BACK IN AFTER TESTING
-Returns:
+Input: string genres, list parsed
+Returns: list tgenres
 
 Created by Jessica - 04.25
 '''
-def common_genre():
+def parse_genres_recur(genres, parsed):
+	index = genres.find(',')
+	if index == -1 and len(genres)>1:
+		parsed.append(genres[1:])
+		return parsed
+	parsed.append(genres[1:index])
+	return parse_genres_recur(genres[index+1:], parsed)
+
+'''
+Helper method: Set up for the recursion
+'''
+def parse_genres(genres):
+	index = genres.find(',')
+	if index == -1:
+		return [genres.strip()]
+	toRet = [genres[0:index]]
+	return parse_genres_recur(genres[index+1:], toRet)
+
+'''
+Calculates and returns genre by rank
+
+Inputs: string username
+Returns: string ranked 
+
+Created by Jessica - 04.25
+'''
+def ranked_genre(username):
 	# connect to database
 	conn = db.get_db()
 
@@ -78,19 +103,24 @@ def common_genre():
 	genres = conn.execute(
 		'SELECT	Genres FROM IMDb_Watchlist_Jenny').fetchall()
 
-	print(genres[0][0])
-
 	# parse genres in watchlist into dictionary
 		# key -> genre
 		# value -> incrementing
 	genre_dict = {}
 	for title in genres:
-		print(title[0])
-		title_tokens = nltk.word_tokenize(title[0])
-		for gen in title_tokens:
-			print(gen)
+		tgenres = parse_genres(title[0])
+		for ent in tgenres:
+			if ent not in genre_dict.keys():
+				genre_dict[ent] = 1
+			else:
+				genre_dict[ent] += 1
 
-	return
+	ranked = {k:v for k,v in sorted(genre_dict.items(), key=lambda item:item[1], reverse=True)}
+
+	return ranked
+
+'''
+'''
 
 
 '''
