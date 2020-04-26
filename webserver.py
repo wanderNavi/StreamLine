@@ -163,18 +163,25 @@ def profile_recommendation():
     page = pr.main('profile/profile-recommendation.html','Parsed_Watchlist_Jenny')
     return page
 
+################# SECURITY #################
 # user profile security and login page
 @app.route('/profile/security')
 def profile_security():
 #    page = "Profile security page"
     return render_template('profile/profile-security.html')
 
+################# LINKED #################
 # user profile linked accounts page
 @app.route('/profile/linked')
 def profile_linked():
+    # get boolean statuses from sql
+    # eventually route directly to account page
+
+    # TESTING HARDCODE WHILE MYSQL IS DOING SOMETHING WEIRD
 #    page = "Profile linked page"
     return render_template('profile/profile-linked.html')
 
+################# PREFERENCES #################
 # user profile content preferences page
 @app.route('/profile/preferences')
 def profile_preferences():
