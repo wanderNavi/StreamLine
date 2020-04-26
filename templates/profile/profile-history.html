@@ -5,7 +5,7 @@
     <hr>
     <div style="margin-left:20px;padding-top:25px">
         <div>
-            <p><big>Your Watchlists:</big></p>
+            <h4>Your Watchlists:</h4>
             <div>
                 <!-- Route to page with individual watchlists -->
                 {% for watch in page.watchlists %}
@@ -19,13 +19,13 @@
         <br>
         <hr>
         <div>
-            <p><big>Your recent watch history:</big></p>
+            <h4>Your recent watch history:</h4>
             <!-- Set up proper css later -->
-            <div>
+            <div style="display: flex">
                 <!-- box of items in watchlist in list -->
                 {% for title in page.recents %}
                     <!-- style below taken from w3school -->
-                    <div style="margin: 5px; border: 1px solid #ccc; float: left; width: 150px">
+                    <div style="margin: 5px; border: 1px solid #ccc; width: 150px">
                         <!-- Want poster image - need to call up tmdb -->
                         <!-- <img style="width: 100%; height: auto"> -->
                         <!-- Eventually into links toward movie info pages -->
