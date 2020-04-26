@@ -78,5 +78,6 @@ def fetch_html_watchlist(full_watchlist, parsed_watchlist):
                     db, coerce_float=False)
 
   join_query.rename(columns={"IMDb Rating":"IMDb_Rating"}, inplace=True)
+  join_query.set_index('Const', inplace=True)
 
   return join_query
