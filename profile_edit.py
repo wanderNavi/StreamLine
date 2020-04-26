@@ -89,7 +89,7 @@ def parse_genres(genres):
 Calculates and returns genre by rank
 
 Inputs: string username
-Returns: string ranked 
+Returns: dictionary ranked 
 
 Created by Jessica - 04.25
 '''
@@ -120,8 +120,21 @@ def ranked_genre(username):
 	return ranked
 
 '''
-'''
+Returns top three genres and how many titles
+Eventually link with method finding example posters?
 
+Inputs: dictionary ranked
+Returns: dictionary top_three
+'''
+def three_genre(ranked):
+	top_three = {}
+	if len(ranked.keys()) >= 3:
+		for i, (k,v) in enumerate(ranked.items()):
+			print(i, k, v)
+			top_three[k] = v
+			if i == 2: break
+
+	return top_three
 
 '''
 Main method rendering profile-edit.html template

@@ -89,9 +89,14 @@ def profile_edit():
     # get user bio
     bio = prof_edit.get_bio(username)
 
+    # get user top three genre
+    top_three = prof_edit.three_genre(prof_edit.ranked_genre(username))
+    # print(top_three)
+
     # need to be able to edit author cards later
     profile = {'username':username,
-                'bio': bio}
+                'bio': bio,
+                'top_three':top_three}
 
     # page = prof_edit.main('profile/profile-edit.html', username)
     # return page

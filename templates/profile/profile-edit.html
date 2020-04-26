@@ -15,7 +15,12 @@
 			<br>
 		</article>
 		<hr>
-		<p>Most common genre:</p>
+		<article>
+			<h4>Most common genre:</h4>
+			{% for k in profile.top_three.keys() %}
+				<p>{{k}}: {{profile.top_three[k]}} titles</p>
+			{% endfor %}
+		</article>
 	</div>
 {% endblock %}
 
