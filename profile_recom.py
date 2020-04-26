@@ -94,11 +94,32 @@ def main(template, table_name):
     
     # call content from sql
     parsed_loc = cs.retrieve_from_sql(table_name)
+    # print(parsed_loc)
     # generate recommendations
     recommends = sr.platform_recommend_SQL(parsed_loc)
-    
+    # print(recommends)
+
     # recommendation for streaming service
     service_recc = recommends['subscription'][0]
+    # content from service_recc that can be used -> max four items
+    plat_examples = []
+    if service_recc == "Amazon Prime Video":
+        for item in parsed_loc['subscription']['amazon prime']:
+            if len(plat_examples) == 4: break
+            plat_examples.append(item)
+    elif service_recc == "Netflix":
+        for item in parsed_loc['subscription']['netflix']:
+            if len(plat_examples) == 4: break
+            plat_examples.append(item)
+    elif service_recc == "HBO":
+        for item in parsed_loc['subscription']['hbo']:
+            if len(plat_examples) == 4: break
+            plat_examples.append(item)
+    elif service_recc == "Hulu":
+        for item in parsed_loc['subscription']['hulu']:
+            if len(plat_examples) == 4: break
+            plat_examples.append(item)
+
     # recommendations for individual rent
     indiv_rents = compile_rent(recommends['individual'])
     # recommendations for individual buy
@@ -107,4 +128,5 @@ def main(template, table_name):
     return render_template(template,
                            service_recc=service_recc,
                            indiv_rents=indiv_rents,
-                           indiv_buys=indiv_buys)
+                           indiv_buys=indiv_buys,
+                           plat_content=plat_examples)

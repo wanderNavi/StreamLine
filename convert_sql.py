@@ -25,6 +25,7 @@ Created by Kitty - 04.20
 Modified by Jessica - 04.21: 
     changing "watchlist" from pandas.Dataframe to output of sr.watchlist_parse()
     filling out documentation head
+NOTED: Jessica 04.26 - we need a better way of IDing all these different watchlists - structure for table names
 '''
 def convert_to_sql(parsed_loc, table_name):
     # Get the parsed watchlist
@@ -39,6 +40,7 @@ def convert_to_sql(parsed_loc, table_name):
     
     # Create a new table
     create_table_query = '''CREATE TABLE IF NOT EXISTS {table} (position int, 
+                         imdbID text,
                          title varchar(255),
                          google_rent real,
                          google_buy real,
@@ -53,9 +55,9 @@ def convert_to_sql(parsed_loc, table_name):
     con.execute(create_table_query)
     
     # Insert head into the table
-    insert_query = '''INSERT IGNORE INTO {table} (position, title,google_rent, google_buy, itunes_rent, itunes_buy,
+    insert_query = '''INSERT IGNORE INTO {table} (position, imdbID, title, google_rent, google_buy, itunes_rent, itunes_buy,
                     amazon_prime, netflix, hbo, hulu, nowhere) 
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''.format(table=table_name)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''.format(table=table_name)
    
     
     # creating set of all items - Jessica
@@ -72,6 +74,7 @@ def convert_to_sql(parsed_loc, table_name):
     for index, title in enumerate(all_set):
         # position
         position = index + 1
+        imdbID = parsed_loc['ids'][title]
         
         # individual
         # MODIFIED by Jessica to handle cases where no ind option
@@ -96,7 +99,7 @@ def convert_to_sql(parsed_loc, table_name):
         nowhere = True if title in parsed_loc['nowhere'] else False
         
         # execute query
-        query_parameters = (position, title, google_rent, google_buy, itunes_rent, itunes_buy, amazon_prime, netflix, hbo, hulu, nowhere)
+        query_parameters = (position, imdbID, title, google_rent, google_buy, itunes_rent, itunes_buy, amazon_prime, netflix, hbo, hulu, nowhere)
         con.execute(insert_query, query_parameters)
         
         # end of method
@@ -134,33 +137,33 @@ def retrieve_from_sql(table_name):
     for item in query_ret:
         # check and fill in individual 
         # GOOGLE
-        if item[2] is not None:
-            parsed_loc['individual']['google']['rent'][item[1]] = item[2]
         if item[3] is not None:
-            parsed_loc['individual']['google']['buy'][item[1]] = item[3]
-        # ITUNES
+            parsed_loc['individual']['google']['rent'][item[2]] = item[3]
         if item[4] is not None:
-            parsed_loc['individual']['itunes']['rent'][item[1]] = item[4]
+            parsed_loc['individual']['google']['buy'][item[3]] = item[4]
+        # ITUNES
         if item[5] is not None:
-            parsed_loc['individual']['itunes']['buy'][item[1]] = item[5]
+            parsed_loc['individual']['itunes']['rent'][item[2]] = item[5]
+        if item[6] is not None:
+            parsed_loc['individual']['itunes']['buy'][item[2]] = item[6]
         
         # check and fill in subscriptions
         # AMAZON
-        if item[6] == 1:
-            parsed_loc['subscription']['amazon prime'].append(item[1])
-        # NETFLIX
         if item[7] == 1:
-            parsed_loc['subscription']['netflix'].append(item[1])
-        # HBO
+            parsed_loc['subscription']['amazon prime'].append(item[2])
+        # NETFLIX
         if item[8] == 1:
-            parsed_loc['subscription']['hbo'].append(item[1])
-        # HULU
+            parsed_loc['subscription']['netflix'].append(item[2])
+        # HBO
         if item[9] == 1:
-            parsed_loc['subscription']['hulu'].append(item[1])
+            parsed_loc['subscription']['hbo'].append(item[2])
+        # HULU
+        if item[10] == 1:
+            parsed_loc['subscription']['hulu'].append(item[2])
         
         # check if nowhere
-        if item[10] == 1:
-            parsed_loc['nowhere'].append(item[1])
+        if item[11] == 1:
+            parsed_loc['nowhere'].append(item[2])
            
     
     return parsed_loc

@@ -3,14 +3,36 @@
 {% block content %}
     <h2>History &amp Watchlists</h2>
     <hr>
-    <p style="margin-left:20px;padding-top:25px"><big>Your Watchlists:</big></p>
-    <div><!-- box of items in watchlist in list -->
-    </div>
-    <br>
-    <hr>
     <div style="margin-left:20px;padding-top:25px">
-        <p><big>Your recent watch history:</big></p>
-        <div><!-- box of items in watchlist in list -->
+        <div>
+            <h4>Your Watchlists:</h4>
+            <div>
+                <!-- Route to page with individual watchlists -->
+                {% for watch in page.watchlists %}
+                    <a href="{{ url_for('profile_watchlist_each', watch_name=watch.title) }}">{{ watch.title }}</a>
+                    <!-- Eventually have visual preview gallery of first few items -->
+                {% endfor %}
+            </div>
+            <br>
+            <a href="/profile/watchlist/add"><small>+ Add Watchlist</small></a>
         </div>
+        <br>
+        <hr>
+        <div>
+            <h4>Your recent watch history:</h4>
+            <!-- Set up proper css later -->
+            <div style="display: flex">
+                <!-- box of items in watchlist in list -->
+                {% for title in page.recents %}
+                    <!-- style below taken from w3school -->
+                    <div style="margin: 5px; border: 1px solid #ccc; width: 150px">
+                        <!-- Want poster image - need to call up tmdb -->
+                        <!-- <img style="width: 100%; height: auto"> -->
+                        <!-- Eventually into links toward movie info pages -->
+                        <p style="padding: 5px; text-align: center">{{ title }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>       
     </div>
 {% endblock %}
