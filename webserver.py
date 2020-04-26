@@ -4,7 +4,7 @@
 
 ############# IMPORTS#############
 # LIBRARIES
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from sqlalchemy import create_engine
 
 # FILES
@@ -12,6 +12,8 @@ import landing
 import login
 import signup
 import profile_recom as pr
+import db_connect as db
+import profile_edit as prof_edit
 
 ############# GLOBAL VARIABLES #############
 # CONNECT TO DATABASE
@@ -66,68 +68,104 @@ def browse():
 
 # movie/show profile page
 
+##############################################################
+# PROFILE SEGMENT
 
 # NOTE: IF CREATE PUBLIC PROFILE KIND OF THING, CHANGE BELOW "PROFILE" ALL INTO "SETTINGS"
-# user profile main page
-@app.route('/profile')
-def profile():
-    # auto route to edit profile page
-    page = "Profile main page"
-#     return page
-    return render_template('profile-generic.html',page_title="Edit")
+    # SET LOGIN VERIFICATION TO SEPARATE PUBLIC AND PRIVATE CODE
 
-# user profile edit profile page
+# # PROFILE BLUEPRINT
+# import profile
+# app.register_blueprint(profile.bp)
+
+
+# user profile main page; auto routes to edit profile page
+@app.route('/profile')
 @app.route('/profile/edit')
 def profile_edit():
-    page = "Profile edit page" 
-#     return page
-    return render_template('profile-generic.html',page_title="Edit")
+    # need to make this variable through login verification
+    username = "PROTOTYPE_TEST"
+
+    # get user bio
+    bio = prof_edit.get_bio(username)
+
+    # get user top three genre
+    top_three = prof_edit.three_genre(prof_edit.ranked_genre(username))
+    # print(top_three)
+
+    # need to be able to edit author cards later
+    profile = {'username':username,
+                'bio': bio,
+                'top_three':top_three}
+
+    # page = prof_edit.main('profile/profile-edit.html', username)
+    # return page
+    return render_template('profile/profile-edit.html', profile=profile)
+
+@app.route('/profile/edit-bio', methods=('GET', 'POST'))
+def profile_edit_bio():
+    # come back and find way to pass this variable later, maybe /profile/edit-bio/<username>
+    username = "PROTOTYPE_TEST"
+
+    bio = prof_edit.get_bio(username)
+
+    if request.method == 'POST':
+        bio_body = request.form['bio_body']
+        prof_edit.update_sql_bio(username, bio_body)
+        return redirect(url_for('profile_edit'))
+
+    profile = {'username':username,
+                'bio': bio}
+    return render_template('profile/profile-edit-bio.html', profile=profile)
 
 # user profile history and watchlist page
 @app.route('/profile/history')
 def profile_history():
     page = "Profile history page"
-    return render_template('profile-generic.html',page_title="History")
+    return render_template('profile/profile-history.html')
 
 # streaming service recommendation
 @app.route('/profile/recommendation')
 def profile_recommendation():
 #     page = "Profile recommendation page"
-    page = pr.main('profile-generic.html','Parsed_Watchlist_Sample')
+    page = pr.main('profile/profile-recommendation.html','Parsed_Watchlist_Sample')
     return page
 
 # user profile security and login page
 @app.route('/profile/security')
 def profile_security():
 #    page = "Profile security page"
-    return render_template('profile-generic.html',page_title="Security")
+    return render_template('profile/profile-security.html')
 
 # user profile linked accounts page
 @app.route('/profile/linked')
 def profile_linked():
 #    page = "Profile linked page"
-    return render_template('profile-generic.html',page_title="Linked")
+    return render_template('profile/profile-linked.html')
 
 # user profile content preferences page
 @app.route('/profile/preferences')
 def profile_preferences():
 #    page = "Profile preferences page"
-    return render_template('profile-generic.html',page_title="Preference")
+    return render_template('profile/profile-preference.html')
 
 # import watchlist - user profile version
+# INCOMPLETE TEMPLATE
 @app.route('/profile/import')
 def profile_import():
 #    page = "Profile import page"
-    return render_template('profile-generic.html')
+    return render_template('profile/profile-generic.html')
 
 # watchlist pages
+# INCOMPLETE TEMPLATE
 @app.route('/watchlist')
 def profile_watchlist():
     # will have arguments in url for each unique watchlist
 #    page = "Profile watchlist page"
-    return render_template('profile-generic.html')
+    return render_template('profile/profile-generic.html')
 
 # refining user preference page
+# INCOMPLETE TEMPLATE
 @app.route('/recommendation/refine')
 def profile_recommendation_refine():
     page = "Profile recommentation refine page"
@@ -136,7 +174,7 @@ def profile_recommendation_refine():
 # results page
 
 
-
+##############################################################
 # OPTIONAL TEST PAGES
 # TESTING FOOTER
 @app.route('/test')
@@ -153,7 +191,7 @@ def test_justwatch():
 
 @app.route('/test/profile-gen-kitty')
 def test_profile_gen_kitty():
-    return render_template('profile-generic-UPDATED.html')
+    return render_template('profile/profile-generic.html')
 
 # about us page
 @app.route('/about')

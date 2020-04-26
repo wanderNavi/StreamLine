@@ -1,0 +1,15 @@
+{% extends "profile/profile-generic.html" %}
+
+{% block content %}
+	<h2>Edit Profile</h2>
+	<hr>
+	<div style="margin-left:20px;padding-top:25px">
+		<form method="post">
+			<label for="bio">Edit Bio</label>
+			<br>
+			<textarea name="bio_body" id="bio_body" rows="5" cols="60" onkeypress="enters(event)">{{ request.form['bio_body'] or profile['bio']}}</textarea>
+			<br>
+			<input type="submit" value="Save">
+		</form>
+	</div>
+{% endblock %}
