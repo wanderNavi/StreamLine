@@ -4,14 +4,37 @@
     <h2>Recommendation</h2>
     <hr>
     <div style="margin-left:20px;padding-top:25px">
-        <p style="margin-left:-20px;text-align:center"><big>Your recommended streaming service:</big></p>
-        <p style="margin-left:-20px;text-align:center"><strong>{{service_recc}}</strong></p>
-    <!-- will want to add what you can watch on service later -->
-    <!--<br>
-    <br>
-    <hr>
-    <p style="text-align:center;padding-top:25px"><big>Can't find what you want by streaming?</big></p>
-    fill in menu and button stuff later
-    -->
-    </div>
+        <div id="platform">
+            <!-- Platform recommendation content -->
+            <h4>Your recommended streaming service:</h4>
+            {% if service_recc == "Amazon Prime Video" %}
+                <a href="https://www.primevideo.com/"><big>{{ service_recc }}</big></a>
+            {% elif service_recc == "Netflix" %}
+                <a href="https://www.netflix.com/"><big>{{ service_recc }}</big></a>
+            {% elif service_recc == "HBO" %}
+                <a href="https://www.hbo.com/"><big>{{ service_recc }}</big></a>
+            {% elif service_recc == "Hulu" %}
+                <a href="https://www.hulu.com/welcome"><big>{{ service_recc }}</big></a>
+            {% endif %}
+            <br>
+            <div>
+                <p>Content from your watchlists you can find on {{ service_recc }}:</p>
+                <div style="display: flex;">
+                    {% for cont in plat_content %}
+                        <div style="margin: 5px; border: 1px solid #ccc; width: 150px">
+                            <!-- Want poster image - need to call up tmdb -->
+                            <!-- <img style="width: 100%; height: auto"> -->
+                            <!-- Eventually into links toward movie info pages -->
+                            <p style="padding: 5px; text-align: center">{{ cont }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div id="individual">
+            <h4>Can't find something in a streaming service?</h4>
+            <!-- Add search/drop down bar for individual suggestions to be displayed -->
+        </div>
+    </div> <!-- overall box -->
 {% endblock %}
