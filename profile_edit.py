@@ -130,7 +130,7 @@ def three_genre(ranked):
 	top_three = {}
 	if len(ranked.keys()) >= 3:
 		for i, (k,v) in enumerate(ranked.items()):
-			print(i, k, v)
+			# print(i, k, v)
 			top_three[k] = v
 			if i == 2: break
 

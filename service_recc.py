@@ -177,7 +177,7 @@ def call_Utelly(title, imdb_id):
     for result in resp['results']:
         # checking that utelly found our query
         # matching against IMDb id ('Const' column) 
-            # could have used the id endpoint
+            # CONVERT THIS TO ID ENDPOINT LATER?
         if result['external_ids']['imdb'] is not None:
             if result['external_ids']['imdb']['id'] == imdb_id:
                 # found query, find locations
@@ -194,6 +194,7 @@ on prices for individual purchases.
 Input: pandas.Dataframe watchlist - titles column of watchlist
        NOTE: AS LONG AS WATCHLIST HAS A COLUMN CALLED ['Title'] THAT'S CONTENT TITLES
              AND A COLUMN CALLED ['Const'] THAT'S IMDb IDS, ANY DATAFRAME IS GOOD
+       NOTE: call from db_connect.fetch_watchlist(watchlist_table_name)
 Returns: dictionary parsed_loc - dictionary containing lists of content 
                                  from watchlist at each location
 
@@ -201,7 +202,8 @@ Created and modified by Jessica from content written by Kitty - 04.20
 '''
 def watchlist_parse(watchlist):
     # dictionaries containing lists of items available on each platform
-    parsed_loc = {'individual':{'google':{'rent':dict(),'buy':dict()},
+    parsed_loc = {'ids':{},
+                'individual':{'google':{'rent':dict(),'buy':dict()},
                               'itunes':{'rent':dict(),'buy':dict()},
                               'amazon instant':{'rent':dict(),'buy':dict()}},
                 'subscription':{'amazon prime':[],
@@ -218,10 +220,13 @@ def watchlist_parse(watchlist):
         imdb_id = row['Const']
         
         # Print to track completion and bugs
-        print(index+1,":",title)
+        print(index,":",title)
         
         # API CALL
         title_location = call_Utelly(title, imdb_id)
+
+        # track imdb_id as unique identifier joining sql tables together
+        parsed_loc['ids'][title]= imdb_id
         
         if title_location is False:
             # Can't find content on any major platforms
@@ -281,9 +286,9 @@ def compare_ind_rent(content, inds):
     
     # find values of variables comparing
     if content in inds['google']['rent']: 
-        google_rent = inds['google']['rent'][content]
+        google_rent = float(inds['google']['rent'][content])
     if content in inds['itunes']['rent']: 
-        itunes_rent = inds['itunes']['rent'][content]
+        itunes_rent = float(inds['itunes']['rent'][content])
         
     # compare values
     if google_rent > itunes_rent and itunes_rent != 0.0:
@@ -311,9 +316,9 @@ def compare_ind_buy(content, inds):
     
     # find values of variables comparing
     if content in inds['google']['buy']: 
-        google_buy = inds['google']['buy'][content]
+        google_buy = float(inds['google']['buy'][content])
     if content in inds['itunes']['buy']: 
-        itunes_buy = inds['itunes']['buy'][content]
+        itunes_buy = float(inds['itunes']['buy'][content])
         
     # compare values
     if google_buy > itunes_buy and itunes_buy != 0.0:
