@@ -137,12 +137,14 @@ def profile_history():
     return render_template('profile/profile-history.html', page=page)
 
 # page from user profile specifically to a watchlist
-@app.route('/profile/watchlist', methods=('GET', 'POST'))
-def profile_watchlist_each():
+@app.route('/profile/watchlist/<watch_name>', methods=('GET', 'POST'))
+def profile_watchlist_each(watch_name):
     # watchlist name
     watchlist = {}
+    # TESTING HARDCODE, TAKE CARE IN SQL AND GET RID LATER
+    # watchlist = 
 
-    return render_template('/profile/profile-watchlist-each.html')
+    return render_template('/profile/profile-watchlist-each.html', watch_name=watch_name)
 
 # streaming service recommendation
 @app.route('/profile/recommendation')

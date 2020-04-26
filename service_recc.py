@@ -177,7 +177,7 @@ def call_Utelly(title, imdb_id):
     for result in resp['results']:
         # checking that utelly found our query
         # matching against IMDb id ('Const' column) 
-            # could have used the id endpoint
+            # CONVERT THIS TO ID ENDPOINT LATER?
         if result['external_ids']['imdb'] is not None:
             if result['external_ids']['imdb']['id'] == imdb_id:
                 # found query, find locations

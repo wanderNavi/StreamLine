@@ -40,7 +40,7 @@ def convert_to_sql(parsed_loc, table_name):
     
     # Create a new table
     create_table_query = '''CREATE TABLE IF NOT EXISTS {table} (position int, 
-                         imdbID varchar(255),
+                         imdbID text,
                          title varchar(255),
                          google_rent real,
                          google_buy real,
