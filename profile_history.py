@@ -12,3 +12,9 @@ import convert_sql as cs
 import db_connect as db
 
 #######################################################################################
+
+'''
+Get watchlist from database to print out on its page
+
+NOTE: NOT INCLUDING INFO FROM RECOMMENDATION - NEED TO ADD COLUMN TO PARSE WATCHLIST TO WRITE DOWN IMDB ID TOO
+'''

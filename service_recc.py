@@ -194,6 +194,7 @@ on prices for individual purchases.
 Input: pandas.Dataframe watchlist - titles column of watchlist
        NOTE: AS LONG AS WATCHLIST HAS A COLUMN CALLED ['Title'] THAT'S CONTENT TITLES
              AND A COLUMN CALLED ['Const'] THAT'S IMDb IDS, ANY DATAFRAME IS GOOD
+       NOTE: call from db_connect.fetch_watchlist(watchlist_table_name)
 Returns: dictionary parsed_loc - dictionary containing lists of content 
                                  from watchlist at each location
 
@@ -201,7 +202,8 @@ Created and modified by Jessica from content written by Kitty - 04.20
 '''
 def watchlist_parse(watchlist):
     # dictionaries containing lists of items available on each platform
-    parsed_loc = {'individual':{'google':{'rent':dict(),'buy':dict()},
+    parsed_loc = {'ids':{},
+                'individual':{'google':{'rent':dict(),'buy':dict()},
                               'itunes':{'rent':dict(),'buy':dict()},
                               'amazon instant':{'rent':dict(),'buy':dict()}},
                 'subscription':{'amazon prime':[],
@@ -218,10 +220,13 @@ def watchlist_parse(watchlist):
         imdb_id = row['Const']
         
         # Print to track completion and bugs
-        print(index+1,":",title)
+        print(index,":",title)
         
         # API CALL
         title_location = call_Utelly(title, imdb_id)
+
+        # track imdb_id as unique identifier joining sql tables together
+        parsed_loc['ids'][title]= imdb_id
         
         if title_location is False:
             # Can't find content on any major platforms

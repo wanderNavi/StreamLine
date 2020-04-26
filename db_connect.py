@@ -4,6 +4,7 @@ File managing all connection needs with MySQL database
 
 ####### IMPORTS #######
 from sqlalchemy import create_engine
+import pandas as pd
 
 ####### METHODS #######
 '''
@@ -28,8 +29,8 @@ def get_db():
 '''
 4/21 Helen
 Imports IMDb watchlist table from MySQL
-input: table name as db_watchlist (test with 'IMDb_Watchlist_sample', 'IMDb_Watchlist_Jenny')
-output: watchlist as a pandas dataframe with three columns: Position (index), Const, and Titlev
+input: string db_watchlist: table name (test with 'IMDb_Watchlist_sample', 'IMDb_Watchlist_Jenny')
+output: watchlist as a pandas dataframe with three columns: Position (index), Const, and Title
 '''
 def fetch_watchlist(db_watchlist):
     db = get_db()

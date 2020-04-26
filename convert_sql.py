@@ -25,6 +25,7 @@ Created by Kitty - 04.20
 Modified by Jessica - 04.21: 
     changing "watchlist" from pandas.Dataframe to output of sr.watchlist_parse()
     filling out documentation head
+NOTED: Jessica 04.26 - we need a better way of IDing all these different watchlists - structure for table names
 '''
 def convert_to_sql(parsed_loc, table_name):
     # Get the parsed watchlist
@@ -39,6 +40,7 @@ def convert_to_sql(parsed_loc, table_name):
     
     # Create a new table
     create_table_query = '''CREATE TABLE IF NOT EXISTS {table} (position int, 
+                         imdbID varchar(255),
                          title varchar(255),
                          google_rent real,
                          google_buy real,
@@ -53,9 +55,9 @@ def convert_to_sql(parsed_loc, table_name):
     con.execute(create_table_query)
     
     # Insert head into the table
-    insert_query = '''INSERT IGNORE INTO {table} (position, title,google_rent, google_buy, itunes_rent, itunes_buy,
+    insert_query = '''INSERT IGNORE INTO {table} (position, imdbID, title, google_rent, google_buy, itunes_rent, itunes_buy,
                     amazon_prime, netflix, hbo, hulu, nowhere) 
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''.format(table=table_name)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''.format(table=table_name)
    
     
     # creating set of all items - Jessica
@@ -72,6 +74,7 @@ def convert_to_sql(parsed_loc, table_name):
     for index, title in enumerate(all_set):
         # position
         position = index + 1
+        imdbID = parsed_loc['ids'][title]
         
         # individual
         # MODIFIED by Jessica to handle cases where no ind option
@@ -96,7 +99,7 @@ def convert_to_sql(parsed_loc, table_name):
         nowhere = True if title in parsed_loc['nowhere'] else False
         
         # execute query
-        query_parameters = (position, title, google_rent, google_buy, itunes_rent, itunes_buy, amazon_prime, netflix, hbo, hulu, nowhere)
+        query_parameters = (position, imdbID, title, google_rent, google_buy, itunes_rent, itunes_buy, amazon_prime, netflix, hbo, hulu, nowhere)
         con.execute(insert_query, query_parameters)
         
         # end of method

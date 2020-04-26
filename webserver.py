@@ -121,14 +121,34 @@ def profile_edit_bio():
 # user profile history and watchlist page
 @app.route('/profile/history')
 def profile_history():
-    page = "Profile history page"
-    return render_template('profile/profile-history.html')
+    # list of watchlist tables and files
+    watchlists = []
+    # TESTING HARDCODE, GET RID OF LATER; dictionary in list
+    watchlists.append({'title':'My Watchlist', 'file':'IMDb_Watchlist_Jenny'})
+
+    # list of recent videos; restrict to 4 titles
+    recents = []
+    # TESTING HARDCODE DUMMY
+    recents.extend(['Reservoir Dogs', 'Moonlight', 'Westworld', 'Luke Cage'])
+
+    # dictionary containing page content
+    page = {'watchlists': watchlists,
+            'recents': recents }
+    return render_template('profile/profile-history.html', page=page)
+
+# page from user profile specifically to a watchlist
+@app.route('/profile/watchlist', methods=('GET', 'POST'))
+def profile_watchlist_each():
+    # watchlist name
+    watchlist = {}
+
+    return render_template('/profile/profile-watchlist-each.html')
 
 # streaming service recommendation
 @app.route('/profile/recommendation')
 def profile_recommendation():
 #     page = "Profile recommendation page"
-    page = pr.main('profile/profile-recommendation.html','Parsed_Watchlist_Sample')
+    page = pr.main('profile/profile-recommendation.html','Parsed_Watchlist_Jenny')
     return page
 
 # user profile security and login page
