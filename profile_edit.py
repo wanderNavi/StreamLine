@@ -6,6 +6,7 @@ Created by Jessica - 04.22
 ############################### IMPORTS ###############################
 from sqlalchemy import create_engine
 from flask import Flask, render_template
+import nltk
 
 import service_recc as sr
 import convert_sql as cs
@@ -59,18 +60,26 @@ def update_sql_bio(username, bio):
 
 	return
 
-# @app.route('/profile/edit/bio', methods=('GET','POST'))
-# def update_bio(username):
-# 	bio = get_bio(username)
+'''
+Calculates and returns most common genre
 
-# 	if request.method == 'POST':
-# 		bio_body = request.form['bio_body']
-# 		error = None
+Inputs: string username
+Returns:
 
-# 		update_sql_bio(username, bio_body)
-# 		return redirect(url_for('/profile'))
+Created by Jessica - 04.25
+'''
+def common_genre(username):
+	# connect to database
+	conn = db.get_db()
 
-# 	return render_template('profile/profile-edit-bio.html', bio=bio)
+	# fetch watchlist content
+	# CURRENTLY HARDCODE, NEED TO SETUP VARIABLE LATER
+		# "IMDb_Watchlist_username"?
+	genres = conn.execute(
+		'SELECT	Genres FROM IMDb_Watchlist_Jenny').fetchall()
+
+	print(genres[0][0])
+
 
 '''
 Main method rendering profile-edit.html template

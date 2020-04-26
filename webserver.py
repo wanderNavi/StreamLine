@@ -84,11 +84,12 @@ def browse():
 @app.route('/profile/edit')
 def profile_edit():
     # need to make this variable through login verification
-    username = "user1"
+    username = "PROTOTYPE_TEST"
 
     # get user bio
     bio = prof_edit.get_bio(username)
 
+    # need to be able to edit author cards later
     profile = {'username':username,
                 'bio': bio}
 
@@ -99,7 +100,7 @@ def profile_edit():
 @app.route('/profile/edit-bio', methods=('GET', 'POST'))
 def profile_edit_bio():
     # come back and find way to pass this variable later, maybe /profile/edit-bio/<username>
-    username = "user1"
+    username = "PROTOTYPE_TEST"
 
     bio = prof_edit.get_bio(username)
 
