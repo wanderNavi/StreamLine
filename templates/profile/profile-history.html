@@ -13,6 +13,8 @@
                     <!-- Eventually have visual preview gallery of first few items -->
                 {% endfor %}
             </div>
+            <br>
+            <a href="/profile/watchlist/add"><small>+ Add Watchlist</small></a>
         </div>
         <br>
         <hr>
@@ -22,6 +24,7 @@
             <div>
                 <!-- box of items in watchlist in list -->
                 {% for title in page.recents %}
+                    <!-- style below taken from w3school -->
                     <div style="margin: 5px; border: 1px solid #ccc; float: left; width: 150px">
                         <!-- Want poster image - need to call up tmdb -->
                         <!-- <img style="width: 100%; height: auto"> -->

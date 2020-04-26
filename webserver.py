@@ -8,12 +8,15 @@ from flask import Flask, render_template, request, redirect, url_for
 from sqlalchemy import create_engine
 
 # FILES
+import db_connect as db
+
 import landing
 import login
 import signup
+
 import profile_recom as pr
-import db_connect as db
 import profile_edit as prof_edit
+import profile_history as prof_hist
 
 ############# GLOBAL VARIABLES #############
 # CONNECT TO DATABASE
@@ -140,11 +143,16 @@ def profile_history():
 @app.route('/profile/watchlist/<watch_name>', methods=('GET', 'POST'))
 def profile_watchlist_each(watch_name):
     # watchlist name
-    watchlist = {}
+    # watchlist = {}
     # TESTING HARDCODE, TAKE CARE IN SQL AND GET RID LATER
-    # watchlist = 
+    watchlist = prof_hist.parse_watchlist_for_page("IMDb_Watchlist_Jenny", "Parsed_Watchlist_Jenny")
 
-    return render_template('/profile/profile-watchlist-each.html', watch_name=watch_name)
+    return render_template('/profile/profile-watchlist-each.html', watch_name=watch_name, watchlist=watchlist)
+
+# user adding watchlist
+@app.route('/profile/watchlist/add', methods=('GET','POST'))
+def profile_watchlist_add():
+    return render_template('/profile/profile-watchlist-add.html')
 
 # streaming service recommendation
 @app.route('/profile/recommendation')

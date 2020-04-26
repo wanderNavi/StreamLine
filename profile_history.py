@@ -61,31 +61,31 @@ def parse_watchlist_for_page(full_watchlist, parsed_watchlist):
 			if card_series['hulu'] == 1:
 				card['platform_where'].append("Hulu")
 
-			if np.isnan(card_series['google_rent']) is False and np.isnan(card_series['itunes_rent']) is False:
+			if np.isnan(card_series['google_rent']) == False and np.isnan(card_series['itunes_rent']) == False:
 				if card_series['google_rent'] <= card_series['itunes_rent']:
 					card['indiv']['where_rent'] = "Google Play"
 					card['indiv']['price_rent'] = card_series['google_rent']
 				else:
 					card['indiv']['where_rent'] = "iTunes"
 					card['indiv']['price_rent'] = card_series['itunes_rent']
-			elif np.isnan(card_series['itunes_rent']) is False:
+			elif np.isnan(card_series['google_rent']) == False and np.isnan(card_series['itunes_rent']) == True:
 				card['indiv']['where_rent'] = "Google Play"
 				card['indiv']['price_rent'] = card_series['google_rent']
-			elif np.isnan(card_series['google_rent']) is False:
+			elif np.isnan(card_series['google_rent']) == True and np.isnan(card_series['itunes_rent']) == False:
 				card['indiv']['where_rent'] = "iTunes"
 				card['indiv']['price_rent'] = card_series['itunes_rent']
 			
-			if np.isnan(card_series['google_buy']) is False and np.isnan(card_series['itunes_buy']) is False:
+			if np.isnan(card_series['google_buy']) == False and np.isnan(card_series['itunes_buy']) == False:
 				if card_series['google_buy'] <= card_series['itunes_buy']:
 					card['indiv']['where_buy'] = "Google Play"
 					card['indiv']['price_buy'] = card_series['google_buy']
 				else:
 					card['indiv']['where_buy'] = "iTunes"
 					card['indiv']['price_buy'] = card_series['itunes_buy']
-			elif np.isnan(card_series['itunes_buy']) is False:
+			elif np.isnan(card_series['google_buy']) == False and np.isnan(card_series['itunes_buy']) == True:
 				card['indiv']['where_buy'] = "Google Play"
 				card['indiv']['price_buy'] = card_series['google_buy']
-			elif np.isnan(card_series['google_buy']) is False:
+			elif np.isnan(card_series['google_buy']) == True and np.isnan(card_series['itunes_buy']) == False:
 				card['indiv']['where_buy'] = "iTunes"
 				card['indiv']['price_buy'] = card_series['itunes_buy']
 

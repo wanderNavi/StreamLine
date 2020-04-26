@@ -1,9 +1,40 @@
 {% extends "profile/profile-generic.html" %}
 
 {% block content %}
+    <a href="/profile/history" style="font-size: 0.8rem">Back</a>
     <h2>{{ watch_name }}</h2>
     <hr>
-    <div style="margin-left:20px;padding-top:25px">
-   
+    <div style="margin-left:20px; margin-right:20px; padding-top:25px" class="list-group list-group-flush">
+        {% for card in watchlist %}
+            <div class="list-group-item"> <!-- This is going to have that blue bar at the left but alright for now I guess -->
+                <!-- three columns: far-left - index number; left - poster; right - information -->
+                <div style="float: left">
+                    <p style="vertical-align: center; font-size:1.2rem">{{ loop.index }}</p>
+                </div>
+                <div style="margin: 5px; border: 1px solid #ccc; float: left; height: 125px; width: 100px">
+                    <!-- Left box with poster -->
+                    <!-- Should figure out way to have index number along with card -->
+                    <p style="vertical-align: center; text-align: center">Will have poster image here</p>
+                </div>
+                <div style="float: left; margin-top: 10px; margin-bottom: 10px; width: 75%">
+                    <p style="font-size: 1.2rem; margin-bottom: -.2rem"><strong>{{ card.title }}</strong>  |  ({{ card.year }})</p>
+                    <p>{{ card.genres }}  |  IMDb Rating: {{ card.rating }}</p>
+                    <hr style="margin-top: -.2rem; margin-bottom: -.1rem">
+                    {% if card.platform_where|length > 0 %}
+                        <span>Streaming Services: </span>
+                        {% for plat in card.platform_where %}
+                            <span>{{ plat }}{{ " | " if not loop.last }}</span>
+                        {% endfor %}
+                    {% endif %}
+                    <!-- Add later from utelly API links directly to store page -->
+                    {% if card.indiv.where_rent|length > 0%}
+                        <p style="margin-bottom: -.08rem">Best Price to Rent: {{ card.indiv.where_rent }} (${{ card.indiv.price_rent }})</p>
+                    {% endif %}
+                    {% if card.indiv.where_buy|length > 0%}
+                        <p>Best Price to Buy: {{ card.indiv.where_buy }} (${{ card.indiv.price_buy }})</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}   
     </div>
 {% endblock %}
