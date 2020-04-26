@@ -3,3 +3,4 @@ THIS IS AN EXAMPLE FILE TO DEMONSTRATE ASPECTS OF BRANCHES
 Here are some changes to demonstrate commits. 
 
 And now testing how to handle syncs with master
+And testing republish branch

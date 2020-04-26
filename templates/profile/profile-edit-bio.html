@@ -7,6 +7,7 @@
 		<form method="post">
 			<label for="bio">Edit Bio</label>
 			<br>
+			<!-- IF ENTERED BIO IS TOO LONG, WITH NOT UPDATE INTO SQL AND WILL RETURN ERROR -->
 			<textarea name="bio_body" id="bio_body" rows="5" cols="60" onkeypress="enters(event)">{{ request.form['bio_body'] or profile['bio']}}</textarea>
 			<br>
 			<input type="submit" value="Save">

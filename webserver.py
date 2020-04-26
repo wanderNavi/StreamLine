@@ -8,12 +8,15 @@ from flask import Flask, render_template, request, redirect, url_for
 from sqlalchemy import create_engine
 
 # FILES
+import db_connect as db
+
 import landing
 import login
 import signup
+
 import profile_recom as pr
-import db_connect as db
 import profile_edit as prof_edit
+import profile_history as prof_hist
 
 ############# GLOBAL VARIABLES #############
 # CONNECT TO DATABASE
@@ -78,7 +81,7 @@ def browse():
 # import profile
 # app.register_blueprint(profile.bp)
 
-
+################# EDIT #################
 # user profile main page; auto routes to edit profile page
 @app.route('/profile')
 @app.route('/profile/edit')
@@ -118,17 +121,46 @@ def profile_edit_bio():
                 'bio': bio}
     return render_template('profile/profile-edit-bio.html', profile=profile)
 
+################# HISTORY #################
 # user profile history and watchlist page
 @app.route('/profile/history')
 def profile_history():
-    page = "Profile history page"
-    return render_template('profile/profile-history.html')
+    # list of watchlist tables and files
+    watchlists = []
+    # TESTING HARDCODE, GET RID OF LATER; dictionary in list
+    watchlists.append({'title':'My Watchlist', 'file':'IMDb_Watchlist_Jenny'})
 
+    # list of recent videos; restrict to 4 titles
+    recents = []
+    # TESTING HARDCODE DUMMY
+    recents.extend(['Reservoir Dogs', 'Moonlight', 'Westworld', 'Luke Cage'])
+
+    # dictionary containing page content
+    page = {'watchlists': watchlists,
+            'recents': recents }
+    return render_template('profile/profile-history.html', page=page)
+
+# page from user profile specifically to a watchlist
+@app.route('/profile/watchlist/<watch_name>', methods=('GET', 'POST'))
+def profile_watchlist_each(watch_name):
+    # watchlist name
+    # watchlist = {}
+    # TESTING HARDCODE, TAKE CARE IN SQL AND GET RID LATER
+    watchlist = prof_hist.parse_watchlist_for_page("IMDb_Watchlist_Jenny", "Parsed_Watchlist_Jenny")
+
+    return render_template('/profile/profile-watchlist-each.html', watch_name=watch_name, watchlist=watchlist)
+
+# user adding watchlist
+@app.route('/profile/watchlist/add', methods=('GET','POST'))
+def profile_watchlist_add():
+    return render_template('/profile/profile-watchlist-add.html')
+
+################# RECOMMENDATION #################
 # streaming service recommendation
 @app.route('/profile/recommendation')
 def profile_recommendation():
 #     page = "Profile recommendation page"
-    page = pr.main('profile/profile-recommendation.html','Parsed_Watchlist_Sample')
+    page = pr.main('profile/profile-recommendation.html','Parsed_Watchlist_Jenny')
     return page
 
 # user profile security and login page
