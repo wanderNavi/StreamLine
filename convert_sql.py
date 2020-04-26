@@ -7,19 +7,12 @@ Broadly, file handles conversion to and from sql for further processing in proje
 as in towards the recommendation algorithm or towards front-end.
 
 Created by Kitty - Apr 20
-Modified by Jessica, see notes - 04.21
+Modified by Jessica, see notes - 04.21, 04.25
 '''
 #######################################################################################
 
-from sqlalchemy import create_engine
-# import service_recc as sr - Jessica 04.21: as of now unnecessary
-
-CONN_STRING = 'mysql+pymysql://{user}:{password}@{host}/{db}?charset={encoding}'.format(
-        host = '35.245.115.59', 
-        user = 'root',
-        db = 'streamline',
-        password = 'dwdstudent2015',
-        encoding = 'utf8mb4')
+import db_connect as db_conn
+# Jessica - 04.25, putting all database call needs into one file
 
 #######################################################################################
 '''
@@ -38,8 +31,7 @@ def convert_to_sql(parsed_loc, table_name):
 #     parsed_loc = sr.watchlist_parse(watchlist)
     
     # Connect to database
-    engine = create_engine(CONN_STRING)
-    con = engine.connect()
+    con = db_conn.get_db()
     
     # Drop the old table if exists
     drop_table_query = '''DROP table IF EXISTS {table}'''.format(table=table_name)
@@ -119,8 +111,7 @@ Created by Jessica - 04.21
 '''        
 def retrieve_from_sql(table_name):
     # Connect to database
-    engine = create_engine(CONN_STRING)
-    con = engine.connect()
+    con = db_conn.get_db()
     
     # TO DO: proper try catch error handling
     query = '''SELECT * FROM {table}'''.format(table=table_name)

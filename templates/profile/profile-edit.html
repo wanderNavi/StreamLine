@@ -1,0 +1,32 @@
+{% extends "profile/profile-generic.html" %}
+
+{% block content %}
+	<h2>Edit Profile</h2>
+	<hr>
+	<div style="margin-left:20px;padding-top:25px">
+		<article>
+			<h4>Bio</h4>
+			{## Retrieving bio info from database 
+				IN MYSQL TABLE all_user_data COLUMN user_data #}
+			<p>{{ profile['bio'] }}</p>
+			<!-- <p>{{ profile['username'] }}</p> -->
+
+			<a class="action" href="{{ url_for('profile_edit_bio') }}">Edit</a> 
+			<br>
+		</article>
+		<hr>
+		<article>
+			<h4>Most common genre:</h4>
+			{% for k in profile.top_three.keys() %}
+				<p>{{k}}: {{profile.top_three[k]}} titles</p>
+			{% endfor %}
+		</article>
+	</div>
+{% endblock %}
+
+
+{#
+	# want to figure out way to put "Bio" and "edit" on same line
+	<div style="display: flex; flex-direction: column; flex-wrap: wrap"></div>
+	<a class="action" href="{{ url_for('profile-bio.update') }}">Edit</a> 
+#}
