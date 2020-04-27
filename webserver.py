@@ -61,6 +61,11 @@ def login():
     page = "Login Page"
     return render_template('bootstrap-login-login.html')
 
+# log out page
+@app.route('/logout')
+def logout():
+    page = "Log out"
+    return page
 
 
 # movie/show search page
@@ -163,18 +168,37 @@ def profile_recommendation():
     page = pr.main('profile/profile-recommendation.html','Parsed_Watchlist_Jenny')
     return page
 
+################# SECURITY #################
 # user profile security and login page
 @app.route('/profile/security')
 def profile_security():
 #    page = "Profile security page"
     return render_template('profile/profile-security.html')
 
+################# LINKED #################
 # user profile linked accounts page
 @app.route('/profile/linked')
 def profile_linked():
-#    page = "Profile linked page"
-    return render_template('profile/profile-linked.html')
+    # get boolean statuses from sql
+    # eventually route directly to account page
 
+    # TESTING HARDCODE WHILE MYSQL IS DOING SOMETHING WEIRD
+    linked = {'amazon_prime':True, 'netflix': True, 'hbo': True, 'hulu': True}
+
+#    page = "Profile linked page"
+    return render_template('profile/profile-linked.html', linked=linked)
+
+# updating which linked accounts user has
+@app.route('/profile/linked/update')
+def profile_linked_update():
+    # get form response to store updated info into database
+    
+    # TESTING HARDCODE WHILE MYSQL IS DOING SOMETHING WEIRD
+    linked = {'amazon_prime':True, 'netflix': True, 'hbo': True, 'hulu': True}
+
+    return render_template('profile/profile-linked-update.html', linked=linked)
+
+################# PREFERENCES #################
 # user profile content preferences page
 @app.route('/profile/preferences')
 def profile_preferences():
@@ -228,26 +252,26 @@ def test_profile_gen_kitty():
 # about us page
 @app.route('/about')
 def about():
-    page_content = ['This is the about page.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ultricies ullamcorper ante et placerat. Integer ut diam nec ipsum condimentum aliquet ut ac leo. Sed pretium velit nisi, sed pulvinar ante porta vel. Suspendisse et posuere ex. Etiam tincidunt tempor turpis, quis lacinia tellus ultricies ac. Nam rutrum orci nulla, vitae dictum nulla vulputate a. Morbi libero sapien, sollicitudin eu nisi id, posuere porta urna. Morbi gravida elit nisl, eu gravida arcu pretium id. Vivamus magna mi, fermentum in placerat vel, tincidunt tincidunt purus.', 'Integer condimentum magna mattis nisi condimentum, sollicitudin luctus ligula elementum. Sed rhoncus ante quis sollicitudin dictum. Pellentesque finibus lectus quis nibh ullamcorper aliquam. Cras sed aliquet sapien. Vivamus blandit tempor turpis nec condimentum. Phasellus ornare id dui a tincidunt. Morbi congue mi quis tempor cursus. In ac suscipit dui, id efficitur turpis. Phasellus varius leo eget dolor pellentesque consequat. Nam eu libero nisl. Sed consectetur ante elit, in commodo diam interdum quis. Aenean feugiat porta est vitae condimentum. Cras ornare ante tellus, sed mattis ligula egestas tempus. Donec sodales tellus mi, non ultricies diam auctor et. Quisque congue venenatis mauris, non convallis felis sodales a.', 'Donec aliquet lectus vitae mi consequat, vitae rutrum orci tempus. Suspendisse at erat quis nisl elementum molestie. Proin aliquet gravida posuere. Aenean vitae lobortis ipsum. Integer blandit massa enim. Donec consectetur tellus ut lorem venenatis gravida ac eu velit. Etiam auctor mauris nulla, sit amet euismod libero eleifend at. Ut risus est, elementum vitae augue dapibus, laoreet convallis sem. Vestibulum eget erat sapien. Curabitur non placerat libero, eu feugiat nisl.']
-    return render_template('one-column-footer-page.html', title="About Us", page_content=page_content)
+    # return render_template('one-column-footer-page.html', title="About Us", page_content=page_content)
+    return render_template('footer/footer-about.html')
 
 # contact us page
 @app.route('/contact')
 def contact():
-    page_content = ['This is the contact page.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ultricies ullamcorper ante et placerat. Integer ut diam nec ipsum condimentum aliquet ut ac leo. Sed pretium velit nisi, sed pulvinar ante porta vel. Suspendisse et posuere ex. Etiam tincidunt tempor turpis, quis lacinia tellus ultricies ac. Nam rutrum orci nulla, vitae dictum nulla vulputate a. Morbi libero sapien, sollicitudin eu nisi id, posuere porta urna. Morbi gravida elit nisl, eu gravida arcu pretium id. Vivamus magna mi, fermentum in placerat vel, tincidunt tincidunt purus.', 'Integer condimentum magna mattis nisi condimentum, sollicitudin luctus ligula elementum. Sed rhoncus ante quis sollicitudin dictum. Pellentesque finibus lectus quis nibh ullamcorper aliquam. Cras sed aliquet sapien. Vivamus blandit tempor turpis nec condimentum. Phasellus ornare id dui a tincidunt. Morbi congue mi quis tempor cursus. In ac suscipit dui, id efficitur turpis. Phasellus varius leo eget dolor pellentesque consequat. Nam eu libero nisl. Sed consectetur ante elit, in commodo diam interdum quis. Aenean feugiat porta est vitae condimentum. Cras ornare ante tellus, sed mattis ligula egestas tempus. Donec sodales tellus mi, non ultricies diam auctor et. Quisque congue venenatis mauris, non convallis felis sodales a.', 'Donec aliquet lectus vitae mi consequat, vitae rutrum orci tempus. Suspendisse at erat quis nisl elementum molestie. Proin aliquet gravida posuere. Aenean vitae lobortis ipsum. Integer blandit massa enim. Donec consectetur tellus ut lorem venenatis gravida ac eu velit. Etiam auctor mauris nulla, sit amet euismod libero eleifend at. Ut risus est, elementum vitae augue dapibus, laoreet convallis sem. Vestibulum eget erat sapien. Curabitur non placerat libero, eu feugiat nisl.']
-    return render_template('one-column-footer-page.html', title="Contact Us", page_content=page_content)
+    # return render_template('one-column-footer-page.html', title="Contact Us", page_content=page_content)
+    return render_template('footer/footer-contact.html')
 
 # privacy policy page
 @app.route('/privacy')
 def privacy():
-    page_content = ['This is the privacy page.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ultricies ullamcorper ante et placerat. Integer ut diam nec ipsum condimentum aliquet ut ac leo. Sed pretium velit nisi, sed pulvinar ante porta vel. Suspendisse et posuere ex. Etiam tincidunt tempor turpis, quis lacinia tellus ultricies ac. Nam rutrum orci nulla, vitae dictum nulla vulputate a. Morbi libero sapien, sollicitudin eu nisi id, posuere porta urna. Morbi gravida elit nisl, eu gravida arcu pretium id. Vivamus magna mi, fermentum in placerat vel, tincidunt tincidunt purus.', 'Integer condimentum magna mattis nisi condimentum, sollicitudin luctus ligula elementum. Sed rhoncus ante quis sollicitudin dictum. Pellentesque finibus lectus quis nibh ullamcorper aliquam. Cras sed aliquet sapien. Vivamus blandit tempor turpis nec condimentum. Phasellus ornare id dui a tincidunt. Morbi congue mi quis tempor cursus. In ac suscipit dui, id efficitur turpis. Phasellus varius leo eget dolor pellentesque consequat. Nam eu libero nisl. Sed consectetur ante elit, in commodo diam interdum quis. Aenean feugiat porta est vitae condimentum. Cras ornare ante tellus, sed mattis ligula egestas tempus. Donec sodales tellus mi, non ultricies diam auctor et. Quisque congue venenatis mauris, non convallis felis sodales a.', 'Donec aliquet lectus vitae mi consequat, vitae rutrum orci tempus. Suspendisse at erat quis nisl elementum molestie. Proin aliquet gravida posuere. Aenean vitae lobortis ipsum. Integer blandit massa enim. Donec consectetur tellus ut lorem venenatis gravida ac eu velit. Etiam auctor mauris nulla, sit amet euismod libero eleifend at. Ut risus est, elementum vitae augue dapibus, laoreet convallis sem. Vestibulum eget erat sapien. Curabitur non placerat libero, eu feugiat nisl.']
-    return render_template('one-column-footer-page.html', title="Privacy Policy", page_content=page_content)
+    # return render_template('one-column-footer-page.html', title="Privacy Policy", page_content=page_content)
+    return render_template('footer/footer-privacy.html')
 
 # FAQ page
 @app.route('/faq')
 def faq():
-    page_content = ['This is the faq page.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ultricies ullamcorper ante et placerat. Integer ut diam nec ipsum condimentum aliquet ut ac leo. Sed pretium velit nisi, sed pulvinar ante porta vel. Suspendisse et posuere ex. Etiam tincidunt tempor turpis, quis lacinia tellus ultricies ac. Nam rutrum orci nulla, vitae dictum nulla vulputate a. Morbi libero sapien, sollicitudin eu nisi id, posuere porta urna. Morbi gravida elit nisl, eu gravida arcu pretium id. Vivamus magna mi, fermentum in placerat vel, tincidunt tincidunt purus.', 'Integer condimentum magna mattis nisi condimentum, sollicitudin luctus ligula elementum. Sed rhoncus ante quis sollicitudin dictum. Pellentesque finibus lectus quis nibh ullamcorper aliquam. Cras sed aliquet sapien. Vivamus blandit tempor turpis nec condimentum. Phasellus ornare id dui a tincidunt. Morbi congue mi quis tempor cursus. In ac suscipit dui, id efficitur turpis. Phasellus varius leo eget dolor pellentesque consequat. Nam eu libero nisl. Sed consectetur ante elit, in commodo diam interdum quis. Aenean feugiat porta est vitae condimentum. Cras ornare ante tellus, sed mattis ligula egestas tempus. Donec sodales tellus mi, non ultricies diam auctor et. Quisque congue venenatis mauris, non convallis felis sodales a.', 'Donec aliquet lectus vitae mi consequat, vitae rutrum orci tempus. Suspendisse at erat quis nisl elementum molestie. Proin aliquet gravida posuere. Aenean vitae lobortis ipsum. Integer blandit massa enim. Donec consectetur tellus ut lorem venenatis gravida ac eu velit. Etiam auctor mauris nulla, sit amet euismod libero eleifend at. Ut risus est, elementum vitae augue dapibus, laoreet convallis sem. Vestibulum eget erat sapien. Curabitur non placerat libero, eu feugiat nisl.']
-    return render_template('one-column-footer-page.html', title="FAQ", page_content=page_content)
+    # return render_template('one-column-footer-page.html', title="FAQ", page_content=page_content)
+    return render_template('footer/footer-faq.html')
 
 # Requires different template from above
 # sitemap page

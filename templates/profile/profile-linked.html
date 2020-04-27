@@ -7,10 +7,27 @@
     <div style="margin-left:20px;padding-top:25px">
         <ul style="list-style-type:none">
             <!-- make each of these lists into a div block later -->
-            <li>Amazon Prime Videos</li>
-            <li>Netflix</li>
-            <li>HBO</li>
-            <li>Hulu</li>
+            {% if linked.amazon_prime == true %}
+                <li><a href="https://www.amazon.com/Prime-Video/b?ie=UTF8&node=2676882011">Amazon Prime Video</a></li>
+            {% else %}
+                <li>Amazon Prime Video</li>
+            {% endif %}
+            {% if linked.netflix == true %}
+                <li><a href="https://www.netflix.com/browse">Netflix</a></li>
+            {% else %}
+                <li>Netflix</li>
+            {% endif %}
+            {% if linked.hbo == true %}
+                <li><a href="https://www.hbo.com/">HBO</a></li>
+            {% else %}
+                <li>HBO</li>
+            {% endif %}
+            {% if linked.hulu == true %}
+                <li><a href="https://www.hulu.com/welcome">Hulu</a></li>
+            {% else %}
+                <li>Hulu</li>
+            {% endif %}
         </ul>
+        <a href="/profile/linked/update"><p><small>Update List</small></p></a>
     </div>
 {% endblock %}
