@@ -107,7 +107,7 @@ def convert_to_sql(parsed_loc, table_name):
 '''
 Retrieving stored table information - potential input for recommendation methods
 
-Input: string table_name
+Input: string table_name: already parsed watchlist
 Returns: dictionary parsed_loc
 
 Created by Jessica - 04.21
@@ -140,7 +140,7 @@ def retrieve_from_sql(table_name):
         if item[3] is not None:
             parsed_loc['individual']['google']['rent'][item[2]] = item[3]
         if item[4] is not None:
-            parsed_loc['individual']['google']['buy'][item[3]] = item[4]
+            parsed_loc['individual']['google']['buy'][item[2]] = item[4]
         # ITUNES
         if item[5] is not None:
             parsed_loc['individual']['itunes']['rent'][item[2]] = item[5]
@@ -150,20 +150,20 @@ def retrieve_from_sql(table_name):
         # check and fill in subscriptions
         # AMAZON
         if item[7] == 1:
-            parsed_loc['subscription']['amazon prime'].append(item[2])
+            parsed_loc['subscription']['amazon prime'].append({'title':item[2],'imdbID':item[1]})
         # NETFLIX
         if item[8] == 1:
-            parsed_loc['subscription']['netflix'].append(item[2])
+            parsed_loc['subscription']['netflix'].append({'title':item[2],'imdbID':item[1]})
         # HBO
         if item[9] == 1:
-            parsed_loc['subscription']['hbo'].append(item[2])
+            parsed_loc['subscription']['hbo'].append({'title':item[2],'imdbID':item[1]})
         # HULU
         if item[10] == 1:
-            parsed_loc['subscription']['hulu'].append(item[2])
+            parsed_loc['subscription']['hulu'].append({'title':item[2],'imdbID':item[1]})
         
         # check if nowhere
         if item[11] == 1:
-            parsed_loc['nowhere'].append(item[2])
+            parsed_loc['nowhere'].append({'title':item[2],'imdbID':item[1]})
            
     
     return parsed_loc

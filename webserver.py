@@ -6,6 +6,8 @@
 # LIBRARIES
 from flask import Flask, render_template, request, redirect, url_for
 from sqlalchemy import create_engine
+from flask_wtf import FlaskForm
+from wtforms import SelectField
 
 # FILES
 import db_connect as db
@@ -19,13 +21,23 @@ import profile_edit as prof_edit
 import profile_history as prof_hist
 import poster_image as pi
 
-############# GLOBAL VARIABLES #############
-# CONNECT TO DATABASE
+############# START UP CONFIGURATION #############
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'dev'
 
-############# METHODS #############
+############# CLASSES #############
+'''
+Class for form object: Specifically drop-down menus for individual recommendations
+
+Inherits from FlaskForm
+
+Created by Jessica 04.27
+'''
+class ReccDropForm(FlaskForm):
+    rent = SelectField('rent_title', choices=[([],"Select a movie or tv show")], default="Select a movie or tv show")
+    buy = SelectField('buy_title', choices=[([],"Select a movie or tv show")], default="Select a movie or tv show")
 
 ############# PAGES #############
-app = Flask(__name__)
 
 # landing page
 @app.route('/')
@@ -180,11 +192,23 @@ def profile_watchlist_add():
 
 ################# RECOMMENDATION #################
 # streaming service recommendation
-@app.route('/profile/recommendation')
+@app.route('/profile/recommendation', methods=['GET','POST'])
 def profile_recommendation():
 #     page = "Profile recommendation page"
-    page = pr.main('profile/profile-recommendation.html','Parsed_Watchlist_Jenny')
-    return page
+    # page = pr.main('profile/profile-recommendation.html','Parsed_Watchlist_Jenny')
+    # return page
+
+    # gets main content loaded onto screen
+    page_content = pr.main('Parsed_Watchlist_Jenny')
+    drops = ReccDropForm()
+    drops.rent.choices.extend([([ind_cont['platform'],ind_cont['price']],ind_cont['title']) for ind_cont in page_content['indiv_rents']])
+    drops.buy.choices.extend([([ind_cont['platform'],ind_cont['price']],ind_cont['title']) for ind_cont in page_content['indiv_buys']])
+
+    # # individual rent forms
+    # if request.method == 'POST':
+    #     return
+
+    return render_template('profile/profile-recommendation.html', service_recc=page_content['service_recc'], indiv_rents=page_content['indiv_rents'], indiv_buys=page_content['indiv_buys'], plat_content=page_content['plat_content'], drop_form=drops)
 
 ################# SECURITY #################
 # user profile security and login page
