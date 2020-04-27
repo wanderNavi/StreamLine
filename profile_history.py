@@ -12,6 +12,7 @@ import numpy as np
 # import service_recc as sr
 # import convert_sql as cs
 import db_connect as db
+import poster_image as pi
 
 #######################################################################################
 
@@ -35,7 +36,7 @@ def parse_watchlist_for_page(full_watchlist, parsed_watchlist):
 
 	# iterate through each line of full_watchlist and grab info from cards_content to put into title_cards
 	for imdb_id in ordered_list['Const']:
-		card = {'title':'', 'year':'', 'genres':'', 'rating':'',
+		card = {'title':'', 'year':'', 'genres':'', 'rating':'', 'image_url':'',
 				'nowhere':'',
 				'platform_where':[],
 				'indiv':{'where_rent':'','price_rent':'','where_buy':'', 'price_buy':''}}
@@ -48,6 +49,7 @@ def parse_watchlist_for_page(full_watchlist, parsed_watchlist):
 		card['year'] = card_series['Year']
 		card['genres'] = card_series['Genres'] # MAY WANT TO SPLIT UP IN CASE MAKE IT SO CAN CLICK EACH GENRE TO A LINK IN CONTENT BROWSE
 		card['rating'] = card_series['IMDb_Rating']
+		card['image_url'] = pi.get_poster_url_sql(imdb_id, card_series['Title'])
 
 		if card_series['nowhere'] == 1:
 			card['nowhere'] = True

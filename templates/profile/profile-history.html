@@ -23,13 +23,13 @@
             <!-- Set up proper css later -->
             <div style="display: flex">
                 <!-- box of items in watchlist in list -->
-                {% for title in page.recents %}
+                {% for content in page.recents %}
                     <!-- style below taken from w3school -->
                     <div style="margin: 5px; border: 1px solid #ccc; width: 150px">
                         <!-- Want poster image - need to call up tmdb -->
-                        <!-- <img style="width: 100%; height: auto"> -->
+                        <img src="{{ content.url }}" style="width: 100%; height: auto">
                         <!-- Eventually into links toward movie info pages -->
-                        <p style="padding: 5px; text-align: center">{{ title }}</p>
+                        <p style="padding: 5px; text-align: center">{{ content.title }}</p>
                     </div>
                 {% endfor %}
             </div>

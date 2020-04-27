@@ -17,6 +17,7 @@ import signup
 import profile_recom as pr
 import profile_edit as prof_edit
 import profile_history as prof_hist
+import poster_image as pi
 
 ############# GLOBAL VARIABLES #############
 # CONNECT TO DATABASE
@@ -138,7 +139,12 @@ def profile_history():
     # list of recent videos; restrict to 4 titles
     recents = []
     # TESTING HARDCODE DUMMY
-    recents.extend(['Reservoir Dogs', 'Moonlight', 'Westworld', 'Luke Cage'])
+    recents.extend([{'imdbid':'tt0105236','title':'Reservoir Dogs','url':''},
+                    {'imdbid':'tt4975722','title':'Moonlight','url':''},
+                    {'imdbid':'tt0475784','title':'Westworld','url':''},
+                    {'imdbid':'tt3322314','title':'Luke Cage','url':''}])
+    for rec in recents:
+        rec['url'] = pi.get_poster_url_sql(rec['imdbid'],rec['title'])
 
     # dictionary containing page content
     page = {'watchlists': watchlists,
@@ -154,6 +160,15 @@ def profile_watchlist_each(watch_name):
     watchlist = prof_hist.parse_watchlist_for_page("IMDb_Watchlist_Jenny", "Parsed_Watchlist_Jenny")
 
     return render_template('/profile/profile-watchlist-each.html', watch_name=watch_name, watchlist=watchlist)
+
+# trying to get pagination on watchlist pages
+@app.route('/profile/watchlist/<watch_name>/<int:page>', methods=['GET'])
+def view(page = 1):
+    per_page = 1
+    max_per_page = 20
+    # content = paginate(page, per_page, error_out=True, max_per_page)
+    # posts = Posts.query.order_by(Posts.time.desc()).paginate(page,per_page,error_out=False)
+    return render_template('/profile/profile-pagination.html', posts=posts)
 
 # user adding watchlist
 @app.route('/profile/watchlist/add', methods=('GET','POST'))
