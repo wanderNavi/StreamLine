@@ -161,14 +161,17 @@ def profile_watchlist_each(watch_name):
 
     return render_template('/profile/profile-watchlist-each.html', watch_name=watch_name, watchlist=watchlist)
 
-# trying to get pagination on watchlist pages
-@app.route('/profile/watchlist/<watch_name>/<int:page>', methods=['GET'])
-def view(page = 1):
-    per_page = 1
-    max_per_page = 20
-    # content = paginate(page, per_page, error_out=True, max_per_page)
-    # posts = Posts.query.order_by(Posts.time.desc()).paginate(page,per_page,error_out=False)
-    return render_template('/profile/profile-pagination.html', posts=posts)
+# # trying to get pagination on watchlist pages
+# # COME BACK TO THIS LATER
+
+# # loading pagination
+# @app.route('/profile/watchlist/<watch_name>/<int:page>', methods=['GET'])
+# def view(page = 1):
+#     per_page = 1
+#     max_per_page = 20
+#     # content = paginate(page, per_page, error_out=True, max_per_page)
+#     # posts = Posts.query.order_by(Posts.time.desc()).paginate(page,per_page,error_out=False)
+#     return render_template('/profile/profile-pagination.html', posts=posts)
 
 # user adding watchlist
 @app.route('/profile/watchlist/add', methods=('GET','POST'))
