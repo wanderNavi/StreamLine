@@ -178,8 +178,20 @@ def profile_linked():
     # eventually route directly to account page
 
     # TESTING HARDCODE WHILE MYSQL IS DOING SOMETHING WEIRD
+    linked = {'amazon_prime':True, 'netflix': True, 'hbo': True, 'hulu': True}
+
 #    page = "Profile linked page"
-    return render_template('profile/profile-linked.html')
+    return render_template('profile/profile-linked.html', linked=linked)
+
+# updating which linked accounts user has
+@app.route('/profile/linked/update')
+def profile_linked_update():
+    # get form response to store updated info into database
+    
+    # TESTING HARDCODE WHILE MYSQL IS DOING SOMETHING WEIRD
+    linked = {'amazon_prime':True, 'netflix': True, 'hbo': True, 'hulu': True}
+    
+    return render_template('profile/profile-linked-update.html', linked=linked)
 
 ################# PREFERENCES #################
 # user profile content preferences page
