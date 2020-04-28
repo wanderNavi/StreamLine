@@ -4,12 +4,12 @@
 
 ############# IMPORTS#############
 # LIBRARIES
-from flask import Flask, render_template, request, redirect, url_for, flash
-# from sqlalchemy import create_engine
+from flask import Flask, render_template, request, redirect, url_for, flash, session, g
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_wtf import FlaskForm
 from wtforms import SelectField
 from datetime import datetime
+import functools
 
 # FILES
 import db_connect as db
@@ -27,7 +27,7 @@ import poster_image as pi
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'dev'
 
-############# CLASSES #############
+############# CLASSES AND METHODS #############
 '''
 Class for form object: Specifically drop-down menus for individual recommendations
 
@@ -38,6 +38,37 @@ Created by Jessica 04.27
 class ReccDropForm(FlaskForm):
     rent = SelectField('rent_title', choices=[([],"Select a movie or tv show")], default="Select a movie or tv show")
     buy = SelectField('buy_title', choices=[([],"Select a movie or tv show")], default="Select a movie or tv show")
+
+'''
+Check if user id is stored in session
+
+Created by Jessica - 04.27
+'''
+@app.before_request
+def load_logged_in_user():
+    user_id = session.get('user_id')
+
+    if user_id is None:
+        g.user = None
+    else:
+        g.user = db.get_db().execute('''SELECT * FROM all_user_data WHERE userID="{user_id}"'''.format(user_id=user_id)).fetchone()
+
+'''
+Decorator to check if user is logged into a session 
+Determines access to certain pages and visible header buttons (in browsing sections)
+
+Input:
+Returns:
+
+Created by Jessica - 04.27
+'''
+def login_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.user is None:
+            return redirect(url_for('login'))
+        return view(**kwargs)
+    return wrapped_view
 
 ############# PAGES #############
 
@@ -57,11 +88,11 @@ def home():
 def sign_up():
     # print("Enter 0")
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        fname = request.form['first']
-        lname = request.form['last']
-        email = request.form['email']
+        username = request.form['username'].strip()
+        password = request.form['password'].strip()
+        fname = request.form['first'].strip()
+        lname = request.form['last'].strip()
+        email = request.form['email'].strip()
         join_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         conn = db.get_db()
         error = None
@@ -111,20 +142,24 @@ def sign_up_watchImport():
 def login():
     if request.method == 'POST':
         username = request.form['username']
-        password = request.form['password']
+        password1 = request.form['password']
         conn = db.get_db()
         error = None
+        user = conn.execute('''SELECT * FROM all_user_data WHERE username="{username}"'''.format(username=username)).fetchone()
 
         # grabbing all possible errors
         if not username:
             error = 'Username is required.'
-        elif not password:
+        elif not password1:
             error = 'Password is required.'
-        elif conn.execute('''SELECT EXISTS(SELECT * FROM all_user_data WHERE username="{username}")'''.format(username=username)).fetchone()[0] == 1:
-            error = 'User {} is already registered.'.format(username)
+        elif user is None:
+            error = 'Incorrect username.'
+        elif user['password'] != password1:
+            error = 'Incorrect password.'
 
         if error is None:
-            # conn.execute('''INSERT INTO all_user_data (userID, username, password, fname, lname, email, join_date, user_bio, linked_amazon, linked_netflix, linked_hbo, linked_hulu) VALUES (default, "{username}", "{password}", "{fname}", "{lname}", "{email}", "{join_date}","", FALSE, FALSE, FALSE, FALSE)'''.format(username=username,password=password,fname=fname,lname=lname,email=email,join_date=join_date))
+            session.clear()
+            session['user_id'] = user['userID']
             return redirect(url_for('profile_edit'))
 
         flash(error)
@@ -134,8 +169,8 @@ def login():
 # log out page
 @app.route('/logout')
 def logout():
-    page = "Log out"
-    return page
+    session.clear()
+    return redirect(url_for('login'))
 
 
 ############################### BROWSING SEGMENT ###############################
@@ -153,6 +188,7 @@ def browse():
 # user profile main page; auto routes to edit profile page
 @app.route('/profile')
 @app.route('/profile/edit')
+@login_required
 def profile_edit():
     # need to make this variable through login verification
     username = "PROTOTYPE_TEST"
@@ -174,6 +210,7 @@ def profile_edit():
     return render_template('profile/profile-edit.html', profile=profile)
 
 @app.route('/profile/edit-bio', methods=('GET', 'POST'))
+@login_required
 def profile_edit_bio():
     # come back and find way to pass this variable later, maybe /profile/edit-bio/<username>
     username = "PROTOTYPE_TEST"
@@ -192,6 +229,7 @@ def profile_edit_bio():
 ################# HISTORY #################
 # user profile history and watchlist page
 @app.route('/profile/history')
+@login_required
 def profile_history():
     # list of watchlist tables and files
     watchlists = []
@@ -215,6 +253,7 @@ def profile_history():
 
 # page from user profile specifically to a watchlist
 @app.route('/profile/watchlist/<watch_name>', methods=('GET', 'POST'))
+@login_required
 def profile_watchlist_each(watch_name):
     # watchlist name
     # watchlist = {}
@@ -237,12 +276,14 @@ def profile_watchlist_each(watch_name):
 
 # user adding watchlist
 @app.route('/profile/watchlist/add', methods=('GET','POST'))
+@login_required
 def profile_watchlist_add():
     return render_template('/profile/profile-watchlist-add.html')
 
 ################# RECOMMENDATION #################
 # streaming service recommendation
 @app.route('/profile/recommendation', methods=['GET','POST'])
+@login_required
 def profile_recommendation():
 #     page = "Profile recommendation page"
     # page = pr.main('profile/profile-recommendation.html','Parsed_Watchlist_Jenny')
@@ -263,6 +304,7 @@ def profile_recommendation():
 ################# SECURITY #################
 # user profile security and login page
 @app.route('/profile/security')
+@login_required
 def profile_security():
 #    page = "Profile security page"
     return render_template('profile/profile-security.html')
@@ -270,6 +312,7 @@ def profile_security():
 ################# LINKED #################
 # user profile linked accounts page
 @app.route('/profile/linked')
+@login_required
 def profile_linked():
     # get boolean statuses from sql
     # eventually route directly to account page
@@ -282,6 +325,7 @@ def profile_linked():
 
 # updating which linked accounts user has
 @app.route('/profile/linked/update')
+@login_required
 def profile_linked_update():
     # get form response to store updated info into database
     
@@ -293,6 +337,7 @@ def profile_linked_update():
 ################# PREFERENCES #################
 # user profile content preferences page
 @app.route('/profile/preferences')
+@login_required
 def profile_preferences():
 #    page = "Profile preferences page"
     return render_template('profile/profile-preference.html')
@@ -300,6 +345,7 @@ def profile_preferences():
 # import watchlist - user profile version
 # INCOMPLETE TEMPLATE
 @app.route('/profile/import')
+@login_required
 def profile_import():
 #    page = "Profile import page"
     return render_template('profile/profile-generic.html')
@@ -307,6 +353,7 @@ def profile_import():
 # watchlist pages
 # INCOMPLETE TEMPLATE
 @app.route('/watchlist')
+@login_required
 def profile_watchlist():
     # will have arguments in url for each unique watchlist
 #    page = "Profile watchlist page"
@@ -315,6 +362,7 @@ def profile_watchlist():
 # refining user preference page
 # INCOMPLETE TEMPLATE
 @app.route('/recommendation/refine')
+@login_required
 def profile_recommendation_refine():
     page = "Profile recommentation refine page"
     return page
