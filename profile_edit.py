@@ -30,6 +30,7 @@ def get_bio(username):
 		'SELECT user_bio FROM all_user_data WHERE username = %s',
 		(username,),
 		).fetchone()
+	conn.close()
 
 	# check if bio is empty
 	if bio[0] is None:
@@ -56,7 +57,7 @@ def update_sql_bio(username, bio):
 		(bio, username),
 		)
 	# conn.commit()
-
+	conn.close()
 	return
 
 '''
@@ -116,7 +117,7 @@ def ranked_genre(username):
 				genre_dict[ent] += 1
 
 	ranked = {k:v for k,v in sorted(genre_dict.items(), key=lambda item:item[1], reverse=True)}
-
+	conn.close()
 	return ranked
 
 '''

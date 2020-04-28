@@ -23,9 +23,9 @@
                     {% for cont in plat_content %}
                         <div style="margin: 5px; border: 1px solid #ccc; width: 150px">
                             <!-- Want poster image - need to call up tmdb -->
-                            <!-- <img style="width: 100%; height: auto"> -->
+                            <img src="{{ cont.poster_url }}" style="width: 100%; height: auto">
                             <!-- Eventually into links toward movie info pages -->
-                            <p style="padding: 5px; text-align: center">{{ cont }}</p>
+                            <p style="padding: 5px; text-align: center">{{ cont.title }}</p>
                         </div>
                     {% endfor %}
                 </div>
@@ -34,7 +34,81 @@
         <hr>
         <div id="individual">
             <h4>Can't find something in a streaming service?</h4>
-            <!-- Add search/drop down bar for individual suggestions to be displayed -->
+            <!-- Have a button for toggling between rent and buy -->
+            <button id="show_rent">Rent Options</button>
+            <button id="show_buy">Purchase Options</button>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+            <script type="text/javascript">
+                $(document).ready(function() {
+                    $("#show_rent").click(function() {
+                        $("#search_rent").show();
+                        $("#search_buy").hide();
+                    })
+                    $("#show_buy").click(function() {
+                        $("#search_rent").hide();
+                        $("#search_buy").show();
+                    })
+                })
+            </script>
+
+            <div id="search_rent" style="display: none;">
+                <p>Options for Rent</p>
+                <div>
+                    <!-- search/drop down bar for individual suggestions to be displayed -->
+                    <!-- NEED TO FIND SOME WAY TO CONSISTENTLY LIST IN SOME SORT OF ORDER - ALPHABETICAL? -->
+                    <!-- CLEAN THIS UP INTO BETTER CLASS STRUCTURE AND INCLUDE LINKS TO PURCHASE PAGE -->
+                    <form method="POST">
+                        {{ drop_form.rent }}
+                    </form>
+                    <div id="rent_selected">
+                    </div>
+                    <!-- Script for drop down menu -->
+                    <script type="text/javascript"> 
+                        let rent_title_select = document.getElementById('rent');
+                        let rent_title_return = document.getElementById('rent_selected');
+
+                        rent_title_select.onchange = function() {
+                            if (rent_title_select.value == "[]") {
+                                rent_title_return.innerHTML="<p></p>"
+                            }
+                            else {
+                                var title = rent_title_select.value.split(',');
+                                rent_title_return.innerHTML="<p><big>"+title[0].substring(2,title[0].length-1)+"</big>: $"+title[1].substring(1,title[1].length-1)+"</p>";
+                            }
+                        }
+                    </script>
+                </div>
+            </div>
+
+            <div id="search_buy" style="display: none;">
+                <p>Options for Purchase</p>
+                <div>
+                    <!-- search/drop down bar for individual suggestions to be displayed -->
+                    <!-- NEED TO FIND SOME WAY TO CONSISTENTLY LIST IN SOME SORT OF ORDER - ALPHABETICAL? -->
+                    <form method="POST">
+                        {{ drop_form.buy }}
+                    </form>
+                    <div id="buy_selected">
+                    </div>
+                    <!-- Script for drop down menu -->
+                    <script type="text/javascript"> 
+                        let buy_title_select = document.getElementById('buy');
+                        let buy_title_return = document.getElementById('buy_selected');
+
+                        buy_title_select.onchange = function() {
+                            if (buy_title_select.value == "[]") {
+                                buy_title_return.innerHTML="<p></p>"
+                            } else {
+                                var title = buy_title_select.value.split(',');
+                                buy_title_return.innerHTML="<p><big>"+title[0].substring(2,title[0].length-1)+"</big>: $"+title[1].substring(1,title[1].length-1)+"</p>";
+                            }
+                        }
+                    </script>
+                </div>
+            </div>
         </div>
+        <!-- {% for ent in indiv_buys %}
+            <p>{{ ent }}</p>
+        {% endfor %} -->
     </div> <!-- overall box -->
 {% endblock %}
