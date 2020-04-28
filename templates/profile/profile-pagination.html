@@ -1,6 +1,18 @@
 <!-- Pagination test taken from sqlalchemy documentation -->
 
-{% macro render_pagination(pagination, endpoint) %}
+{% extends "profile/profile-generic.html" %}
+
+{% block content %}
+    <a href="/profile/history" style="font-size: 0.8rem">Back</a>
+    <h2>{{ watch_name }}</h2>
+    <hr>
+    <div style="margin-left:20px; margin-right:20px; padding-top:25px" class="list-group list-group-flush">
+    	{% for post in posts.items %}
+    		<p></p>
+    </div>
+{% endblock %}
+
+<!-- {% macro render_pagination(pagination, endpoint) %}
 	<div class="pagination">
 		{%- for page in pagination.iter_pages() %}
 			{% if page %}
@@ -14,4 +26,4 @@
 			{% endif %}
 		{%- endfor %}
 	</div>
-{% endmacro %}
+{% endmacro %} -->

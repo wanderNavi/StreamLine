@@ -45,7 +45,7 @@ def fetch_watchlist(db_watchlist):
                            columns=['Const', 'Title'],
                            parse_dates=None,
                            chunksize=None)
-    
+    db.close()
     return watchlist
 
 #edits above by Helen 4/21--------------------------
@@ -79,5 +79,5 @@ def fetch_html_watchlist(full_watchlist, parsed_watchlist):
 
   join_query.rename(columns={"IMDb Rating":"IMDb_Rating"}, inplace=True)
   join_query.set_index('Const', inplace=True)
-
+  db.close()
   return join_query

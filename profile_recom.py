@@ -12,13 +12,17 @@ from flask import Flask, render_template
 
 import service_recc as sr
 import convert_sql as cs
+import poster_image as pi
 # import db_connect as db_conn
 
 # import requests
 # import pandas as pd
 # above from Jessica 04.20
 
-#######################################################################################
+############################### CLASSES ###############################
+
+
+############################### METHODS ###############################
 
 '''
 Compile rent recommendations of individually acquired items
@@ -56,6 +60,7 @@ def compile_buy(individual):
     # construct variable to return, will contain dictionaries
         # each dictionary in form: {'title','platform','price'}
     indiv_buys = []
+    # print(individual)
     
     # iterating through individual
     for title in individual:
@@ -68,13 +73,14 @@ def compile_buy(individual):
 '''
 Main method of file creating final output heading towards webserver
 
-Input: string template - name of html template file
+Input: string template - name of html template file - Jessica 04.27 remove
        string table_name - LINK TO USER IDENTIFICATION
-Returns: renders html template
+Returns: dictionary template_inputs: what would be needed to render template
+    renders html template - Jessica 04.27 remove
 
 Created by Jessica 04.21
 '''
-def main(template, table_name):
+def main(table_name):
     # VARIABLES TO PASS THROUGH TEMPLATE
     # USER CUSTOMIZED SIDEBAR:
         # User name
@@ -106,27 +112,31 @@ def main(template, table_name):
     if service_recc == "Amazon Prime Video":
         for item in parsed_loc['subscription']['amazon prime']:
             if len(plat_examples) == 4: break
-            plat_examples.append(item)
+            plat_examples.append({'title':item['title'], 'poster_url':pi.get_poster_url_sql(item['imdbID'],item['title'])})
     elif service_recc == "Netflix":
         for item in parsed_loc['subscription']['netflix']:
             if len(plat_examples) == 4: break
-            plat_examples.append(item)
+            plat_examples.append({'title':item['title'], 'poster_url':pi.get_poster_url_sql(item['imdbID'],item['title'])})
     elif service_recc == "HBO":
         for item in parsed_loc['subscription']['hbo']:
             if len(plat_examples) == 4: break
-            plat_examples.append(item)
+            plat_examples.append({'title':item['title'], 'poster_url':pi.get_poster_url_sql(item['imdbID'],item['title'])})
     elif service_recc == "Hulu":
         for item in parsed_loc['subscription']['hulu']:
             if len(plat_examples) == 4: break
-            plat_examples.append(item)
+            plat_examples.append({'title':item['title'], 'poster_url':pi.get_poster_url_sql(item['imdbID'],item['title'])})
 
     # recommendations for individual rent
     indiv_rents = compile_rent(recommends['individual'])
+
     # recommendations for individual buy
     indiv_buys = compile_buy(recommends['individual'])
     
-    return render_template(template,
-                           service_recc=service_recc,
-                           indiv_rents=indiv_rents,
-                           indiv_buys=indiv_buys,
-                           plat_content=plat_examples)
+    # constructing dictionary to return
+    template_inputs = {'service_recc':service_recc, 'indiv_rents':indiv_rents, 'indiv_buys':indiv_buys, 'plat_content':plat_examples}
+    return template_inputs
+    # return render_template(template,
+    #                        service_recc=service_recc,
+    #                        indiv_rents=indiv_rents,
+    #                        indiv_buys=indiv_buys,
+    #                        plat_content=plat_examples)

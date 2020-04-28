@@ -430,7 +430,9 @@ Created by Jessica - 04.20
 def subscript_set(subscriptions):
     in_subs = set()
     for key in subscriptions.keys():
-        in_subs.update(subscriptions[key])
+        for cont in subscriptions[key]:
+            in_subs.add(cont['title'])
+        # in_subs.update(subscriptions[key])
     return in_subs
 
 '''
@@ -510,6 +512,7 @@ Returns: dictionary reccs
 Created and modified by Jessica from content written by Kitty - 04.20
 '''
 def platform_recommend_SQL(locPrice):
+    # print("LocPrice:\n" + str(locPrice) + "\n\n\n")
     # dictionary to return 
         # tuple of best platform
         # dictionaries for content have to get individually
@@ -518,7 +521,7 @@ def platform_recommend_SQL(locPrice):
     
     # finding best subscription platform
     subscript_loc = locPrice['subscription']
-    reccs['subscription'] = compare_subscriptions(subscript_loc)
+    reccs['subscription'] = compare_subscriptions(locPrice['subscription'])
     
     # finding which content not available through the flatrate platforms
     in_subs = subscript_set(locPrice['subscription'])
@@ -526,6 +529,7 @@ def platform_recommend_SQL(locPrice):
     
     # generate list of recommendations for what can't be acquired through subscriptions
     for content in individual_set:
+        # print(content)
         reccs['individual'][content] = compare_individual(content, locPrice['individual'])
      
     return reccs
