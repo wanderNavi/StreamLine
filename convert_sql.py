@@ -102,7 +102,8 @@ def convert_to_sql(parsed_loc, table_name):
         query_parameters = (position, imdbID, title, google_rent, google_buy, itunes_rent, itunes_buy, amazon_prime, netflix, hbo, hulu, nowhere)
         con.execute(insert_query, query_parameters)
         
-        # end of method
+    con.close()
+    # end of method
     
 '''
 Retrieving stored table information - potential input for recommendation methods
@@ -165,7 +166,7 @@ def retrieve_from_sql(table_name):
         if item[11] == 1:
             parsed_loc['nowhere'].append({'title':item[2],'imdbID':item[1]})
            
-    
+    con.close()
     return parsed_loc
 
 

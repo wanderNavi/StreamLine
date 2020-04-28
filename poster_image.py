@@ -91,13 +91,16 @@ def get_poster_url_sql(external_id, title):
 				replace_url = get_poster_url(external_id)
 				insert_query = '''UPDATE posters SET url="{url}" WHERE imdbID="{id}"'''.format(url=replace_url, id=external_id)
 				con.execute(insert_query)
+				con.close()
 				return replace_url
 			else:
+				con.close()
 				return image_url
 		else: # does not already exist
 			replace_url = get_poster_url(external_id)
 			insert_query = '''INSERT INTO posters (imdbID, title, url) VALUES ("{id}","{title}","{url}")'''.format(id=external_id, title=title, url=replace_url)
 			con.execute(insert_query)
+			con.close()
 			return replace_url
 
 	return NO_POSTER_URL

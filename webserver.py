@@ -4,10 +4,12 @@
 
 ############# IMPORTS#############
 # LIBRARIES
-from flask import Flask, render_template, request, redirect, url_for
-from sqlalchemy import create_engine
+from flask import Flask, render_template, request, redirect, url_for, flash
+# from sqlalchemy import create_engine
+from werkzeug.security import check_password_hash, generate_password_hash
 from flask_wtf import FlaskForm
 from wtforms import SelectField
+from datetime import datetime
 
 # FILES
 import db_connect as db
@@ -39,6 +41,7 @@ class ReccDropForm(FlaskForm):
 
 ############# PAGES #############
 
+############################### LANDING SEGMENT ###############################
 # landing page
 @app.route('/')
 def home():
@@ -48,18 +51,53 @@ def home():
     # actual render_template all done in main methods of individual py scripts
     # that is returned up to this central file
 
-
+################# SIGN UP #################
 # sign up page
-@app.route('/signup')
+@app.route('/signup', methods=('GET', 'POST'))
 def sign_up():
-    page = signup.main()
+    # print("Enter 0")
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        fname = request.form['first']
+        lname = request.form['last']
+        email = request.form['email']
+        join_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        conn = db.get_db()
+        error = None
+
+        # grabbing all possible errors
+        if not username:
+            error = 'Username is required.'
+        elif not password:
+            error = 'Password is required.'
+        elif not fname:
+            error = 'First name is required.'
+        elif not lname:
+            error = 'Last name is required.'
+        elif not email:
+            error = 'Email is required.'
+        elif conn.execute('''SELECT EXISTS(SELECT * FROM all_user_data WHERE username="{username}")'''.format(username=username)).fetchone()[0] == 1:
+            error = 'User {} is already registered.'.format(username)
+
+        # print("Enter 9")
+
+        if error is None:
+            # print("Enter 10")
+            conn.execute('''INSERT INTO all_user_data (userID, username, password, fname, lname, email, join_date, user_bio, linked_amazon, linked_netflix, linked_hbo, linked_hulu) VALUES (default, "{username}", "{password}", "{fname}", "{lname}", "{email}", "{join_date}","", FALSE, FALSE, FALSE, FALSE)'''.format(username=username,password=password,fname=fname,lname=lname,email=email,join_date=join_date))
+            return redirect(url_for('login'))
+
+        flash(error)
+    # print("Enter 3")
+    # page = signup.main() # replaced by above
     return render_template('bootstrap-login-signup.html')
 
-# sign up succeed page
-@app.route('/signup/success')
-def sign_up_success():
-    page = signup.success()
-    return page
+# # sign up succeed page
+# @app.route('/signup/success')
+# def sign_up_success():
+#     # page = signup.success() # METHOD DOES NOT EXIST?
+#     page = "Successful sign up"
+#     return page
 
 # import watchlist - sign up version
 @app.route('/signup/watchimport')
@@ -67,11 +105,30 @@ def sign_up_watchImport():
     page = "Sign Up through Importing list"
     return page
 
-
+################# LOG IN AND OUT #################
 # log in page
-@app.route('/login')
+@app.route('/login', methods=('GET', 'POST'))
 def login():
-    page = "Login Page"
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        conn = db.get_db()
+        error = None
+
+        # grabbing all possible errors
+        if not username:
+            error = 'Username is required.'
+        elif not password:
+            error = 'Password is required.'
+        elif conn.execute('''SELECT EXISTS(SELECT * FROM all_user_data WHERE username="{username}")'''.format(username=username)).fetchone()[0] == 1:
+            error = 'User {} is already registered.'.format(username)
+
+        if error is None:
+            # conn.execute('''INSERT INTO all_user_data (userID, username, password, fname, lname, email, join_date, user_bio, linked_amazon, linked_netflix, linked_hbo, linked_hulu) VALUES (default, "{username}", "{password}", "{fname}", "{lname}", "{email}", "{join_date}","", FALSE, FALSE, FALSE, FALSE)'''.format(username=username,password=password,fname=fname,lname=lname,email=email,join_date=join_date))
+            return redirect(url_for('profile_edit'))
+
+        flash(error)
+
     return render_template('bootstrap-login-login.html')
 
 # log out page
@@ -81,6 +138,7 @@ def logout():
     return page
 
 
+############################### BROWSING SEGMENT ###############################
 # movie/show search page
 @app.route('/browse')
 def browse():
@@ -89,15 +147,7 @@ def browse():
 
 # movie/show profile page
 
-##############################################################
-# PROFILE SEGMENT
-
-# NOTE: IF CREATE PUBLIC PROFILE KIND OF THING, CHANGE BELOW "PROFILE" ALL INTO "SETTINGS"
-    # SET LOGIN VERIFICATION TO SEPARATE PUBLIC AND PRIVATE CODE
-
-# # PROFILE BLUEPRINT
-# import profile
-# app.register_blueprint(profile.bp)
+############################### PROFILE SEGMENT ###############################
 
 ################# EDIT #################
 # user profile main page; auto routes to edit profile page
@@ -272,25 +322,7 @@ def profile_recommendation_refine():
 # results page
 
 
-##############################################################
-# OPTIONAL TEST PAGES
-# TESTING FOOTER
-@app.route('/test')
-def test_page():
-    return render_template('header-footer.html')
-
-@app.route('/test/bootstrap')
-def test_bootstrap():
-    return render_template('bootstrap_template.html')
-
-@app.route('/test/justwatch')
-def test_justwatch():
-    return render_template('test-justwatch.html')
-
-@app.route('/test/profile-gen-kitty')
-def test_profile_gen_kitty():
-    return render_template('profile/profile-generic.html')
-
+############################### FOOTER SEGMENT ###############################
 # about us page
 @app.route('/about')
 def about():
@@ -328,6 +360,25 @@ def sitemap():
 def bugs():
     page = "Report bugs page"
     return page
+
+
+############################### OLD TESTS SEGMENT ###############################
+# TESTING FOOTER
+@app.route('/test')
+def test_page():
+    return render_template('header-footer.html')
+
+@app.route('/test/bootstrap')
+def test_bootstrap():
+    return render_template('bootstrap_template.html')
+
+@app.route('/test/justwatch')
+def test_justwatch():
+    return render_template('test-justwatch.html')
+
+@app.route('/test/profile-gen-kitty')
+def test_profile_gen_kitty():
+    return render_template('profile/profile-generic.html')
 
 
 ###############################
