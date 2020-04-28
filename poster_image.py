@@ -10,7 +10,7 @@ import requests
 import db_connect as db
 
 ########### GLOBAL VARIABLE ###########
-POSTER_URL_HEAD = "http://image.tmdb.org/t/p/w150"
+POSTER_URL_HEAD = "http://image.tmdb.org/t/p/w185"
 NO_POSTER_URL = "https://media.discordapp.net/attachments/662866911348129823/704170526263869450/image0.png"
 
 ########### METHODS ###########
@@ -81,17 +81,26 @@ def get_poster_url_sql(external_id, title):
 	for ent in exist_check:
 		if ent[0] == 1: # does already exist
 			# check if doesn't have poster
-			if ent[0] == NO_POSTER_URL:
+			retrieve_query = '''SELECT * FROM posters WHERE imdbID="{id}"'''.format(id=external_id)
+			retrieve_url = con.execute(retrieve_query)
+			# THERE HAS TO BE A BETTER WAY TO DO THIS
+			image_url = ''
+			for ret in retrieve_url:
+				image_url = ret[2]
+			if image_url == NO_POSTER_URL:
 				replace_url = get_poster_url(external_id)
 				insert_query = '''UPDATE posters SET url="{url}" WHERE imdbID="{id}"'''.format(url=replace_url, id=external_id)
 				con.execute(insert_query)
+				con.close()
 				return replace_url
 			else:
-				return ent[0]
+				con.close()
+				return image_url
 		else: # does not already exist
 			replace_url = get_poster_url(external_id)
 			insert_query = '''INSERT INTO posters (imdbID, title, url) VALUES ("{id}","{title}","{url}")'''.format(id=external_id, title=title, url=replace_url)
 			con.execute(insert_query)
+			con.close()
 			return replace_url
 
 	return NO_POSTER_URL
