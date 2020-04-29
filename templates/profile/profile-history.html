@@ -7,15 +7,15 @@
         <div>
             <h4>Your Watchlists:</h4>
             <div>
-                <p>WARNING: IF WATCHLIST IS LONG, PAGE CURRENTLY TAKES VERY LONG TO LOAD</p>
+                <!-- <p>WARNING: IF WATCHLIST IS LONG, PAGE CURRENTLY TAKES VERY LONG TO LOAD</p> -->
                 <!-- Route to page with individual watchlists -->
                 {% for watch in page.watchlists %}
-                    <p><a href="{{ url_for('profile_watchlist_each', watch_name=watch.title) }}">{{ watch.title }}</a> <small>(NOTE: long load)</small></p>
+                    <p><a href="{{ url_for('profile_watchlist_each', username=username, watch_name=watch.title) }}">{{ watch.title }}</a> <small>(NOTE: long load)</small></p>
                     <!-- Eventually have visual preview gallery of first few items -->
                 {% endfor %}
             </div>
             <br>
-            <a href="/profile/watchlist/add"><small>+ Add Watchlist</small></a>
+            <a href="{{ url_for('profile_watchlist_add', username=username) }}"><small>+ Add Watchlist</small></a>
         </div>
         <br>
         <hr>

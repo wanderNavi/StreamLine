@@ -28,6 +28,6 @@
                 <li>Hulu</li>
             {% endif %}
         </ul>
-        <a href="/profile/linked/update"><p><small>Update List</small></p></a>
+        <a href="{{ url_for('profile_linked_update', username=username) }}"><p><small>Update List</small></p></a>
     </div>
 {% endblock %}

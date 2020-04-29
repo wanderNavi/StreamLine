@@ -12,6 +12,36 @@ import convert_sql as cs
 import db_connect as db
 
 #######################################################################################
+'''
+Retrieve user author card information
+
+Inputs: string username - unique to each user in database
+Returns: dictionary card - dictionary containing first name, last name, and join month and year
+NOTE: WILL NEED TO RETRIEVE PROFILE PHOTO EVENTUALLY
+
+Created by Jessica - 04.28
+'''
+def get_card(username):
+	# connect to database
+	conn = db.get_db()
+
+	# create to return dictionary
+	card = {'first':'',
+			'last':'',
+			'month':'',
+			'year':''}
+
+	# fetch content from all user table
+	user_info = conn.execute('''SELECT * FROM all_user_data WHERE username="{username}"'''.format(username=username)).fetchone()
+	conn.close()
+
+	# fill information
+	card['fname'] = user_info['fname']
+	card['lname'] = user_info['lname']
+	card['join_month'] = user_info['join_date'].strftime("%B")
+	card['join_year'] = user_info['join_date'].year
+
+	return card
 
 '''
 Retrieve's user bio information

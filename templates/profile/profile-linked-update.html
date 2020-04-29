@@ -1,7 +1,7 @@
 {% extends "profile/profile-generic.html" %}
 
 {% block content %}
-    <a href="/profile/linked" style="font-size: 0.8rem">Back</a>
+    <a href="{{ url_for('profile_linked', username=username) }}" style="font-size: 0.8rem">Back</a>
     <h2>Updating Linked Accounts</h2>
     <hr>
     <!-- change opacity of these buttons depending on if have link or not: if false offer to linki -->
@@ -40,7 +40,7 @@
                 <label for="hulu">Hulu</label><br>
             </div>
         </fieldset>
-        <form action="/profile/linked">
+        <form action="{{ url_for('profile_linked', username=username) }}">
             <input type="submit" name="Submit">
         </form>
         <p>NOTE: This function is incomplete and does not update the database yet</p>

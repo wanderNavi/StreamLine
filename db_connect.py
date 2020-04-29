@@ -26,7 +26,18 @@ def get_db():
   return engine.connect()
 
 
+
+
+
+
+
+
+
+
+
 '''
+04.29 - OLD VERSION, FROM WHEN WATCHLISTS WERE SEPARATE TABLES, KEEPING FOR POTENTIAL FUTURE TESTING NEEDS
+
 Imports IMDb watchlist table from MySQL
 
 input: string db_watchlist: table name (test with 'IMDb_Watchlist_sample', 'IMDb_Watchlist_Jenny')
@@ -57,6 +68,8 @@ def fetch_watchlist(db_watchlist):
 #5. html??????????????????
 
 '''
+04.29 - OLD VERSION, FROM WHEN WATCHLISTS WERE SEPARATE TABLES, KEEPING FOR POTENTIAL FUTURE TESTING NEEDS
+
 Retrieves relevant watchlist info from MySQL for profile-watchlist-each.html template
 
 Input: string full_watchlist: name of table in database containing full watchlist info (ex: "IMDb_Watchlist_Jenny")
