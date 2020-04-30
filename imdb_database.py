@@ -10,50 +10,42 @@ import db_connect as db_conn
 ##############################################
 #           FUNCTIONS FOR DATABASE           #
 
-def imdb_database(table_name, index, title, poster, time, certificate, runtime, genre, rate, intro, director, star):
-    
+'''
+04.30 - Jessica modifications: change "index" to imdbID, rewrote create table query primary key syntax
+'''
+def imdb_database(table_name, imdbID, title, poster, year, certificate, runtime, genres, IMDb_rating, intro, director, star):
     # Connect to database
     con = db_conn.get_db()
     
     # Create a new table
-    create_table_query = '''CREATE TABLE IF NOT EXISTS {table} (index varchar(255)
+    create_table_query = '''CREATE TABLE IF NOT EXISTS {table} (imdbID varchar(255) PRIMARY KEY,
                          title varchar(255), 
                          poster varchar(255),
-                         time varchar(255),
+                         year varchar(255),
                          certificate varchar(255),
-                         runtime varchar(255),
-                         genre varchar(255),
-                         rate real),
+                         runtime int,
+                         genres varchar(255),
+                         IMDb_rating real,
                          intro varchar(255),
                          director varchar(255),
-                         star varchar(255),
-                         PRIMARY KEY(index, title))'''.format(table=table_name)
+                         star varchar(255))'''.format(table=table_name)
     con.execute(create_table_query)
     
     # Insert head into the table
-    insert_query = '''INSERT IGNORE INTO {table} (index, title, poster, time, certificate, runtime, genre, rate,
+    insert_query = '''INSERT IGNORE INTO {table} (imdbID, title, poster, year, certificate, runtime, genres, IMDb_rating,
                     intro, director, star) 
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''.format(table=table_name)
 
     # Execute query
-    query_parameters = (index, title, poster, time, certificate, runtime, genre, rate, intro, director, star)
+    query_parameters = (imdbID, title, poster, year, certificate, runtime, genres, IMDb_rating, intro, director, star)
     con.execute(insert_query, query_parameters)
     
     con.close()
+    # end of method
     return
 
 '''
-This function requires a url as parameter (listed above), and returns the url for the next page for iterative (not include superhero):
-    title: str
-    poster: str
-    time: str
-    certificate: str
-    runtime: str
-    genre: str
-    rate: str
-    intro: str
-    director: str
-    star: str
+This function requires a url as parameter (listed above), and returns the url for the next page for iterative (not include superhero)
 '''
 def fetch_imdb(url, table_name):
     
@@ -61,37 +53,42 @@ def fetch_imdb(url, table_name):
     page = requests.get(url)
     bs = BeautifulSoup(page.text, 'html.parser')
     
-    # Create dictionary to store the information
-    movie_dict = {}
+    # # Create dictionary to store the information
+    # movie_dict = {}
     
     # Fetch the information for the webpage
     movie_list = bs.findAll('div','lister-item mode-advanced')
     
     # Fetch the information for each movie
     for movie in movie_list:
-        index = movie.find('span','lister-item-index unbold text-primary').text.strip()
+        # JESSICA 04.30 NOTE: original index extracted didn't make any sense, getting much more relevant imdbID instead
+        imdbID = movie.find('a')['href'][7:-1]
         poster = movie.find('img')['loadlate'].strip() # movie poster        
-        title = movie.findAll('a')[1].text.strip() # movie title        
+        title = movie.findAll('a')[1].text.strip() # movie title    
+        # JESSICA 04.30 NOTE: the name "year" is much more discriptive than "time", replacing all names    
+        #                     also replacing all np.nan with Null because nan confuses MySQL
         try:
-            time = movie.find('span','lister-item-year text-muted unbold').text.strip().strip() # movie time (published)        
+            year = movie.find('span','lister-item-year text-muted unbold').text.strip() # movie time (published)        
         except:
-            time = np.nan
+            year = None
         try:
             certificate = movie.find('span','certificate').text.strip() # movie certificate (R, PG-13,etc.)
         except:
-            certificate = np.nan        
+            certificate = None       
         try:
-            runtime = movie.find('span','runtime').text.strip() # movie runtime (hours and minutes)
+            runtime = int(movie.find('span','runtime').text.strip()[:-4]) # movie runtime (hours and minutes)
         except:
-            runtime = np.nan      
+            runtime = None      
+        # JESSICA 04.30 NOTE: there can be multiple genres for a title
         try:
-            genre = movie.find('span','genre').text.strip() # movie genre      
+            genres = movie.find('span','genre').text.strip() # movie genre      
         except:
-            genre = np.nan
+            genres = None
+        # JESSICA 04.30 NOTE: renaming "rate" to "IMDb_Rating" to be more consistent with existing table names
         try:
-            rate = movie.find('div','inline-block ratings-imdb-rating').text.strip() # movie rate (out of 10)
+            IMDb_rating = movie.find('div','inline-block ratings-imdb-rating').text.strip() # movie rate (out of 10)
         except:
-            rate = np.nan        
+            IMDb_rating = None       
         intro = movie.findAll('p','text-muted')[1].text.strip() # movie introduction/description        
         para = movie.findAll('p')[2].text.strip().replace(', ','').split('\n')        
         if '| ' in para:
@@ -100,12 +97,15 @@ def fetch_imdb(url, table_name):
             star_list = para[para.index('| ')+2:] # movie star (if contains movie director)
             star = ', '.join(star_list)
         else:
-            director = np.nan
-            star = para[1:] # movie star (if not contains movie director)
+            director = None
+            star_list = para[1:] # movie star (if not contains movie director)
             star = ', '.join(star_list)
         
-        # Store the information        
-        imdb_database(table_name, index, title, poster, time, certificate, runtime, genre, rate, intro, director, star)
+        # print(imdbID,"\n", title,"\n", poster,"\n", year,"\n", certificate,"\n", runtime,"\n", genres,"\n", IMDb_rating,"\n", intro,"\n", director,"\n", star,"\n","\n")
+
+        # # Store the information        
+        imdb_database(table_name, imdbID, title, poster, year, certificate, runtime, genres, IMDb_rating, intro, director, star)
+        print(title)
 
     # Fetch the link for next page
     try:
@@ -117,17 +117,9 @@ def fetch_imdb(url, table_name):
 
 
 '''
-This function requires a url as parameter (listed above), and returns the url for the next page for iterative:
-    title: str
-    poster: str
-    time: str
-    certificate: str
-    runtime: str
-    genre: str
-    rate: str
-    intro: str
-    director: str
-    star: str
+This function requires a url as parameter (listed above), and returns the url for the next page for iterative looping
+
+MODIFICATIONS: Jessica 04.30 - see above method for notes on changes made
 '''
 def fetch_superhero_imdb(url, table_name):
     
@@ -135,21 +127,21 @@ def fetch_superhero_imdb(url, table_name):
     page = requests.get(url)
     bs = BeautifulSoup(page.text, 'html.parser')
     
-    # Create dictionary to store the information
-    movie_dict = {}
+    # # Create dictionary to store the information
+    # movie_dict = {}
     
     # Fetch the information for the webpage
     movie_list = bs.findAll('div','lister-item mode-detail')
     
     # Fetch the information for each movie
     for movie in movie_list:
-        index = movie.find('span','lister-item-index unbold text-primary').text.strip()
+        imdbID = movie.find('a')['href'][7:-1]
         poster = movie.find('img')['loadlate'].strip() # movie poster        
         title = movie.findAll('a')[1].text.strip() # movie title        
         try:
-            time = movie.find('span','lister-item-year text-muted unbold').text.strip().strip() # movie time (published)        
+            year = movie.find('span','lister-item-year text-muted unbold').text.strip().strip() # movie time (published)        
         except:
-            time = np.nan  
+            year = np.nan  
         try:
             certificate = movie.find('span','certificate').text.strip() # movie certificate (R, PG-13,etc.)
         except:
@@ -159,15 +151,15 @@ def fetch_superhero_imdb(url, table_name):
         except:
             runtime = np.nan        
         try:
-            genre = movie.find('span','genre').text.strip() # movie genre     
+            genres = movie.find('span','genre').text.strip() # movie genre     
         except:
-            genre = np.nan
+            genres = np.nan
         try:
-            rate = movie.find('div','inline-block ratings-imdb-rating').text.strip() # movie rate (out of 10)
+            IMDb_rating = movie.find('div','inline-block ratings-imdb-rating').text.strip() # movie rate (out of 10)
         except:
-            rate = np.nan        
+            IMDb_rating = np.nan        
         intro = movie.findAll('p','text-muted')[1].text.strip() # movie introduction/description        
-        para = movie.findAll('p')[2].text.strip().replace(', ','').split('\n')        
+        para = movie.findAll('p')[2].text.strip().replace(', ','').split('\n')     
         if '| ' in para:
             director_list = para[1:para.index('| ')] # movie director 
             director = ', '.join(director_list)
@@ -175,11 +167,11 @@ def fetch_superhero_imdb(url, table_name):
             star = ', '.join(star_list)
         else:
             director = np.nan
-            star = para[1:] # movie star (if not contains movie director)
+            star_list = para[1:] # movie star (if not contains movie director)
             star = ', '.join(star_list)
         
         # Store the information      
-        imdb_database(table_name, index, title, poster, time, certificate, runtime, genre, rate, intro, director, star)
+        imdb_database(table_name, imdbID, title, poster, year, certificate, runtime, genres, IMDb_rating, intro, director, star)
     
     # Fetch the link for next page
     try:
@@ -200,11 +192,14 @@ This function aims to fetch all the comedy movies and related information.
 def comedy_imdb():
     # Set the initial url to fetch
     url = "https://www.imdb.com/search/title/?genres=comedy&explore=title_type,genres&pf_rd_m=A2FGELUUNOQJNL&pf_rd_p=3396781f-d87f-4fac-8694-c56ce6f490fe&pf_rd_r=HS270KKF3EKA0HHP3F0X&pf_rd_s=center-1&pf_rd_t=15051&pf_rd_i=genre&ref_=ft_gnr_pr1_i_1"
-    
+    # url = "https://www.imdb.com/search/title/?genres=comedy&explore=title_type,genres&ref_=adv_prv"
+
     # Use loop to fetch all the url page
     while url:
-        # Updat the url
-        url = fetch_imdb(url,"Comedy_IMDB")
+        # Update the url
+        # url = fetch_imdb(url,"Comedy_IMDB")
+        url = fetch_imdb(url,"IMDb_Catalog")
+        print("URL:",url,"\n")
     return
 
 
@@ -218,7 +213,7 @@ def scifi_imdb():
     # Use loop to fetch all the url page
     while url:
         # Updat the url
-        url = fetch_imdb(url,"Scifi_IMDB")
+        url = fetch_imdb(url,"IMDb_Catalog")
     return
 
 
@@ -232,7 +227,7 @@ def horror_imdb():
     # Use loop to fetch all the url page
     while url:
         # Updat the url
-        url = fetch_imdb(url,"Horror_IMDB")
+        url = fetch_imdb(url,"IMDb_Catalog")
     return
 
 
@@ -246,7 +241,7 @@ def romance_imdb():
     # Use loop to fetch all the url page
     while url:
         # Updat the url
-        url = fetch_imdb(url,"Romance_IMDB")
+        url = fetch_imdb(url,"IMDb_Catalog")
     return
 
 
@@ -260,7 +255,7 @@ def action_imdb():
     # Use loop to fetch all the url page
     while url:
         # Updat the url
-        url = fetch_imdb(url,"Action_IMDB")
+        url = fetch_imdb(url,"IMDb_Catalog")
     return
 
 
@@ -274,7 +269,7 @@ def thriller_imdb():
     # Use loop to fetch all the url page
     while url:
         # Updat the url
-        url = fetch_imdb(url,"Thriller_IMDB")
+        url = fetch_imdb(url,"IMDb_Catalog")
     return
 
 
@@ -288,7 +283,7 @@ def drama_imdb():
     # Use loop to fetch all the url page
     while url:
         # Updat the url
-        url = fetch_imdb(url,"Drama_IMDB")
+        url = fetch_imdb(url,"IMDb_Catalog")
     return
 
 
@@ -302,7 +297,7 @@ def mystery_imdb():
     # Use loop to fetch all the url page
     while url:
         # Updat the url
-        url = fetch_imdb(url,"Mystery_IMDB")
+        url = fetch_imdb(url,"IMDb_Catalog")
     return
 
 
@@ -316,7 +311,7 @@ def crime_imdb():
     # Use loop to fetch all the url page
     while url:
         # Updat the url
-        url = fetch_imdb(url,"Crime_IMDB")
+        url = fetch_imdb(url,"IMDb_Catalog")
     return
 
 
@@ -330,7 +325,7 @@ def animation_imdb():
     # Use loop to fetch all the url page
     while url:
         # Updat the url
-        url = fetch_imdb(url,"Animation_IMDB")
+        url = fetch_imdb(url,"IMDb_Catalog")
     return
 
 
@@ -344,7 +339,7 @@ def adventure_imdb():
     # Use loop to fetch all the url page
     while url:
         # Updat the url
-        url = fetch_imdb(url,"Adventure_IMDB")
+        url = fetch_imdb(url,"IMDb_Catalog")
     return
 
 
@@ -358,7 +353,7 @@ def fantasy_imdb():
     # Use loop to fetch all the url page
     while url:
         # Updat the url
-        url = fetch_imdb(url,"Fantasy_IMDB")
+        url = fetch_imdb(url,"IMDb_Catalog")
     return
 
 
@@ -372,7 +367,7 @@ def comedy_romance_imdb():
     # Use loop to fetch all the url page
     while url:
         # Updat the url
-        url = fetch_imdb(url,"Comedy_Romance_IMDB")
+        url = fetch_imdb(url,"IMDb_Catalog")
     return
 
 
@@ -386,7 +381,7 @@ def action_comedy_imdb():
     # Use loop to fetch all the url page
     while url:
         # Updat the url
-        url = fetch_imdb(url,"Action_Comedy_IMDB")
+        url = fetch_imdb(url,"IMDb_Catalog")
     return
 
 
@@ -400,8 +395,15 @@ def superhero_imdb():
     # Use loop to fetch all the url page
     while url:
         # Updat the url
-        url = fetch_superhero_imdb(url,"Superhero_IMDB")
+        url = fetch_superhero_imdb(url,"IMDb_Catalog")
     return
 
 
 
+'''
+test function to make debugging less heinous; remove when done
+'''
+def test_main():
+    comedy_imdb()
+
+test_main()
