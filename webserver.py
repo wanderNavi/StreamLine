@@ -307,7 +307,7 @@ def profile_history(username):
     # list of watchlist tables and files
     watchlists = []
     # TESTING HARDCODE, GET RID OF LATER; dictionary in list
-    watchlists.append({'title':'My Watchlist', 'file':'IMDb_Watchlist_Jenny'})
+    watchlists.append({'title':'Navi\'s Watchlist'})
 
     # list of recent videos; restrict to 4 titles
     recents = []
@@ -334,7 +334,7 @@ def profile_watchlist_each(username, watch_name):
     # watchlist name
     # watchlist = {}
     # TESTING HARDCODE, TAKE CARE IN SQL AND GET RID LATER
-    watchlist = prof_hist.parse_watchlist_for_page("IMDb_Watchlist_Jenny", "Parsed_Watchlist_Jenny")
+    watchlist = prof_hist.parse_watchlist_for_page(username,watch_name)
 
     return render_template('/profile/profile-watchlist-each.html', profile=card, watch_name=watch_name, watchlist=watchlist, username=username)
 
