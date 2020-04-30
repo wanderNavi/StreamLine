@@ -8,10 +8,6 @@ import requests
 import numpy as np
 import db_connect as db_conn
 ##############################################
-
-# STILL WORKING ON SUPERHERO URL, DIFFIRENT LAYOUT ON WEBSITE
-
-##############################################
 #           FUNCTIONS FOR DATABASE           #
 
 def imdb_database(table_name, index, title, poster, time, certificate, runtime, genre, rate, intro, director, star):
