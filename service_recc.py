@@ -7,7 +7,7 @@ import pandas as pd
 
 ############################### GLOBAL VARIABLES ###############################
 UTELLY_URL = "https://utelly-tv-shows-and-movies-availability-v1.p.rapidapi.com/lookup"
-UTELLY_HEADERS = {'x-rapidapi-host': "utelly-tv-shows-and-movies-availability-v1.p.rapidapi.com",'x-rapidapi-key': "e9bbb712c8msh12658873185a8a4p12aea1jsn7e5f6edc1117"}
+UTELLY_HEADERS = {'x-rapidapi-host': "utelly-tv-shows-and-movies-availability-v1.p.rapidapi.com",'x-rapidapi-key': "6f9401aad4msh44554d944610128p148132jsn9766e57a2be6"}
 # JESSICA STERN EMAIL KEY = "1143a34b31msh6b1412e3803f9dcp1221cfjsn5ea4ee0dfb85"
 # JESSICA PERSONAL EMAIL 2 KEY: "6f9401aad4msh44554d944610128p148132jsn9766e57a2be6"
 # KITTY KEY 1 = "e9bbb712c8msh12658873185a8a4p12aea1jsn7e5f6edc1117"
@@ -199,6 +199,7 @@ Returns: dictionary parsed_loc - dictionary containing lists of content
                                  from watchlist at each location
 
 Created and modified by Jessica from content written by Kitty - 04.20
+NOTE: JESSICA 05.01 - need to add google_url and itunes_url
 '''
 def watchlist_parse(watchlist):
     # dictionaries containing lists of items available on each platform
@@ -232,7 +233,7 @@ def watchlist_parse(watchlist):
             # Can't find content on any major platforms
             parsed_loc['nowhere'].append(title)
         else:
-            # parsing individual purchases - tuples of (title, price)
+            # parsing individual purchases - key = title; values = tuple(price, url)
             # GOOGLE
             if title_location['individual']['google'][0] != 0.0:
                 # rent option

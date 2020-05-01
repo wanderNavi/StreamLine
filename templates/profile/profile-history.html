@@ -10,8 +10,20 @@
                 <!-- <p>WARNING: IF WATCHLIST IS LONG, PAGE CURRENTLY TAKES VERY LONG TO LOAD</p> -->
                 <!-- Route to page with individual watchlists -->
                 {% for watch in page.watchlists %}
-                    <p><a href="{{ url_for('profile_watchlist_each', username=username, watch_name=watch) }}">{{ watch }}</a></p>
+                    <p><a href="{{ url_for('profile_watchlist_each', username=username, watch_name=watch.name) }}">{{ watch.name }}</a></p>
                     <!-- Eventually have visual preview gallery of first few items -->
+                    <div style="display: flex">
+                    <!-- box of items in watchlist in list -->
+                    {% for content in watch.preview %}
+                        <!-- style below taken from w3school -->
+                        <div style="margin: 5px; border: 1px solid #ccc; width: 150px">
+                            <!-- Want poster image - need to call up tmdb -->
+                            <img src="{{ content.url }}" style="width: 100%; height: auto">
+                            <!-- Eventually into links toward movie info pages -->
+                            <p style="padding: 5px; text-align: center">{{ content.title }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
                 {% endfor %}
             </div>
             <br>

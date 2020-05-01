@@ -1,10 +1,13 @@
 '''
-File managing all connection needs with MySQL database
+File managing all connection needs with MySQL database: Creation and updating
 '''
 
 ####### IMPORTS #######
 from sqlalchemy import create_engine
 import pandas as pd
+
+import service_recc as sr
+import convert_sql as cs
 
 ####### METHODS #######
 '''
@@ -24,6 +27,8 @@ def get_db():
         encoding = 'utf8mb4')
   engine = create_engine(conn_string)
   return engine.connect()
+
+
 
 '''
 Gets user's watchlist from "IMDb_Watchlist" table in database
@@ -82,6 +87,58 @@ def fetch_html_watchlist(username, watchlist_name):
   return joined_frame
 
 '''
+Updates watchlist tables from new watchlist file uploads - creates new watchlist
+
+Inputs: string username: unique to each user
+        string watchlist_name: unique within user of new watchlist
+        string file: file path to list downloaded from IMDb to upload into user's account
+Returns: returns False if file not from IMDb
+         returns True if able to write new watchlist into table
+
+Created by Jessica 05.01
+'''
+def create_watchlist_upload(username, watchlist_name, filepath):
+  # make filepath into pandas.DataFrame object
+  file = pd.read_csv(filepath)
+  # print(file.columns)
+
+  # checks that content of file is really directly from IMDb
+  # set of expected column names
+  expected_head = {'Position','Const','Created','Modified','Description','Title','URL','Title Type','IMDb Rating','Runtime (mins)','Year','Genres','Num Votes','Release Date','Directors','Your Rating','Date Rated'}
+  for col in file.columns:
+    if col not in expected_head:
+      return False
+
+  # put content of table into IMDb_Watchlist
+  db = get_db()
+
+  imdb_query = '''INSERT IGNORE INTO IMDb_Watchlist (Position, username, watchlist_name, Const, Created, Modified, Description, Title, URL, Title_Type, IMDb_Rating, Runtime, Year, Genres, Num_Votes, Release_Date, Directors, Your_Rating, Date_Rated) 
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
+  
+  for index, row in file.iterrows():
+    descrip = row['Description']
+    if str(descrip) == "nan": descrip = ""
+    directors = row['Directors']
+    if str(directors) == "nan": directors = ""
+    your_rating = row['Your Rating']
+    if str(your_rating) == "nan": your_rating = ""
+    date_rated = row['Date Rated']
+    if str(date_rated) == "nan": date_rated = ""
+
+    imdb_param = (row['Position'], username, watchlist_name, row['Const'], row['Created'], row['Modified'], descrip, row['Title'], row['URL'], row['Title Type'], row['IMDb Rating'], row['Runtime (mins)'], row['Year'], row['Genres'], row['Num Votes'], row['Release Date'], directors, your_rating, date_rated)
+    db.execute(imdb_query, imdb_param)
+
+  # put content of table into Parsed_Watchlist
+  parsed_list = sr.watchlist_parse(fetch_watchlist(username, watchlist_name))
+  print(parsed_list)
+  cs.convert_to_sql(parsed_list, username, watchlist_name)
+
+  db.close()
+  return True
+
+
+
+'''
 Retrieves status of linked accounts from MySQL on "Linked Accounts" page
 
 Inputs: string username: unique to each user and finds status of linked accounts
@@ -125,6 +182,26 @@ def update_account_status(username, service, status):
   db.close()
 
   return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 '''
 04.29 - OLD VERSION, FROM WHEN WATCHLISTS WERE SEPARATE TABLES, KEEPING FOR POTENTIAL FUTURE TESTING NEEDS

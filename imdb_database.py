@@ -423,8 +423,8 @@ test function to make debugging less heinous; remove when done
 '''
 def test_main():
     # comedy_imdb()
-    scifi_imdb()
-    # horror_imdb()
+    # scifi_imdb()
+    horror_imdb()
     # romance_imdb()
     # action_imdb()
     # thriller_imdb()
