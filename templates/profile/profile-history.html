@@ -20,7 +20,7 @@
                             <!-- Want poster image - need to call up tmdb -->
                             <img src="{{ content.url }}" style="width: 100%; height: auto">
                             <!-- Eventually into links toward movie info pages -->
-                            <p style="padding: 5px; text-align: center">{{ content.title }}</p>
+                            <p style="padding: 5px; text-align: center"><a href="{{ url_for('browse_content', imdbID=content.imdbid) }}">{{ content.title }}</a></p>
                         </div>
                     {% endfor %}
                 </div>

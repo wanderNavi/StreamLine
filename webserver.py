@@ -11,7 +11,9 @@ from werkzeug.utils import secure_filename
 from flask_wtf import FlaskForm
 from wtforms import SelectField
 from datetime import datetime
+from bs4 import BeautifulSoup
 import functools
+import requests
 import os
 
 # FILES
@@ -195,7 +197,107 @@ def browse():
     page = "Browse catalog page"
     return page
 
-# movie/show profile page
+# movie/show content page: the contents of this method should honestly be sent to a separate file
+@app.route('/browse/<imdbID>')
+def browse_content(imdbID):
+    # connect to database
+    conn = db.get_db()
+    # query for piece of content's row from the table "IMDb_Catalog"
+    imdb_query = conn.execute('''SELECT * FROM IMDb_Catalog WHERE imdbID = "{imdbID}"'''.format(imdbID=imdbID)).fetchone()
+    # query for content in table "Parsed_Catalog"
+    parsed_query = conn.execute('''SELECT * FROM Parsed_Catalog WHERE imdbID = "{imdbID}"'''.format(imdbID=imdbID)).fetchone()
+
+    # items to pack
+    title = imdb_query['title']
+
+    year = imdb_query['year']
+    if year[1] == 'I':
+        year = year[4:]
+
+    genres = imdb_query['genres'].split(", ")
+    imdb_rating = imdb_query['IMDb_rating']
+
+    certificates = imdb_query['certificate']
+    if certificates == None or certificates == "Unrated" or certificates == "Not Rated":
+        certificates = ""
+
+    description = imdb_query['intro']
+    if description.find("Add a Plot") != -1:
+        description = ""
+    if description.find("See full summary") != -1:
+        # shortcut for now
+        description = ""
+        # need to retrieve and update table with correct summary. 
+        # plot_page = BeautifulSoup(requests.get("https://www.imdb.com/title/{imdbID}/plotsummary".format(imdbID=imdbID)).text, 'html.parser')
+    
+    poster = pi.get_poster_url(imdbID)
+
+    director = imdb_query['director']
+    if director == None:
+        director = ""
+    else:
+        director = director.split(", ")
+
+    stars = imdb_query['star']
+    if stars == None:
+        stars = ""
+    else:
+        stars = stars.split(", ")
+
+    platforms = []
+    individuals = dict()
+
+    # check if content wasn't in "Parsed_Catalog"
+    if parsed_query == None:
+        # adding to Parsed_Catalog table
+        utelly_call = sr.call_Utelly(imdbID, imdb_query['title'])
+
+        if utelly_call['subscription']['amazon prime'] == True:
+            platforms.append("Amazon Prime Video")
+        if utelly_call['subscription']['netflix'] == True:
+            platforms.append("Netflix")
+        if utelly_call['subscription']['hbo'] == True:
+            platforms.append('HBO')
+        if utelly_call['subscription']['hulu'] == True:
+            platforms.append('Hulu')
+
+        individuals = utelly_call['individual']
+
+        nowhere = False
+        # check nowhere
+        if utelly_call['individual']['google'][1] == 0.0 and utelly_call['individual']['itunes'][1] == 0.0 and utelly_call['subscription']['amazon prime'] == False and utelly_call['subscription']['netflix'] == False and utelly_call['subscription']['hbo'] == False and utelly_call['subscription']['hulu'] == False:
+            nowhere = True
+
+        # insert into database
+        conn.execute('''INSERT INTO Parsed_Catalog (imdbID, title, google_rent, google_buy, google_url, itunes_rent, itunes_buy, itunes_url, amazon_prime, netflix, hbo, hulu, nowhere) VALUES ("{imdbID}","{title},{google_rent}, {google_buy}, "{google_url}", {itunes_rent}, {itunes_buy}, "{itunes_url}", {amazon_prime}, {netflix}, {hbo}, {hulu}, {nowhere})'''.format(imdbID=imdbid,title=title,google_rent=utelly_call['individual']['google'][0],google_buy=utelly_call['individual']['google'][1],itunes_rent=utelly_call['individual']['itunes'][0],itunes_buy=utelly_call['individual']['itunes'][1],amazon_prime=utelly_call['subscription']['amazon prime'],netflix=utelly_call['subscription']['netflix'],hbo=utelly_call['subscription']['hbo'],hulu=utelly_call['subscription']['hulu'],nowhere=nowhere))
+    else:
+        if parsed_query['amazon_prime'] == True:
+            platforms.append("Amazon Prime Video")
+        if parsed_query['netflix'] == True:
+            platforms.append("Netflix")
+        if parsed_query['hbo'] == True:
+            platforms.append('HBO')
+        if parsed_query['hulu'] == True:
+            platforms.append('Hulu')
+
+        individuals['google'] = (parsed_query['google_rent'],parsed_query['google_buy'])
+        individuals['itunes'] = (parsed_query['itunes_rent'],parsed_query['itunes_buy'])
+        
+
+    # packaged information for sending off to template
+    page = {"title":title,
+            "year":year, # check for that weird (I) (year) thing
+            "genres":genres, # break into list so can click towards browse by genre pages
+            "IMDb_rating":imdb_rating,
+            "certificates":certificates, # if certificates are null or not rated, don't show
+            "description":description, # need to check if scrape was cut off and update table with full
+            "poster_url":poster,
+            "platforms":platforms,
+            "individuals":individuals,
+            "director":director,
+            "stars":stars}
+
+    return render_template('browse-content.html', page=page)
 
 ############################### PROFILE SEGMENT ###############################
 

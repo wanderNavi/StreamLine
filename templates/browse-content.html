@@ -1,1 +1,83 @@
 <!-- Page specifically for each piece of content -->
+
+{% extends 'footer/footer-generic.html' %}
+
+{% block title %}{{ page.title }}{% endblock %}
+
+{% block content %}
+	<div class="container mt-5">
+	    <div class="row">
+            <!-- Poster Sidebar-->
+            <div class="col-lg-4 pb-5">
+            	<div style="margin: 5px; border: 1px solid #ccc; height: 300px; width: 200px">
+                    <img src="{{ page.poster_url }}" style="width: 100%; height: auto">
+                </div>
+            </div>
+            <!-- Main page content -->
+            <div class="col-lg-8 pb-5">
+            	<p style="font-size: 1.5rem; margin-bottom: -.2rem"><strong>{{ page.title }}</strong>  |  {{ page.year }}</p>
+            	<div>
+            		{% for genre in page.genres %}
+            			<span>{{ genre }}{{ ", " if not loop.last }}</span>
+            		{% endfor %}
+            		<span>  |  IMDb Rating: {{ page.IMDb_rating }}</span>
+            		{% if page.certificates is not none %}
+            			<span>  |  {{ page.certificates }}</span>
+            		{% endif %}
+            	</div>
+            	<hr>
+            	<div>{{ page.description }}</div>
+            	<hr>
+            	<div>
+            		{% if page.platforms|length > 0 %}
+                        <span>Available on: </span>
+                        {% for plat in page.platforms %}
+                            <span>{{ plat }}{{ " | " if not loop.last }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div>
+                    {% if ((page.individuals.google[0] is not none) or (page.individuals.itunes[0]) is not none) %}
+                    	<span> Rent at: </span>
+                    	{% if page.individuals.google[0] is not none %}
+                    		<span>Google Play (${{ page.individuals.google[0] }})</span>
+                    	{% endif %}
+                    	<span>{{ " | " if ((page.individuals.google[0] is not none) and (page.individuals.itunes[0] is not none)) }}</span>
+                    	{% if page.individuals.google[0] is not none %}
+                    		<span>iTunes (${{ page.individuals.itunes[0] }})</span>
+                    	{% endif %}
+                    {% endif %}
+                </div>
+                <div>
+                    {% if ((page.individuals.google[1] is not none) or (page.individuals.itunes[1]) is not none) %}
+                    	<span> Purchase at: </span>
+                    	{% if page.individuals.google[1] is not none %}
+                    		<span>Google Play (${{ page.individuals.google[1] }})</span>
+                    	{% endif %}
+                    	<span>{{ " | " if ((page.individuals.google[1] is not none) and (page.individuals.itunes[1] is not none)) }}</span>
+                    	{% if page.individuals.google[1] is not none %}
+                    		<span>iTunes (${{ page.individuals.itunes[1] }})</span>
+                    	{% endif %}
+                    {% endif %}
+                </div>
+                <hr>
+                <div>
+                	{% if page.director|length > 0 %}
+                		<span>Directed by: </span>
+                		{% for direct in page.director %}
+                			<span>{{ direct }}{{ ", " if not loop.last }}</span>
+                		{% endfor %}
+                	{% endif %}
+                </div>
+                <div>
+                	{% if page.stars|length > 0 %}
+                		<span>Starring: </span>
+                		{% for star in page.stars %}
+                			<span>{{ star }}{{ ", " if not loop.last }}</span>
+                		{% endfor %}
+                	{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
