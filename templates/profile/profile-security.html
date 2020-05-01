@@ -4,11 +4,26 @@
     <h2>Security &amp Login</h2>
     <hr>
     <div style="margin-left:20px;padding-top:25px">
-    	<!-- put in form boxes -->
-        <p>Username</p> 
-        <textarea rows="2" cols="70">Will be having ability to change username and validate unique against database; button for confirmation</textarea>
-        <p>Password</p>
-        <textarea rows="2" cols="70">Will be having ability to change password; button for confirmation</textarea>
+    	<form class="form" method="POST">
+    		<!-- put in form boxes -->
+    		<!-- IF WANT TO HAVE USERNAME EDITING, NEED TO CHECK DON'T CAUSE DUPLICATES OF USERNAMES -->
+	        <!-- <span>Edit Username</span> 
+	        <input type="text" name="username" value="{{ form_dic.username }}">
+	        <br> -->
+
+	        <span>Edit Password</span>
+	        <input type="password" name="password" value="{{ form_dic.password }}">
+	        <!-- <button id="reveal_password">Show Password</button> -->
+	        <!-- Find way to help user see password to check against typos -->
+	        <!-- Or require double entry to check password same -->
+	        <br>
+
+	        <span>Edit Email</span>
+	        <input type="email" name="email" value="{{ form_dic.email }}">
+	        <br>
+
+	        <input type="submit" name="email_save">
+    	</form>
     </div>
 {% endblock %}
 

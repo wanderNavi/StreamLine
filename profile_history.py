@@ -50,7 +50,7 @@ def parse_watchlist_for_page(username, watchlist_name):
 				'indiv':{'where_rent':'','price_rent':'','where_buy':'', 'price_buy':''}}
 		# pandas.Series object of info found - consider going about this directly in sql instead later?
 		# if 
-		card_series = cards_content.iloc[imdb_id]
+		card_series = cards_content.loc[imdb_id]
 		print("card_series:", card_series)
 
 		# fill in card

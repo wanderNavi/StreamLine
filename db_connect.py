@@ -70,7 +70,7 @@ def fetch_html_watchlist(username, watchlist_name):
   db = get_db()
 
   # join query for watchlist information
-  join_query = db.execute('''SELECT i.Const, i.Title, i.Year, i.Genres, i.IMDb_Rating, p.google_rent, p.google_buy, p.google_url, p.itunes_rent, p.itunes_buy, p.itunes_url, p.amazon_prime, p.netflix, p.hbo, p.hulu, p.nowhere FROM IMDb_Watchlist i LEFT JOIN Parsed_Watchlist p ON i.Const = p.imdbID WHERE p.username="{username}" AND p.watchlist_name="{watchlist_name}"'''.format(username=username, watchlist_name=watchlist_name)).fetchall()
+  join_query = db.execute('''SELECT DISTINCT i.Const, i.Title, i.Year, i.Genres, i.IMDb_Rating, p.google_rent, p.google_buy, p.google_url, p.itunes_rent, p.itunes_buy, p.itunes_url, p.amazon_prime, p.netflix, p.hbo, p.hulu, p.nowhere FROM IMDb_Watchlist i LEFT JOIN Parsed_Watchlist p ON i.Const = p.imdbID WHERE p.username="{username}" AND p.watchlist_name="{watchlist_name}"'''.format(username=username, watchlist_name=watchlist_name)).fetchall()
 
   joined_frame = pd.DataFrame(columns=['Const','Title','Year','Genres','IMDb_Rating','google_rent','google_buy','google_url','itunes_rent','itunes_buy','itunes_url','amazon_prime','netflix','hbo','hulu','nowhere'])
 
@@ -81,9 +81,50 @@ def fetch_html_watchlist(username, watchlist_name):
   db.close()
   return joined_frame
 
+'''
+Retrieves status of linked accounts from MySQL on "Linked Accounts" page
 
+Inputs: string username: unique to each user and finds status of linked accounts
+Returns: dictionary linked_status: dictionary with boolean values of if user has linked accounts. Default for new user is all false
 
+Created by Jessica 04.30
+'''
+def linked_account_status(username):
+  # Default user has all false values
+  linked_status = {'amazon_prime': False, 'netflix': False, 'hbo': False, 'hulu': False}
 
+  # Connect to database
+  db = get_db()
+  query = db.execute('''SELECT linked_amazon, linked_netflix, linked_hbo, linked_hulu FROM all_user_data WHERE username="{username}"'''.format(username=username)).fetchone()
+  db.close()
+
+  # Fill dictionary info
+  if query['linked_amazon'] == 1: linked_status['amazon_prime'] = True 
+  if query['linked_netflix'] == 1: linked_status['netflix'] = True
+  if query['linked_hbo'] == 1: linked_status['hbo'] = True
+  if query['linked_hulu'] == 1: linked_status['hulu'] = True
+
+  return linked_status
+
+'''
+Updates linked accounts for users
+
+Inputs: string username: unique to each user
+        string service: name of service updating, by column name - 'linked_amazon', 'linked_netflix', 'linked_hbo', 'linked_hulu'
+        boolean status: true if have linked account, else false
+Returns:
+
+Created by Jessica 04.30
+'''
+def update_account_status(username, service, status):
+  # connect to database
+  db = get_db()
+
+  # Update database
+  update = db.execute('''UPDATE all_user_data SET {service} = {status} WHERE username="{username}"'''.format(username=username, service=service, status=status))
+  db.close()
+
+  return
 
 '''
 04.29 - OLD VERSION, FROM WHEN WATCHLISTS WERE SEPARATE TABLES, KEEPING FOR POTENTIAL FUTURE TESTING NEEDS

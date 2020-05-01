@@ -282,17 +282,18 @@ def profile_edit_bio(username):
     # get user existing bio
     bio = prof_edit.get_bio(username)
 
-    if request.method == 'POST':
-        bio_body = request.form['bio_body']
-        prof_edit.update_sql_bio(username, bio_body)
-        return redirect(url_for('profile_edit', username=username))
-
+    # pack info for author card and page
     profile = {'username':username,
                 'fname': card['fname'],
                 'lname': card['lname'],
                 'join_month': card['join_month'],
                 'join_year': card['join_year'],
                 'bio': bio}
+
+    if request.method == 'POST':
+        bio_body = request.form['bio_body']
+        prof_edit.update_sql_bio(username, bio_body)
+        return redirect(url_for('profile_edit', username=username))
 
     return render_template('profile/profile-edit-bio.html', profile=profile, username=username)
 
@@ -306,8 +307,12 @@ def profile_history(username):
 
     # list of watchlist tables and files
     watchlists = []
-    # TESTING HARDCODE, GET RID OF LATER; dictionary in list
-    watchlists.append({'title':'Navi\'s Watchlist'})
+
+    # connect to database to get existing watchlist names
+    conn = db.get_db()
+    user_lists = conn.execute('''SELECT DISTINCT watchlist_name FROM IMDb_Watchlist WHERE username="{username}"'''.format(username=username)).fetchall()
+    for ent in user_lists:
+        watchlists.append(ent['watchlist_name'])
 
     # list of recent videos; restrict to 4 titles
     recents = []
@@ -332,8 +337,6 @@ def profile_watchlist_each(username, watch_name):
     card = prof_edit.get_card(username)
     
     # watchlist name
-    # watchlist = {}
-    # TESTING HARDCODE, TAKE CARE IN SQL AND GET RID LATER
     watchlist = prof_hist.parse_watchlist_for_page(username,watch_name)
 
     return render_template('/profile/profile-watchlist-each.html', profile=card, watch_name=watch_name, watchlist=watchlist, username=username)
@@ -368,7 +371,7 @@ def profile_recommendation(username):
     card = prof_edit.get_card(username)
 
     # gets main content loaded onto screen
-    page_content = pr.main('Parsed_Watchlist_Jenny')
+    page_content = pr.main(username)
     drops = ReccDropForm()
     drops.rent.choices.extend([([ind_cont['platform'],ind_cont['price']],ind_cont['title']) for ind_cont in page_content['indiv_rents']])
     drops.buy.choices.extend([([ind_cont['platform'],ind_cont['price']],ind_cont['title']) for ind_cont in page_content['indiv_buys']])
@@ -381,14 +384,31 @@ def profile_recommendation(username):
 
 ################# SECURITY #################
 # user profile security and login page
-@app.route('/<username>/profile/security')
+@app.route('/<username>/profile/security', methods=('GET', 'POST'))
 @login_required
 def profile_security(username):
     # get info for author card
     card = prof_edit.get_card(username)
+
+    # connect to db
+    conn = db.get_db()
     
-#    page = "Profile security page"
-    return render_template('profile/profile-security.html', profile=card, username=username)
+    # dictionary for items to put into input boxes of page
+    form_input = conn.execute('''SELECT username, password, email FROM all_user_data WHERE username="{username}"'''.format(username=username)).fetchone()
+    form_dic = {'username':form_input['username'],'password':form_input['password'],'email':form_input['email']}
+
+    # update database from submitting change to form
+    if request.method == 'POST':
+        # OH WHOOPS NEED TO ADDRESS DUPLICATES
+        # update_username = conn.execute('''UPDATE all_user_data SET username="{username}" WHERE ''')
+        update_password = conn.execute('''UPDATE all_user_data SET password="{password}" WHERE username="{username}"'''.format(password=request.form['password'], username=username))
+        update_email = conn.execute('''UPDATE all_user_data SET email="{email}" WHERE username="{username}"'''.format(email=request.form['email'],username=username))
+
+        return redirect(url_for('profile_security', username=username))
+
+    conn.close()
+
+    return render_template('profile/profile-security.html', profile=card, username=username, form_dic=form_dic)
 
 ################# LINKED #################
 # user profile linked accounts page
@@ -399,25 +419,34 @@ def profile_linked(username):
     card = prof_edit.get_card(username)
     
     # get boolean statuses from sql
-    # eventually route directly to account page
-
-    # TESTING HARDCODE WHILE MYSQL IS DOING SOMETHING WEIRD
-    linked = {'amazon_prime':True, 'netflix': True, 'hbo': True, 'hulu': True}
+    linked = db.linked_account_status(username)
 
 #    page = "Profile linked page"
     return render_template('profile/profile-linked.html', profile=card, linked=linked, username=username)
 
 # updating which linked accounts user has
-@app.route('/<username>/profile/linked/update')
+@app.route('/<username>/profile/linked/update', methods=('GET', 'POST'))
 @login_required
 def profile_linked_update(username):
     # get info for author card
     card = prof_edit.get_card(username)
     
+    # get boolean statuses from sql
+    linked = db.linked_account_status(username)
+
     # get form response to store updated info into database
-    
-    # TESTING HARDCODE WHILE MYSQL IS DOING SOMETHING WEIRD
-    linked = {'amazon_prime':True, 'netflix': True, 'hbo': True, 'hulu': True}
+    if request.method == 'POST':
+        # posting information to database
+        if request.form.get('amazon_prime') is not None:
+            db.update_account_status(username,'linked_amazon',True)
+        if request.form.get('netflix') is not None:
+            db.update_account_status(username,'linked_netflix',True)
+        if request.form.get('hbo') is not None:
+            db.update_account_status(username,'linked_hbo',True)
+        if request.form.get('hulu') is not None:
+            db.update_account_status(username,'linked_hulu',True)
+
+        return redirect(url_for('profile_linked', username=username))
 
     return render_template('profile/profile-linked-update.html', profile=card, linked=linked, username=username)
 
@@ -429,9 +458,10 @@ def profile_preferences(username):
     # get info for author card
     card = prof_edit.get_card(username)
     
-#    page = "Profile preferences page"
+    # page = "Profile preferences page"
     return render_template('profile/profile-preference.html', profile=card, username=username)
 
+################# INCOMPLETE #################
 # # import watchlist - user profile version
 # # INCOMPLETE TEMPLATE
 # # SEE WATCHLIST ADD INSTEAD

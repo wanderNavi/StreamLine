@@ -131,15 +131,14 @@ def ranked_genre(username):
 	# fetch watchlist content
 	# CURRENTLY HARDCODE, NEED TO SETUP VARIABLE LATER
 		# "IMDb_Watchlist_username"?
-	genres = conn.execute(
-		'SELECT	Genres FROM IMDb_Watchlist_Jenny').fetchall()
+	genres = conn.execute('''SELECT Const, Genres FROM IMDb_Watchlist WHERE username="{username}" GROUP BY Const, Genres'''.format(username=username)).fetchall()
 
 	# parse genres in watchlist into dictionary
 		# key -> genre
 		# value -> incrementing
 	genre_dict = {}
 	for title in genres:
-		tgenres = parse_genres(title[0])
+		tgenres = parse_genres(title['Genres'])
 		for ent in tgenres:
 			if ent not in genre_dict.keys():
 				genre_dict[ent] = 1

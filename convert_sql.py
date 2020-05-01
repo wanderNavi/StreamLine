@@ -108,17 +108,18 @@ def convert_to_sql(parsed_loc, table_name):
 '''
 Retrieving stored table information - potential input for recommendation methods
 
-Input: string table_name: already parsed watchlist
+Input:  string username: unique username
+        string table_name: already parsed watchlist - Jessica 04.30 swap out
 Returns: dictionary parsed_loc
 
 Created by Jessica - 04.21
 '''        
-def retrieve_from_sql(table_name):
+def retrieve_from_sql(username):
     # Connect to database
     con = db_conn.get_db()
     
     # TO DO: proper try catch error handling
-    query = '''SELECT * FROM {table}'''.format(table=table_name)
+    query = '''SELECT DISTINCT imdbID, title, google_rent, google_buy, itunes_rent, itunes_buy, amazon_prime, netflix, hbo, hulu, nowhere FROM Parsed_Watchlist WHERE username="{username}"'''.format(username=username)
     query_ret = con.execute(query)
     
     # Constructing dictionary that will be returned
@@ -138,33 +139,33 @@ def retrieve_from_sql(table_name):
     for item in query_ret:
         # check and fill in individual 
         # GOOGLE
-        if item[3] is not None:
-            parsed_loc['individual']['google']['rent'][item[2]] = item[3]
-        if item[4] is not None:
-            parsed_loc['individual']['google']['buy'][item[2]] = item[4]
+        if item['google_rent'] is not None:
+            parsed_loc['individual']['google']['rent'][item['title']] = item['google_rent']
+        if item['google_buy'] is not None:
+            parsed_loc['individual']['google']['buy'][item['title']] = item['google_buy']
         # ITUNES
-        if item[5] is not None:
-            parsed_loc['individual']['itunes']['rent'][item[2]] = item[5]
-        if item[6] is not None:
-            parsed_loc['individual']['itunes']['buy'][item[2]] = item[6]
+        if item['itunes_rent'] is not None:
+            parsed_loc['individual']['itunes']['rent'][item['title']] = item['itunes_rent']
+        if item['itunes_buy'] is not None:
+            parsed_loc['individual']['itunes']['buy'][item['title']] = item['itunes_buy']
         
         # check and fill in subscriptions
         # AMAZON
-        if item[7] == 1:
-            parsed_loc['subscription']['amazon prime'].append({'title':item[2],'imdbID':item[1]})
+        if item['amazon_prime'] == 1:
+            parsed_loc['subscription']['amazon prime'].append({'title':item['title'],'imdbID':item['imdbID']})
         # NETFLIX
-        if item[8] == 1:
-            parsed_loc['subscription']['netflix'].append({'title':item[2],'imdbID':item[1]})
+        if item['netflix'] == 1:
+            parsed_loc['subscription']['netflix'].append({'title':item['title'],'imdbID':item['imdbID']})
         # HBO
-        if item[9] == 1:
-            parsed_loc['subscription']['hbo'].append({'title':item[2],'imdbID':item[1]})
+        if item['hbo'] == 1:
+            parsed_loc['subscription']['hbo'].append({'title':item['title'],'imdbID':item['imdbID']})
         # HULU
-        if item[10] == 1:
-            parsed_loc['subscription']['hulu'].append({'title':item[2],'imdbID':item[1]})
+        if item['hulu'] == 1:
+            parsed_loc['subscription']['hulu'].append({'title':item['title'],'imdbID':item['imdbID']})
         
         # check if nowhere
-        if item[11] == 1:
-            parsed_loc['nowhere'].append({'title':item[2],'imdbID':item[1]})
+        if item['nowhere'] == 1:
+            parsed_loc['nowhere'].append({'title':item['title'],'imdbID':item['imdbID']})
            
     con.close()
     return parsed_loc
