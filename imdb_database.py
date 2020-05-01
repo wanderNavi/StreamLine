@@ -212,8 +212,9 @@ def scifi_imdb():
     url = "https://www.imdb.com/search/title/?genres=sci-fi&explore=title_type,genres&pf_rd_m=A2FGELUUNOQJNL&pf_rd_p=3396781f-d87f-4fac-8694-c56ce6f490fe&pf_rd_r=HS270KKF3EKA0HHP3F0X&pf_rd_s=center-1&pf_rd_t=15051&pf_rd_i=genre&ref_=ft_gnr_pr1_i_2"
     # Use loop to fetch all the url page
     while url:
-        # Updat the url
+        # Update the url
         url = fetch_imdb(url,"IMDb_Catalog")
+        print("URL:",url,"\n")
     return
 
 
@@ -228,6 +229,7 @@ def horror_imdb():
     while url:
         # Updat the url
         url = fetch_imdb(url,"IMDb_Catalog")
+        print("\nURL:",url)
     return
 
 
@@ -242,6 +244,7 @@ def romance_imdb():
     while url:
         # Updat the url
         url = fetch_imdb(url,"IMDb_Catalog")
+        print("\nURL:",url)
     return
 
 
@@ -256,6 +259,7 @@ def action_imdb():
     while url:
         # Updat the url
         url = fetch_imdb(url,"IMDb_Catalog")
+        print("\nURL:",url)
     return
 
 
@@ -270,6 +274,7 @@ def thriller_imdb():
     while url:
         # Updat the url
         url = fetch_imdb(url,"IMDb_Catalog")
+        print("\nURL:",url)
     return
 
 
@@ -284,6 +289,7 @@ def drama_imdb():
     while url:
         # Updat the url
         url = fetch_imdb(url,"IMDb_Catalog")
+        print("\nURL:",url)
     return
 
 
@@ -298,6 +304,7 @@ def mystery_imdb():
     while url:
         # Updat the url
         url = fetch_imdb(url,"IMDb_Catalog")
+        print("\nURL:",url)
     return
 
 
@@ -312,6 +319,7 @@ def crime_imdb():
     while url:
         # Updat the url
         url = fetch_imdb(url,"IMDb_Catalog")
+        print("\nURL:",url)
     return
 
 
@@ -326,6 +334,7 @@ def animation_imdb():
     while url:
         # Updat the url
         url = fetch_imdb(url,"IMDb_Catalog")
+        print("\nURL:",url)
     return
 
 
@@ -340,6 +349,7 @@ def adventure_imdb():
     while url:
         # Updat the url
         url = fetch_imdb(url,"IMDb_Catalog")
+        print("\nURL:",url)
     return
 
 
@@ -354,12 +364,15 @@ def fantasy_imdb():
     while url:
         # Updat the url
         url = fetch_imdb(url,"IMDb_Catalog")
+        print("\nURL:",url)
     return
 
 
 
 '''
 This function aims to fetch all the comedy & romance movies and related information.
+
+NOTE: JESSICA 05.01 - THIS REPEATS comedy_imdb(); BEING IGNORED
 '''
 def comedy_romance_imdb():
     # Set the initial url to fetch
@@ -368,12 +381,15 @@ def comedy_romance_imdb():
     while url:
         # Updat the url
         url = fetch_imdb(url,"IMDb_Catalog")
+        print("\nURL:",url)
     return
 
 
 
 '''
 This function aims to fetch all the action & comedy movies and related information.
+
+NOTE: JESSICA 05.01 - THIS REPEATS comedy_imdb(); BEING IGNORED
 '''
 def action_comedy_imdb():
     # Set the initial url to fetch
@@ -382,6 +398,7 @@ def action_comedy_imdb():
     while url:
         # Updat the url
         url = fetch_imdb(url,"IMDb_Catalog")
+        print("\nURL:",url)
     return
 
 
@@ -396,6 +413,7 @@ def superhero_imdb():
     while url:
         # Updat the url
         url = fetch_superhero_imdb(url,"IMDb_Catalog")
+        print("\nURL:",url)
     return
 
 
@@ -404,6 +422,17 @@ def superhero_imdb():
 test function to make debugging less heinous; remove when done
 '''
 def test_main():
-    comedy_imdb()
+    # comedy_imdb()
+    scifi_imdb()
+    # horror_imdb()
+    # romance_imdb()
+    # action_imdb()
+    # thriller_imdb()
+    # drama_imdb()
+    # mystery_imdb()
+    # crime_imdb()
+    # animation_imdb()
+    # fantasy_imdb()
+
 
 test_main()
