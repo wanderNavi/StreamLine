@@ -57,7 +57,13 @@ def get_poster_url(external_id):
 		if TMDb_response['tv_results'][0]['poster_path'] != None:
 			return POSTER_URL_HEAD+TMDb_response['tv_results'][0]['poster_path']
 
-	return NO_POSTER_URL
+	# couldn't find poster from TMDb
+	conn = db.get_db()
+
+	poster_query = conn.execute('''SELECT poster FROM IMDb_Catalog WHERE imdbID="{id}"'''.format(id=external_id)).fetchone()
+
+	conn.close()
+	return poster_query['poster']
 
 '''
 Retrieve url from database. 

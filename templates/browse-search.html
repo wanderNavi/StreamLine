@@ -1,1 +1,295 @@
 <!-- Most central search page for finding content -->
+{% extends 'footer/footer-generic.html' %}
+
+{% block title %}Genre{% endblock %}
+
+{% block content %}
+<!-- For each genre, have a slideshow gallery of most popular content in genre right now - rip from imdb's webpages -->
+<!-- HONESTLY, SHOULD BE PUTTING THESE STYLE AND SCRIPT SECTIONS INTO SEPARATE FILES -->
+	<style>
+		/* TAKEN FROM W3SCHOOLS: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_slideshow_gallery */
+		* {
+		  box-sizing: border-box;
+		}
+
+		img {
+		  vertical-align: middle;
+		}
+
+		/* Position the image container (needed to position the left and right arrows) */
+		.container {
+		  position: relative;
+		}
+
+		/* Hide the images by default */
+		.mySlides {
+		  display: none;
+		  height: 65vh;
+		  overflow: auto;
+		}
+
+		/* Add a pointer when hovering over the thumbnail images */
+		.cursor {
+		  cursor: pointer;
+		}
+
+		/* Next & previous buttons */
+		.prev,
+		.next {
+		  cursor: pointer;
+		  position: absolute;
+		  top: 40%;
+		  width: auto;
+		  padding: 16px;
+		  margin-top: -50px;
+		  color: white;
+		  font-weight: bold;
+		  font-size: 20px;
+		  border-radius: 0 3px 3px 0;
+		  user-select: none;
+		  -webkit-user-select: none;
+		}
+
+		/* Position the "next button" to the right */
+		.next {
+		  right: 16px;
+		  border-radius: 3px 0 0 3px;
+		}
+
+		/* On hover, add a black background color with a little bit see-through */
+		.prev:hover,
+		.next:hover {
+		  background-color: rgba(0, 0, 0, 0.8);
+		}
+
+		/* Number text (1/3 etc) */
+		.numbertext {
+		  color: #f2f2f2;
+		  font-size: 12px;
+		  padding: 8px 12px;
+		  position: absolute;
+		  top: 0;
+		}
+
+		/* Container for image text */
+		.caption-container {
+		  text-align: center;
+		  background-color: #222;
+		  padding: 2px 16px;
+		  color: white;
+		}
+
+		.row:after {
+		  content: "";
+		  display: table;
+		  clear: both;
+		}
+
+		/* Six columns side by side */
+		.column {
+		  float: left;
+		  width: 16.66%;
+		}
+
+		/* Add a transparency effect for thumnbail images */
+		.demo {
+		  opacity: 0.6;
+		}
+
+/*		.active,
+		.demo:hover {
+		  opacity: 1;
+		}*/
+
+		/* TAKEN FROM TUTORIAL REPUBLIC AND ADAPTED: https://www.tutorialrepublic.com/php-tutorial/php-mysql-ajax-live-search.php */
+		/* Formatting search box */
+/*	    .search-box{
+	        width: 60%;
+	        position: relative;
+	        display: inline-block;
+	        font-size: 1.5rem;
+	    }
+	    .search-box input[type="text"]{
+	        height: 32px;
+	        padding: 5px 10px;
+	        border: 1px solid #CCCCCC;
+	        font-size: 14px;
+	    }*/
+	    /*.result{
+	        position: absolute;        
+	        z-index: 999;
+	        top: 100%;
+	        left: 0;
+	    }*/
+/*	    .search-box input[type="text"], .result{
+	        width: 100%;
+	        box-sizing: border-box;
+	    }*/
+	    /* Formatting result items */
+	    /*.result p{
+	        margin: 0;
+	        padding: 7px 10px;
+	        border: 1px solid #CCCCCC;
+	        border-top: none;
+	        cursor: pointer;
+	    }
+	    .result p:hover{
+	        background: #f2f2f2;
+	    }*/
+	</style>
+
+	<!-- SEARCH BAR -->
+	<div style="postition: absolute; margin-right: -50%; width: 100%;">
+		<div style="display: flex;">
+			<form method="post" style="font-size: 1.5rem;">
+				<span><input type="text" name="search" placeholder="Search Titles..." style="width: 40rem; position: relative;"></span>
+				<span><input type="submit" name="search_submit"></span>
+			</form>
+		</div>
+		<div style="width: 40rem;">
+			{% for ret in results %}
+				<a href="{{ url_for('browse_content', imdbID=ret.imdbID) }}" style="display: flex;">
+					<div style="width: 20%;padding-left: 2%"></div>
+					<div style="width: 80%; display: flex; align-items: center; border: 1px solid #000;">
+						<img src="{{ ret.image_url }}" style="width: 75px; height: auto">
+						<div>
+							<p><strong>{{ ret.title }}</strong></p>
+							<p>{{ret.year}}</p>
+						</div>
+					</div>
+					<div style="width: 20%;padding-left: 2%"></div>
+				</a>
+			{% endfor %}
+		</div>
+	</div>
+
+	<br>
+	<hr>
+
+	<!-- What layer of carousel in -->
+	<!-- {% set carousel = 1 %} -->
+
+	{% for key, value in galleries.items() %}
+		<!-- Image galleries for the different genres -->
+		<p style="font-size: 1.5rem; margin-bottom: -.2rem"><strong>{{ value.page }}</strong></p>
+		<div class="container">
+			{% for card in value.cards %}
+			<p>{{ key }}</p>
+			<div class="mySlides" id="{{ key }}">
+				<!-- <p>{{ card }}</p> -->
+			    <div class="numbertext">{{ loop.index }} / 6</div>
+			    <div style="display: flex;">
+			    	<!-- Poster Image -->
+			    	<img src="{{ card.image_url }}" style="width: auto; height: 65vh; object-fit: cover;">
+			    	<!-- background image -->
+			    	<div style="background-image: url({{ card.image_url }}); 
+			    				background-repeat: no-repeat; 
+			    				background-size: cover; 
+			    				background-position: center center; 
+			    				width: auto; 
+			    				height: 65vh; 
+			    				object-fit: cover; 
+			    				opacity: 0.8; ">
+			    		<!-- Card content and black overlay -->
+			    		<div style="background-color: 
+			    					rgba(0, 0, 0, 0.75); 
+			    					width: auto; 
+			    					height: 65vh; 
+			    					object-fit: cover; 
+			    					color: white; 
+			    					display: flex; 
+			    					flex-direction: column; 
+			    					justify-content: center; /*padding: 30% 7%;*/">
+
+			    			<!-- Synopsis -->
+				    		<div style="margin: 0 10%; width: 80%, height: 100%; padding-top: 10%; /*flex-basis: 40%*/">{{ card.synop }}</div>
+
+				    		<!-- Directors -->
+				    		{% if card.director is not none %}
+				    			<br>
+				    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Directed by: {{ card.director }}</div>
+				    		{% else %}
+				    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+				    		{% endif %}
+
+				    		<!-- Stars -->
+				    		{% if card.star is not none %}
+				    			<br>
+				    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Starring: {{ card.star }}</div>
+				    		{% else %}
+				    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+				    		{% endif %}
+				    		<div style="height: auto; flex: 1;"></div>
+			    		</div> <!-- end card content -->
+			    	</div> <!-- end right side content -->
+			    </div>
+			    <!-- <img src="img_woods_wide.jpg" style="width:100%"> -->
+		  	</div>
+		  	{% endfor %}
+		    
+			<a class="prev" onclick="plusSlides(-1)">❮</a>
+			<a class="next" onclick="plusSlides(1)">❯</a>
+
+			<div class="caption-container">
+			    <p id="caption"></p>
+			</div>
+
+			<div class="row" style="padding: 0 2%">
+			    <div class="column">
+			    	<img class="demo cursor" src="{{ value.cards[0].image_url }}" style="width:99%" onclick="currentSlide(0)" alt="{{ value.cards[0].title }}">
+			    </div>
+			    <div class="column">
+			    	<img class="demo cursor" src="{{ value.cards[1].image_url }}" style="width:99%" onclick="currentSlide(1)" alt="{{ value.cards[1].title }}">
+			    </div>
+			    <div class="column">
+			    	<img class="demo cursor" src="{{ value.cards[2].image_url }}" style="width:99%" onclick="currentSlide(2)" alt="{{ value.cards[2].title }}">
+			    </div>
+			    <div class="column">
+			    	<img class="demo cursor" src="{{ value.cards[3].image_url }}" style="width:99%" onclick="currentSlide(3)" alt="{{ value.cards[3].title }}">
+			    </div>
+			    <div class="column">
+			    	<img class="demo cursor" src="{{ value.cards[4].image_url }}" style="width:99%" onclick="currentSlide(4)" alt="{{ value.cards[4].title }}">
+			    </div>    
+			    <div class="column">
+			    	<img class="demo cursor" src="{{ value.cards[5].image_url }}" style="width:99%" onclick="currentSlide(5)" alt="{{ value.cards[5].title }}">
+			    </div>
+			</div>
+		</div>
+	{% endfor %}
+
+
+	<!-- <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script> -->
+	<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
+	<!-- <script src="typeahead.min.js"></script> -->
+	<script>
+		/* TAKEN FROM W3SCHOOLS: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_slideshow_gallery */
+		var slideIndex = 0;
+		showSlides(slideIndex);
+
+		function plusSlides(n) {
+		  showSlides(slideIndex = (slideIndex - slideIndex%6) + (slideIndex+n)%6);
+		}
+
+		function currentSlide(n) {
+		  showSlides(slideIndex = n);
+		}
+
+		function showSlides(n) {
+		  var i;
+		  var slides = document.getElementsById("comedy");
+		  var dots = document.getElementsByClassName("demo");
+		  var captionText = document.getElementById("caption");
+		  if (n > slides.length-1) {slideIndex = 0}
+		  if (n < 0) {slideIndex = slides.length-1}
+		  for (i = 0; i < slides.length; i++) {
+		      slides[i].style.display = "none";
+		  }
+		  for (i = 0; i < dots.length; i++) {
+		      dots[i].className = dots[i].className.replace(" active", "");
+		  }
+		  slides[slideIndex].style.display = "block";
+		  dots[slideIndex].className += " active";
+		  captionText.innerHTML = dots[slideIndex].alt;
+		}
+	</script>
+{% endblock %}

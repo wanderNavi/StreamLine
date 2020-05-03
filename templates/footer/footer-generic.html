@@ -21,8 +21,14 @@
     <body>
         <!-- Header -->
         <div class="header">
-          <a href="/profile" class="logo">StreamLine</a>
-          <!-- Need to create logout button -->
+            {% if g.user is not none %}
+                <a href="{{ url_for('profile_edit', username=g.user.username) }}" class="logo">StreamLine</a>
+                <a href="{{ url_for('profile_edit', username=g.user.username ) }}" style="float:right">My Account</a>
+            {% else %}
+                <a href="{{ url_for('browse') }}" class="logo">StreamLine</a>
+                <a href="{{ url_for('sign_up') }}" style="float: right;">Sign Up</a>
+                <a href="{{ url_for('login') }}" style="float: right;">Login</a>
+            {% endif %}
         </div> 
         <!-- ./Header -->
         
@@ -74,8 +80,8 @@
                     </div>
                     <div class="col-xs-12 col-sm-4 col-md-4">
                         <ul class="list-unstyled quick-links">
-                            <li><a href="#"><i class="fa fa-angle-double-right"></i>Sitemap</a></li>
-                            <li><a href="#"><i class="fa fa-angle-double-right"></i>Report Bugs</a></li>
+                            <!-- <li><a href="#"><i class="fa fa-angle-double-right"></i>Sitemap</a></li> -->
+                            <li><a href="/bugs"><i class="fa fa-angle-double-right"></i>Report Bugs</a></li>
                         </ul>
                     </div>
 <!--                     <div class="col-xs-12 col-sm-4 col-md-4">

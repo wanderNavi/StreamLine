@@ -27,6 +27,8 @@ import profile_recom as pr
 import profile_edit as prof_edit
 import profile_history as prof_hist
 import poster_image as pi
+import service_recc as sr
+import imdb_database as imdb_db
 
 ############# START UP CONFIGURATION #############
 # app configuration
@@ -147,11 +149,11 @@ def sign_up():
 #     page = "Successful sign up"
 #     return page
 
-# import watchlist - sign up version
-@app.route('/signup/watchimport')
-def sign_up_watchImport():
-    page = "Sign Up through Importing list"
-    return page
+# # import watchlist - sign up version
+# @app.route('/signup/watchimport')
+# def sign_up_watchImport():
+#     page = "Sign Up through Importing list"
+#     return page
 
 ################# LOG IN AND OUT #################
 # log in page
@@ -192,10 +194,53 @@ def logout():
 
 ############################### BROWSING SEGMENT ###############################
 # movie/show search page
-@app.route('/browse')
+@app.route('/browse', methods=('GET', 'POST'))
 def browse():
-    page = "Browse catalog page"
-    return page
+    # genre image galleries
+    galleries = {'comedy':{'page':'Comedy', 'cards':[]}, 'sci-fi':{'page':'Sci-Fi', 'cards':[]}, 'horror': {'page':'Horror', 'cards':[]}, 'romance': {'page':'Romance', 'cards':[]}, 'action': {'page':'Action', 'cards':[]}, 'thriller': {'page':'Thriller', 'cards':[]}, 'drama': {'page':'Drama', 'cards':[]}, 'mystery': {'page':'Mystery', 'cards':[]}, 'crime': {'page':'Crime', 'cards':[]}, 'animation': {'page':'Animation', 'cards':[]}, 'adventure': {'page':'Adventure', 'cards':[]}, 'fantasy':{'page':'Fantasy', 'cards':[]}}
+
+    for gen in galleries.keys():
+        galleries[gen]['cards'] = imdb_db.top_six_imdb(gen)
+    # print(galleries)
+
+    # search bar hit submit
+    if request.method == "POST":
+        # Connect to database
+        conn = db.get_db()
+
+        # Query for search from table "IMDb_Catalog"
+        exact_query = conn.execute('''SELECT title, year, imdbID FROM IMDb_Catalog WHERE title = "{search_title}"'''.format(search_title=request.form['search'])).fetchall()
+        imdb_query = conn.execute('''SELECT title, year, imdbID FROM IMDb_Catalog WHERE title LIKE "%%{search_title}%%"'''.format(search_title=request.form['search'])).fetchall()
+
+        # results to list
+        results = []
+        # already have
+        already_id = set()
+
+        for cont in exact_query:
+            cleanYear = cont['year']
+            if cleanYear[1] == 'I': cleanYear = cleanYear[4:]
+
+            cleanPoster = pi.get_poster_url(cont['imdbID'])
+
+            results.append({'title': cont['title'],'imdbID': cont['imdbID'],'year':cleanYear,'image_url': cleanPoster})
+            already_id.add(cont['imdbID'])
+
+        for cont in imdb_query:
+            if cont['imdbID'] not in already_id:
+                cleanYear = cont['year']
+                if cleanYear[1] == 'I': 
+                    cleanYear = cleanYear[cleanYear[4:].find("(")+4:]
+
+                cleanPoster = pi.get_poster_url(cont['imdbID'])
+
+                results.append({'title': cont['title'],'imdbID': cont['imdbID'],'year':cleanYear,'image_url': cleanPoster})
+
+        conn.close()
+        return render_template('browse-search.html', results=results, galleries=galleries)
+
+        # return render_template("results.html", records=c.fetchall())
+    return render_template('browse-search.html', galleries=galleries)
 
 # movie/show content page: the contents of this method should honestly be sent to a separate file
 @app.route('/browse/<imdbID>')
@@ -204,6 +249,9 @@ def browse_content(imdbID):
     conn = db.get_db()
     # query for piece of content's row from the table "IMDb_Catalog"
     imdb_query = conn.execute('''SELECT * FROM IMDb_Catalog WHERE imdbID = "{imdbID}"'''.format(imdbID=imdbID)).fetchone()
+    if imdb_query == None:
+        return render_template('browse-content-missing.html')
+
     # query for content in table "Parsed_Catalog"
     parsed_query = conn.execute('''SELECT * FROM Parsed_Catalog WHERE imdbID = "{imdbID}"'''.format(imdbID=imdbID)).fetchone()
 
@@ -212,7 +260,7 @@ def browse_content(imdbID):
 
     year = imdb_query['year']
     if year[1] == 'I':
-        year = year[4:]
+        year = year[year[4:].find("(")+4:]
 
     genres = imdb_query['genres'].split(", ")
     imdb_rating = imdb_query['IMDb_rating']
@@ -251,6 +299,9 @@ def browse_content(imdbID):
     if parsed_query == None:
         # adding to Parsed_Catalog table
         utelly_call = sr.call_Utelly(imdbID, imdb_query['title'])
+
+        if utelly_call == False:
+            return render_template('browse-content-missing.html')
 
         if utelly_call['subscription']['amazon prime'] == True:
             platforms.append("Amazon Prime Video")
@@ -297,6 +348,7 @@ def browse_content(imdbID):
             "director":director,
             "stars":stars}
 
+    conn.close()
     return render_template('browse-content.html', page=page)
 
 ############################### PROFILE SEGMENT ###############################
@@ -599,38 +651,48 @@ def faq():
     # return render_template('one-column-footer-page.html', title="FAQ", page_content=page_content)
     return render_template('footer/footer-faq.html')
 
-# Requires different template from above
-# sitemap page
-@app.route('/sitemap')
-def sitemap():
-    page = "Sitemap page"
-    return page
+# # Requires different template from above
+# # sitemap page
+# @app.route('/sitemap')
+# def sitemap():
+#     page = "Sitemap page"
+#     return page
 
-# Requires different template form above
 # Report bugs page
-@app.route('/bugs')
+@app.route('/bugs', methods=('GET','POST'))
 def bugs():
-    page = "Report bugs page"
-    return page
+    if request.method == 'POST':
+        # bio_body = request.form['bio_body']
+        # prof_edit.update_sql_bio(username, bio_body)
+        conn = db.get_db()
+        conn.execute('''INSERT INTO reported_bugs (logNum, report_name, report_content) VALUES (default, "{name}","{content}")'''.format(name=request.form['name'],content=request.form['report']))
+        return redirect(url_for('bugs_success'))
+
+    return render_template('footer/footer-report.html')
+
+# successfully submitted bug report
+@app.route('/bugs/success')
+def bugs_success():
+    return render_template('footer/footer-report-success.html')
 
 
 ############################### OLD TESTS SEGMENT ###############################
-# TESTING FOOTER
-@app.route('/test')
-def test_page():
-    return render_template('header-footer.html')
+# # TESTING FOOTER
+# @app.route('/test')
+# def test_page():
+#     return render_template('header-footer.html')
 
-@app.route('/test/bootstrap')
-def test_bootstrap():
-    return render_template('bootstrap_template.html')
+# @app.route('/test/bootstrap')
+# def test_bootstrap():
+#     return render_template('bootstrap_template.html')
 
-@app.route('/test/justwatch')
-def test_justwatch():
-    return render_template('test-justwatch.html')
+# @app.route('/test/justwatch')
+# def test_justwatch():
+#     return render_template('test-justwatch.html')
 
-@app.route('/test/profile-gen-kitty')
-def test_profile_gen_kitty():
-    return render_template('profile/profile-generic.html')
+# @app.route('/test/profile-gen-kitty')
+# def test_profile_gen_kitty():
+#     return render_template('profile/profile-generic.html')
 
 
 ###############################
