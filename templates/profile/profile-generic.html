@@ -2,7 +2,7 @@
 <!-- setting up generic file for the profile pages; bring in details through jinja -->
 <html>
     <head>
-        <title>StreamLine Profile</title>
+        <title>StreamLine - Profile</title>
 
         <!-- Style for Header -->
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='our_css/profile_generic_header.css') }}"/>
@@ -14,6 +14,9 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='our_css/profile_generic_footer.css') }}"/>
 
+          <!-- Custom fonts for this template -->
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap-login/fonts/font-awesome-4.7.0/css/font-awesome.min.css') }}">
+
     </head>
     
     <!-- ############################################################################ -->
@@ -23,6 +26,7 @@
         <div class="header">
           <a href="{{ url_for('profile_edit', username=username) }}" class="logo">StreamLine</a>
         </div> 
+    </div>
         <!-- ./Header -->
         
         <!-- ################### -->
@@ -46,7 +50,6 @@
                             </div>
                             <div class="author-card-details">
                                 <h5 class="author-card-name text-lg">{{ profile.fname }} {{ profile.lname }}</h5><span class="author-card-position">Joined {{ profile.join_month }} {{ profile.join_year }}</span>
-                            </div>
                         </div>
                     </div>
                     <div class="wizard">
