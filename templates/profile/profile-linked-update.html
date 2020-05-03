@@ -1,48 +1,46 @@
 {% extends "profile/profile-generic.html" %}
 
 {% block content %}
-    <a href="/profile/linked" style="font-size: 0.8rem">Back</a>
+    <a href="{{ url_for('profile_linked', username=username) }}" style="font-size: 0.8rem">Back</a>
     <h2>Updating Linked Accounts</h2>
     <hr>
     <!-- change opacity of these buttons depending on if have link or not: if false offer to linki -->
     <div style="margin-left:20px;padding-top:25px">
-        <fieldset>
+        <form method="POST">
             <div>
                 {% if linked.amazon_prime == true %}
-                    <input type="checkbox" id="amazon_prime" name="linked" checked>
+                    <input type="checkbox" id="amazon_prime" name="amazon_prime" checked>
                 {% else %}
-                    <input type="checkbox" id="amazon_prime" name="linked">
+                    <input type="checkbox" id="amazon_prime" name="amazon_prime">
                 {% endif %}
                 <label for="amazon_prime">Amazon Prime Video</label><br>
             </div>
             <div>
                 {% if linked.netflix == true %}
-                    <input type="checkbox" id="netflix" name="linked" checked>
+                    <input type="checkbox" id="netflix" name="netflix" checked>
                 {% else %}
-                    <input type="checkbox" id="netflix" name="linked">
+                    <input type="checkbox" id="netflix" name="netflix">
                 {% endif %}
                 <label for="netflix">Netflix</label><br>
             </div>
             <div>
                 {% if linked.hbo == true %}
-                    <input type="checkbox" id="hbo" name="linked" checked>
+                    <input type="checkbox" id="hbo" name="hbo" checked>
                 {% else %}
-                    <input type="checkbox" id="hbo" name="linked">
+                    <input type="checkbox" id="hbo" name="hbo">
                 {% endif %}
                 <label for="hbo">HBO</label><br>
             </div>
             <div>
                 {% if linked.hulu == true %}
-                    <input type="checkbox" id="hulu" name="linked" checked>
+                    <input type="checkbox" id="hulu" name="hulu" checked>
                 {% else %}
-                    <input type="checkbox" id="hulu" name="linked">
+                    <input type="checkbox" id="hulu" name="hulu">
                 {% endif %}
                 <label for="hulu">Hulu</label><br>
             </div>
-        </fieldset>
-        <form action="/profile/linked">
+            <!--action="{{ url_for('profile_linked', username=username) }}"-->
             <input type="submit" name="Submit">
         </form>
-        <p>NOTE: This function is incomplete and does not update the database yet</p>
     </div>
 {% endblock %}

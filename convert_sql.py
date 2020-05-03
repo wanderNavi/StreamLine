@@ -17,47 +17,52 @@ import db_connect as db_conn
 #######################################################################################
 '''
 This method is to convert the recommendation results into sql.
+Updates "Parsed_Watchlist" with information for new watchlist - THIS DOES NOT UPDATE EXISTING WATCHLIST
 
-Input: dictionary parsed_loc, string table_name
+Input:  dictionary parsed_loc: Parsed information on watchlist titles
+        string username: Unique username to each user
+        string watchlist_name: Unique watchlist name within each user
+        string table_name: JESSICA 05.01 - removed due to updates to how database tables work now
 Returns:
 
 Created by Kitty - 04.20
 Modified by Jessica - 04.21: 
     changing "watchlist" from pandas.Dataframe to output of sr.watchlist_parse()
     filling out documentation head
-NOTED: Jessica 04.26 - we need a better way of IDing all these different watchlists - structure for table names
+NOTE: Jessica 04.26 - we need a better way of IDing all these different watchlists - structure for table names
+NOTE: Jessica 05.01 - since all watchlists from all users are now in one table, changing
 '''
-def convert_to_sql(parsed_loc, table_name):
+def convert_to_sql(parsed_loc, username, watchlist_name):
     # Get the parsed watchlist
 #     parsed_loc = sr.watchlist_parse(watchlist)
     
     # Connect to database
     con = db_conn.get_db()
     
-    # Drop the old table if exists
-    drop_table_query = '''DROP table IF EXISTS {table}'''.format(table=table_name)
-    con.execute(drop_table_query)
+    # # REMOVED BY JESSICA 05.01
+    # # Drop the old table if exists
+    # drop_table_query = '''DROP table IF EXISTS {table}'''.format(table=table_name)
+    # con.execute(drop_table_query)
     
-    # Create a new table
-    create_table_query = '''CREATE TABLE IF NOT EXISTS {table} (position int, 
-                         imdbID text,
-                         title varchar(255),
-                         google_rent real,
-                         google_buy real,
-                         itunes_rent real,
-                         itunes_buy real,
-                         amazon_prime bool,
-                         netflix bool,
-                         hbo bool,
-                         hulu bool,
-                         nowhere bool,
-                         PRIMARY KEY(position, title))'''.format(table=table_name)
-    con.execute(create_table_query)
+    # # Create a new table
+    # create_table_query = '''CREATE TABLE IF NOT EXISTS {table} (position int, 
+    #                      imdbID text,
+    #                      title varchar(255),
+    #                      google_rent real,
+    #                      google_buy real,
+    #                      itunes_rent real,
+    #                      itunes_buy real,
+    #                      amazon_prime bool,
+    #                      netflix bool,
+    #                      hbo bool,
+    #                      hulu bool,
+    #                      nowhere bool,
+    #                      PRIMARY KEY(position, title))'''.format(table=table_name)
+    # con.execute(create_table_query)
     
-    # Insert head into the table
-    insert_query = '''INSERT IGNORE INTO {table} (position, imdbID, title, google_rent, google_buy, itunes_rent, itunes_buy,
-                    amazon_prime, netflix, hbo, hulu, nowhere) 
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''.format(table=table_name)
+    # Query set up to insert into Parsed_Watchlist table
+    insert_query = '''INSERT IGNORE INTO Parsed_Watchlist (position, username, watchlist_name, imdbID, title, google_rent, google_buy, google_url, itunes_rent, itunes_buy, itunes_url, amazon_prime, netflix, hbo, hulu, nowhere) 
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
    
     
     # creating set of all items - Jessica
@@ -80,8 +85,10 @@ def convert_to_sql(parsed_loc, table_name):
         # MODIFIED by Jessica to handle cases where no ind option
         google_rent = None
         google_buy = None
+        google_url = ""
         itunes_rent = None
         itunes_buy = None
+        itunes_url = ""
         if title in parsed_loc['individual']['google']['rent']:
             google_rent = parsed_loc['individual']['google']['rent'][title]
         if title in parsed_loc['individual']['google']['buy']:
@@ -99,26 +106,27 @@ def convert_to_sql(parsed_loc, table_name):
         nowhere = True if title in parsed_loc['nowhere'] else False
         
         # execute query
-        query_parameters = (position, imdbID, title, google_rent, google_buy, itunes_rent, itunes_buy, amazon_prime, netflix, hbo, hulu, nowhere)
+        query_parameters = (position, username, watchlist_name, imdbID, title, google_rent, google_buy, google_url, itunes_rent, itunes_buy, itunes_url, amazon_prime, netflix, hbo, hulu, nowhere)
         con.execute(insert_query, query_parameters)
         
     con.close()
     # end of method
     
 '''
-Retrieving stored table information - potential input for recommendation methods
+For user, gets all content from accross watchlists into one aggregate to feed into Recommendations page of user profile
 
-Input: string table_name: already parsed watchlist
+Input:  string username: unique username
+        string table_name: already parsed watchlist - Jessica 04.30 swapped out
 Returns: dictionary parsed_loc
 
 Created by Jessica - 04.21
 '''        
-def retrieve_from_sql(table_name):
+def retrieve_from_sql(username):
     # Connect to database
     con = db_conn.get_db()
     
     # TO DO: proper try catch error handling
-    query = '''SELECT * FROM {table}'''.format(table=table_name)
+    query = '''SELECT DISTINCT imdbID, title, google_rent, google_buy, itunes_rent, itunes_buy, amazon_prime, netflix, hbo, hulu, nowhere FROM Parsed_Watchlist WHERE username="{username}"'''.format(username=username)
     query_ret = con.execute(query)
     
     # Constructing dictionary that will be returned
@@ -138,33 +146,33 @@ def retrieve_from_sql(table_name):
     for item in query_ret:
         # check and fill in individual 
         # GOOGLE
-        if item[3] is not None:
-            parsed_loc['individual']['google']['rent'][item[2]] = item[3]
-        if item[4] is not None:
-            parsed_loc['individual']['google']['buy'][item[2]] = item[4]
+        if item['google_rent'] is not None:
+            parsed_loc['individual']['google']['rent'][item['title']] = item['google_rent']
+        if item['google_buy'] is not None:
+            parsed_loc['individual']['google']['buy'][item['title']] = item['google_buy']
         # ITUNES
-        if item[5] is not None:
-            parsed_loc['individual']['itunes']['rent'][item[2]] = item[5]
-        if item[6] is not None:
-            parsed_loc['individual']['itunes']['buy'][item[2]] = item[6]
+        if item['itunes_rent'] is not None:
+            parsed_loc['individual']['itunes']['rent'][item['title']] = item['itunes_rent']
+        if item['itunes_buy'] is not None:
+            parsed_loc['individual']['itunes']['buy'][item['title']] = item['itunes_buy']
         
         # check and fill in subscriptions
         # AMAZON
-        if item[7] == 1:
-            parsed_loc['subscription']['amazon prime'].append({'title':item[2],'imdbID':item[1]})
+        if item['amazon_prime'] == 1:
+            parsed_loc['subscription']['amazon prime'].append({'title':item['title'],'imdbID':item['imdbID']})
         # NETFLIX
-        if item[8] == 1:
-            parsed_loc['subscription']['netflix'].append({'title':item[2],'imdbID':item[1]})
+        if item['netflix'] == 1:
+            parsed_loc['subscription']['netflix'].append({'title':item['title'],'imdbID':item['imdbID']})
         # HBO
-        if item[9] == 1:
-            parsed_loc['subscription']['hbo'].append({'title':item[2],'imdbID':item[1]})
+        if item['hbo'] == 1:
+            parsed_loc['subscription']['hbo'].append({'title':item['title'],'imdbID':item['imdbID']})
         # HULU
-        if item[10] == 1:
-            parsed_loc['subscription']['hulu'].append({'title':item[2],'imdbID':item[1]})
+        if item['hulu'] == 1:
+            parsed_loc['subscription']['hulu'].append({'title':item['title'],'imdbID':item['imdbID']})
         
         # check if nowhere
-        if item[11] == 1:
-            parsed_loc['nowhere'].append({'title':item[2],'imdbID':item[1]})
+        if item['nowhere'] == 1:
+            parsed_loc['nowhere'].append({'title':item['title'],'imdbID':item['imdbID']})
            
     con.close()
     return parsed_loc

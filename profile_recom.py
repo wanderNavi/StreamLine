@@ -73,34 +73,19 @@ def compile_buy(individual):
 '''
 Main method of file creating final output heading towards webserver
 
-Input: string template - name of html template file - Jessica 04.27 remove
-       string table_name - LINK TO USER IDENTIFICATION
+Input: string username: unique to each user
+       string template - name of html template file - Jessica 04.27 remove
+       string table_name - LINK TO USER IDENTIFICATION - Jessica 04.30
 Returns: dictionary template_inputs: what would be needed to render template
     renders html template - Jessica 04.27 remove
 
 Created by Jessica 04.21
 '''
-def main(table_name):
-    # VARIABLES TO PASS THROUGH TEMPLATE
-    # USER CUSTOMIZED SIDEBAR:
-        # User name
-        # Join date?
-        # User image
-        # Sidebar head image   
-        # FOR PROTOTYPE, USING DEFAULTS IN TEMPLATE, CHANGE IN FULL PRODUCT
-    # RECOMMENDATION CONTENT
-        # title of page: "Recommendation" 
-        # Streaming service recommendation
-            # Potentially a block of up to ten-fifteen movie 
-            # posters of what can watch on site from watchlist
-        # List of stuff found individually 
-            # Some sort of button to toggle between rent and buy
-            # Some sort of drop-down menu?
-            # Long scroll of what content from where?
-    
+def main(username):    
     # call content from sql
-    parsed_loc = cs.retrieve_from_sql(table_name)
-    # print(parsed_loc)
+    # CHANGE TO USERNAME
+    parsed_loc = cs.retrieve_from_sql(username)
+    
     # generate recommendations
     recommends = sr.platform_recommend_SQL(parsed_loc)
     # print(recommends)
@@ -135,8 +120,3 @@ def main(table_name):
     # constructing dictionary to return
     template_inputs = {'service_recc':service_recc, 'indiv_rents':indiv_rents, 'indiv_buys':indiv_buys, 'plat_content':plat_examples}
     return template_inputs
-    # return render_template(template,
-    #                        service_recc=service_recc,
-    #                        indiv_rents=indiv_rents,
-    #                        indiv_buys=indiv_buys,
-    #                        plat_content=plat_examples)
