@@ -2,7 +2,7 @@
 <!-- setting up generic file for the profile pages; bring in details through jinja -->
 <html>
     <head>
-        <title>StreamLine Profile</title>
+        <title>StreamLine - Profile</title>
 
         <!-- Style for Header -->
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='our_css/profile_generic_header.css') }}"/>
@@ -14,15 +14,22 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='our_css/profile_generic_footer.css') }}"/>
 
+          <!-- Custom fonts for this template -->
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap-login/fonts/font-awesome-4.7.0/css/font-awesome.min.css') }}">
+
     </head>
     
     <!-- ############################################################################ -->
     
     <body>
         <!-- Header -->
-        <div class="header">
+    <nav class="header">
+        <div class="container">
           <a href="/profile" class="logo">StreamLine</a>
+          <a class="logo" href="about">About</a>
+          <a class="logo" href="contact">Contact Us</a>
         </div> 
+    </div>
         <!-- ./Header -->
         
         <!-- ################### -->
@@ -45,7 +52,7 @@
                             <div class="author-card-avatar"><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Daniel Adams">
                             </div>
                             <div class="author-card-details">
-                                <h5 class="author-card-name text-lg">Daniel Adams</h5><span class="author-card-position">Joined April 2020</span>
+                                <h5 class="author-card-name text-lg">{fname} {lname}</h5><span class="author-card-position">Joined {join_date}</span>
                             </div>
                         </div>
                     </div>

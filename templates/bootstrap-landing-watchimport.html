@@ -11,7 +11,7 @@
   <title>StreamLine - Get Personalized Streaming Service Recommendations!</title>
 
   <!-- Bootstrap core CSS -->
-  <link href="{{ url_for('static', filename='bootstrap-landing/vendor/bootstrap/css/bootstrap.css') }}" rel="stylesheet" media="all">
+  <link href="{{ url_for('static', filename='bootstrap-landing/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" media="all">
 
   <!-- Custom fonts for this template -->
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap-login/fonts/font-awesome-4.7.0/css/font-awesome.min.css') }}">
@@ -23,7 +23,7 @@
   <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">-->
 
   <!-- Custom styles for this template -->
-  <link href="{{ url_for('static', filename='bootstrap-landing/css/landing-page.css') }}" rel="stylesheet" media="all">
+  <link href="{{ url_for('static', filename='bootstrap-landing/css/landing-page.min.css') }}" rel="stylesheet" media="all">
 
 </head>
 
@@ -34,7 +34,10 @@
     <div class="container">
       <a class="navbar-brand" href="/">StreamLine</a>
       <a class="navbar-brand" href="about">About</a>
-      <a class="navbar-brand" href="contact">Contact Us</a>
+      <li class="list-inline-item">&sdot;</li>
+      <a class="navbar-brand" href="contact">Contact</a>
+      <li class="list-inline-item">&sdot;</li>
+      <a class="navbar-brand" href="sitemap">Sitemap</a>
     </div>
   </nav>
 
@@ -47,11 +50,9 @@
           <h1 class="mb-5">Find out which streaming service is best for you!</h1>
         </div>
         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto" vertical-align="middle">
-          <a href='/login'>
-                <form>
+                <form action='login'>
                     <input type='button' class="btn btn-block btn-lg btn-primary" value="Log In or Sign Up" name="button">
-                </form>
-          </a>
+                </form> 
         </div>
       </div>
     </div>
