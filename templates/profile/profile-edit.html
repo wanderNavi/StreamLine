@@ -11,7 +11,7 @@
 			<p>{{ profile['bio'] }}</p>
 			<!-- <p>{{ profile['username'] }}</p> -->
 
-			<a class="action" href="{{ url_for('profile_edit_bio') }}">Edit</a> 
+			<a class="action" href="{{ url_for('profile_edit_bio', username=username) }}">Edit</a> 
 			<br>
 		</article>
 		<hr>

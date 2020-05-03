@@ -1,11 +1,33 @@
 {% extends "profile/profile-generic.html" %}
 
 {% block content %}
-    <a href="/profile/history" style="font-size: 0.8rem">Back</a>
+    <a href="{{ url_for('profile_history', username=username) }}" style="font-size: 0.8rem">Back</a>
     <h2>Add Watchlist</h2>
     <hr>
     <div style="margin-left:20px; margin-right:20px; padding-top:25px" class="list-group list-group-flush">
-        <p>Will be adding ability to construct watchlist through search bars</p>
-        <p>Will be adding form link for importing watchlist</p> 
+    	{% with message = get_flashed_messages() %}
+    		{% if messages %}
+    			<ul class="flashes">
+    				{% for message in messages %}
+    					<li>{{ message }}</li>
+    				{% endfor %}
+    			</ul>
+    		{% endif %}
+    	{% endwith %}
+    	<form method="post" enctype="multipart/form-data">
+	    	<h4>Title Of Your Watchlist</h4>
+	    	<input type="text" name="title">
+	    	<br>
+	    	<hr>
+	    	<h4>Import Your Watchlist</h4>
+	    	<span>Download your lists from your IMDb account and upload it here. <a href="{{ url_for('tutorial_upload_imdb') }}"><small>How do I do this?</small></a></span>
+	    		<input type="file" name="file">
+	    		<input type="submit" value="Upload">
+	    	<br>
+	    	<hr>
+	    	<h4>Or Build A Watchlist</h4>
+	    	<!-- Grab search bar from browsing content -->
+	    	<!-- Ugh, javascripts. -->
+    	</form>
     </div>
 {% endblock %}
