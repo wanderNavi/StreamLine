@@ -1,7 +1,7 @@
 {% extends "profile/profile-generic.html" %}
 
 {% block content %}
-    <h2>History &amp Watchlists</h2>
+    <h2><!--History &amp -->Watchlists</h2>
     <hr>
     <div style="margin-left:20px;padding-top:25px">
         <div>
@@ -31,21 +31,21 @@
         </div>
         <br>
         <hr>
-        <div>
-            <h4>Your recent browsing history:</h4>
+        <!-- <div> -->
+            <!-- <h4>Your recent browsing history:</h4> -->
             <!-- Set up proper css later -->
-            <div style="display: flex">
+            <!-- <div style="display: flex"> -->
                 <!-- box of items in watchlist in list -->
-                {% for content in page.recents %}
+                <!-- {% for content in page.recents %} -->
                     <!-- style below taken from w3school -->
-                    <div style="margin: 5px; border: 1px solid #ccc; width: 150px">
+                    <!-- <div style="margin: 5px; border: 1px solid #ccc; width: 150px"> -->
                         <!-- Want poster image - need to call up tmdb -->
-                        <img src="{{ content.url }}" style="width: 100%; height: auto">
+                        <!-- <img src="{{ content.url }}" style="width: 100%; height: auto"> -->
                         <!-- Eventually into links toward movie info pages -->
-                        <p style="padding: 5px; text-align: center">{{ content.title }}</p>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>       
+                        <!-- <p style="padding: 5px; text-align: center">{{ content.title }}</p> -->
+                    <!-- </div> -->
+                <!-- {% endfor %} -->
+            <!-- </div> -->
+        <!-- </div>        -->
     </div>
 {% endblock %}
