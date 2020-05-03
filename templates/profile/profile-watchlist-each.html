@@ -6,7 +6,7 @@
     <hr>
     <div style="margin-left:20px; margin-right:20px; padding-top:25px" class="list-group list-group-flush">
         <!-- Add ability to filter later -->
-        <p>WILL BE ADDING PAGINATION ABILITY ON WATCHLISTS</p>
+        <!-- <p>WILL BE ADDING PAGINATION ABILITY ON WATCHLISTS</p> -->
         {% for card in watchlist %}
             <div class="list-group-item" style="height: 200px"> <!-- This is going to have that blue bar at the left but alright for now I guess -->
                 <!-- three columns: far-left - index number; left - poster; right - information -->
@@ -16,8 +16,6 @@
                 <div style="margin: 5px; border: 1px solid #ccc; float: left; height: 125px; width: 100px">
                     <!-- Left box with poster -->
                     <img src="{{ card.image_url }}" style="width: 100%; height: auto">
-                    <!-- Should figure out way to have index number along with card -->
-                    <!-- <p style="vertical-align: center; text-align: center">Will have poster image here</p> -->
                 </div>
                 <div style="float: left; margin-top: 10px; margin-bottom: 10px; width: 75%">
                     <p style="font-size: 1.2rem; margin-bottom: -.2rem"><strong>{{ card.title }}</strong>  |  ({{ card.year }})</p>
