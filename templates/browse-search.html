@@ -96,47 +96,51 @@
 		  opacity: 0.6;
 		}
 
-/*		.active,
+		.active,
 		.demo:hover {
 		  opacity: 1;
-		}*/
+		}
 
-		/* TAKEN FROM TUTORIAL REPUBLIC AND ADAPTED: https://www.tutorialrepublic.com/php-tutorial/php-mysql-ajax-live-search.php */
-		/* Formatting search box */
-/*	    .search-box{
-	        width: 60%;
-	        position: relative;
-	        display: inline-block;
-	        font-size: 1.5rem;
-	    }
-	    .search-box input[type="text"]{
-	        height: 32px;
-	        padding: 5px 10px;
-	        border: 1px solid #CCCCCC;
-	        font-size: 14px;
-	    }*/
-	    /*.result{
-	        position: absolute;        
-	        z-index: 999;
-	        top: 100%;
-	        left: 0;
-	    }*/
-/*	    .search-box input[type="text"], .result{
-	        width: 100%;
-	        box-sizing: border-box;
-	    }*/
-	    /* Formatting result items */
-	    /*.result p{
-	        margin: 0;
-	        padding: 7px 10px;
-	        border: 1px solid #CCCCCC;
-	        border-top: none;
-	        cursor: pointer;
-	    }
-	    .result p:hover{
-	        background: #f2f2f2;
-	    }*/
+
+		/*Accordian*/
+		.accordion {
+		  background-color: #fff;
+		  color: #444;
+		  cursor: pointer;
+		  padding: 0.75rem 1.25rem;
+		  width: 100%;
+		  border: 0;
+		  /*border: 1px solid rgba(0, 0, 0, 0.125);*/
+		  margin-bottom: -1px;
+		  text-align: left;
+		  outline: none;
+		  font-size: 15px;
+		  transition: 0.4s;
+		}
+
+		/*.active, .accordion:hover {
+		  background-color: #ccc;
+		}*/
+		/*.accordion::before {
+		    display: block;
+		    position: absolute;
+		    top: 0;
+		    left: 0;
+		    width: 3px;
+		    height: 100%;
+		    background-color: #007bff;
+		    content: '';
+		}*/
+		.panel {
+		  padding: 0 18px;
+		  background-color: white;
+		  max-height: 0;
+		  overflow: hidden;
+		  transition: max-height 0.2s ease-out;
+		}
+
 	</style>
+
 
 	<!-- SEARCH BAR -->
 	<div style="postition: absolute; margin-right: -50%; width: 100%;">
@@ -146,150 +150,1650 @@
 				<span><input type="submit" name="search_submit"></span>
 			</form>
 		</div>
-		<div style="width: 40rem;">
+		<!-- <div class="list-group list-group-flush" style="width: 40rem;"> -->
 			{% for ret in results %}
-				<a href="{{ url_for('browse_content', imdbID=ret.imdbID) }}" style="display: flex;">
-					<div style="width: 20%;padding-left: 2%"></div>
-					<div style="width: 80%; display: flex; align-items: center; border: 1px solid #000;">
-						<img src="{{ ret.image_url }}" style="width: 75px; height: auto">
-						<div>
-							<p><strong>{{ ret.title }}</strong></p>
-							<p>{{ret.year}}</p>
-						</div>
-					</div>
-					<div style="width: 20%;padding-left: 2%"></div>
-				</a>
+				<!-- <div class="list-group-item"> -->
+					<!-- <div class="d-flex justify-content-between align-items-center"> -->
+						<a href="{{ url_for('browse_content', imdbID=ret.imdbID) }}" style="display: flex;">
+							<div style="width: 20%;padding-left: 2%"></div>
+							<div style="width: 80%; display: flex; align-items: center; border: 1px solid #000;">
+								<img src="{{ ret.image_url }}" style="width: 75px; height: auto">
+								<div>
+									<p><strong>{{ ret.title }}</strong></p>
+									<p>{{ret.year}}</p>
+								</div>
+							</div>
+							<div style="width: 20%;padding-left: 2%"></div>
+						</a>
+					<!-- </div> -->
+				<!-- </div> -->
 			{% endfor %}
-		</div>
+		<!-- </div> -->
 	</div>
 
 	<br>
 	<hr>
 
-	<!-- What layer of carousel in -->
-	<!-- {% set carousel = 1 %} -->
+	<!-- Image galleries for the different genres -->
+	<!-- JAVASCRIPT AND JINJA REALLY DON'T GET ALONG -->
 
-	{% for key, value in galleries.items() %}
-		<!-- Image galleries for the different genres -->
-		<p style="font-size: 1.5rem; margin-bottom: -.2rem"><strong>{{ value.page }}</strong></p>
-		<div class="container">
-			{% for card in value.cards %}
-			<p>{{ key }}</p>
-			<div class="mySlides" id="{{ key }}">
-				<!-- <p>{{ card }}</p> -->
-			    <div class="numbertext">{{ loop.index }} / 6</div>
-			    <div style="display: flex;">
-			    	<!-- Poster Image -->
-			    	<img src="{{ card.image_url }}" style="width: auto; height: 65vh; object-fit: cover;">
-			    	<!-- background image -->
-			    	<div style="background-image: url({{ card.image_url }}); 
-			    				background-repeat: no-repeat; 
-			    				background-size: cover; 
-			    				background-position: center center; 
-			    				width: auto; 
-			    				height: 65vh; 
-			    				object-fit: cover; 
-			    				opacity: 0.8; ">
-			    		<!-- Card content and black overlay -->
-			    		<div style="background-color: 
-			    					rgba(0, 0, 0, 0.75); 
-			    					width: auto; 
-			    					height: 65vh; 
-			    					object-fit: cover; 
-			    					color: white; 
-			    					display: flex; 
-			    					flex-direction: column; 
-			    					justify-content: center; /*padding: 30% 7%;*/">
+	<div class="list-group list-group-flush">
+		<!-- COMEDY -->
+		<div class="list-group-item">
+			<button class="accordion" style="font-size: 1.5rem; margin-bottom: -.2rem"><strong>{{ galleries.comedy.page }}</strong></button>
+			<div class="container panel">
+				{% for card in galleries.comedy.cards %}
+				<!-- <p>{{ key }}</p> -->
+				<div class="mySlides comedy">
+					<!-- <p>{{ card }}</p> -->
+				    <div class="numbertext">{{ loop.index }} / 6</div>
+				    <div style="display: flex;">
+				    	<!-- Poster Image -->
+				    	<img src="{{ card.image_url }}" style="width: auto; height: 65vh; object-fit: cover;">
+				    	<!-- background image -->
+				    	<div style="background-image: url({{ card.image_url }}); 
+				    				background-repeat: no-repeat; 
+				    				background-size: cover; 
+				    				background-position: center center; 
+				    				width: auto; 
+				    				height: 65vh; 
+				    				object-fit: cover; 
+				    				opacity: 0.8; ">
+				    		<!-- Card content and black overlay -->
+				    		<div style="background-color: 
+				    					rgba(0, 0, 0, 0.75); 
+				    					width: auto; 
+				    					height: 65vh; 
+				    					object-fit: cover; 
+				    					color: white; 
+				    					display: flex; 
+				    					flex-direction: column; 
+				    					justify-content: center; /*padding: 30% 7%;*/">
 
-			    			<!-- Synopsis -->
-				    		<div style="margin: 0 10%; width: 80%, height: 100%; padding-top: 10%; /*flex-basis: 40%*/">{{ card.synop }}</div>
-
-				    		<!-- Directors -->
-				    		{% if card.director is not none %}
+				    			<!-- Title Link -->
+				    			<div style="margin: 0 10%; width: 80%, height: 100%; padding-top: 10%;"><h4><a href="{{ url_for('browse_content', imdbID=card.imdbID) }}" style="color: white;">{{ card.title }}</a></h4></div>
 				    			<br>
-				    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Directed by: {{ card.director }}</div>
-				    		{% else %}
-				    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
-				    		{% endif %}
 
-				    		<!-- Stars -->
-				    		{% if card.star is not none %}
-				    			<br>
-				    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Starring: {{ card.star }}</div>
-				    		{% else %}
-				    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
-				    		{% endif %}
-				    		<div style="height: auto; flex: 1;"></div>
-			    		</div> <!-- end card content -->
-			    	</div> <!-- end right side content -->
-			    </div>
-			    <!-- <img src="img_woods_wide.jpg" style="width:100%"> -->
-		  	</div>
-		  	{% endfor %}
-		    
-			<a class="prev" onclick="plusSlides(-1)">❮</a>
-			<a class="next" onclick="plusSlides(1)">❯</a>
+				    			<!-- Synopsis -->
+					    		<div style="margin: 0 10%; width: 80%, height: 100%;">{{ card.synop }}</div>
 
-			<div class="caption-container">
-			    <p id="caption"></p>
-			</div>
+					    		{% if card.type == "movie" %}
+					    		<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Directed by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+						    	{% elif card.type == "tv_show" %}
+						    	<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Created by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+					    		{% endif %}
 
-			<div class="row" style="padding: 0 2%">
-			    <div class="column">
-			    	<img class="demo cursor" src="{{ value.cards[0].image_url }}" style="width:99%" onclick="currentSlide(0)" alt="{{ value.cards[0].title }}">
-			    </div>
-			    <div class="column">
-			    	<img class="demo cursor" src="{{ value.cards[1].image_url }}" style="width:99%" onclick="currentSlide(1)" alt="{{ value.cards[1].title }}">
-			    </div>
-			    <div class="column">
-			    	<img class="demo cursor" src="{{ value.cards[2].image_url }}" style="width:99%" onclick="currentSlide(2)" alt="{{ value.cards[2].title }}">
-			    </div>
-			    <div class="column">
-			    	<img class="demo cursor" src="{{ value.cards[3].image_url }}" style="width:99%" onclick="currentSlide(3)" alt="{{ value.cards[3].title }}">
-			    </div>
-			    <div class="column">
-			    	<img class="demo cursor" src="{{ value.cards[4].image_url }}" style="width:99%" onclick="currentSlide(4)" alt="{{ value.cards[4].title }}">
-			    </div>    
-			    <div class="column">
-			    	<img class="demo cursor" src="{{ value.cards[5].image_url }}" style="width:99%" onclick="currentSlide(5)" alt="{{ value.cards[5].title }}">
-			    </div>
+					    		<!-- Stars -->
+					    		{% if card.star is not none %}
+					    			<br>
+					    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Starring: {{ card.star }}</div>
+					    		{% else %}
+					    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+					    		{% endif %}
+					    		<div style="height: auto; flex: 1;"></div>
+				    		</div> <!-- end card content -->
+				    	</div> <!-- end right side content -->
+				    </div>
+				    <!-- <img src="img_woods_wide.jpg" style="width:100%"> -->
+			  	</div>
+			  	{% endfor %}
+			    
+				<a class="prev" onclick="plusSlidesComedy(-1)">❮</a>
+				<a class="next" onclick="plusSlidesComedy(1)">❯</a>
+
+				<div class="caption-container">
+				    <p id="captionComedy"></p>
+				</div>
+
+				<div class="row" style="padding: 0 2%">
+				    <div class="column">
+				    	<img class="demo cursor row_comedy" src="{{ galleries.comedy.cards[0].image_url }}" style="width:99%" onclick="currentSlideComedy(0)" alt="{{ galleries.comedy.cards[0].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_comedy" src="{{ galleries.comedy.cards[1].image_url }}" style="width:99%" onclick="currentSlideComedy(1)" alt="{{ galleries.comedy.cards[1].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_comedy" src="{{ galleries.comedy.cards[2].image_url }}" style="width:99%" onclick="currentSlideComedy(2)" alt="{{ galleries.comedy.cards[2].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_comedy" src="{{ galleries.comedy.cards[3].image_url }}" style="width:99%" onclick="currentSlideComedy(3)" alt="{{ galleries.comedy.cards[3].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_comedy" src="{{ galleries.comedy.cards[4].image_url }}" style="width:99%" onclick="currentSlideComedy(4)" alt="{{ galleries.comedy.cards[4].title }}">
+				    </div>    
+				    <div class="column">
+				    	<img class="demo cursor row_comedy" src="{{ galleries.comedy.cards[5].image_url }}" style="width:99%" onclick="currentSlideComedy(5)" alt="{{ galleries.comedy.cards[5].title }}">
+				    </div>
+				</div>
 			</div>
 		</div>
-	{% endfor %}
 
+		<!-- SCI-FI -->
+		<div class="list-group-item">
+			<button class="accordion" style="font-size: 1.5rem; margin-bottom: -.2rem"><strong>{{ galleries.scifi.page }}</strong></button>
+			<div class="container panel">
+				{% for card in galleries.scifi.cards %}
+				<!-- <p>{{ key }}</p> -->
+				<div class="mySlides scifi">
+					<!-- <p>{{ card }}</p> -->
+				    <div class="numbertext">{{ loop.index }} / 6</div>
+				    <div style="display: flex;">
+				    	<!-- Poster Image -->
+				    	<img src="{{ card.image_url }}" style="width: auto; height: 65vh; object-fit: cover;">
+				    	<!-- background image -->
+				    	<div style="background-image: url({{ card.image_url }}); 
+				    				background-repeat: no-repeat; 
+				    				background-size: cover; 
+				    				background-position: center center; 
+				    				width: auto; 
+				    				height: 65vh; 
+				    				object-fit: cover; 
+				    				opacity: 0.8; ">
+				    		<!-- Card content and black overlay -->
+				    		<div style="background-color: 
+				    					rgba(0, 0, 0, 0.75); 
+				    					width: auto; 
+				    					height: 65vh; 
+				    					object-fit: cover; 
+				    					color: white; 
+				    					display: flex; 
+				    					flex-direction: column; 
+				    					justify-content: center; /*padding: 30% 7%;*/">
+
+				    			<!-- Title Link -->
+				    			<div style="margin: 0 10%; width: 80%, height: 100%; padding-top: 10%;"><h4><a href="{{ url_for('browse_content', imdbID=card.imdbID) }}" style="color: white;">{{ card.title }}</a></h4></div>
+				    			<br>
+
+				    			<!-- Synopsis -->
+					    		<div style="margin: 0 10%; width: 80%, height: 100%;">{{ card.synop }}</div>
+
+					    		{% if card.type == "movie" %}
+					    		<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Directed by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+						    	{% elif card.type == "tv_show" %}
+						    	<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Created by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+					    		{% endif %}
+
+					    		<!-- Stars -->
+					    		{% if card.star is not none %}
+					    			<br>
+					    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Starring: {{ card.star }}</div>
+					    		{% else %}
+					    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+					    		{% endif %}
+					    		<div style="height: auto; flex: 1;"></div>
+				    		</div> <!-- end card content -->
+				    	</div> <!-- end right side content -->
+				    </div>
+				    <!-- <img src="img_woods_wide.jpg" style="width:100%"> -->
+			  	</div>
+			  	{% endfor %}
+			    
+				<a class="prev" onclick="plusSlidesSciFi(-1)">❮</a>
+				<a class="next" onclick="plusSlidesSciFi(1)">❯</a>
+
+				<div class="caption-container">
+				    <p id="captionSciFi"></p>
+				</div>
+
+				<div class="row" style="padding: 0 2%">
+				    <div class="column">
+				    	<img class="demo cursor row_scifi" src="{{ galleries.scifi.cards[0].image_url }}" style="width:99%" onclick="currentSlideSciFi(0)" alt="{{ galleries.scifi.cards[0].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_scifi" src="{{ galleries.scifi.cards[1].image_url }}" style="width:99%" onclick="currentSlideSciFi(1)" alt="{{ galleries.scifi.cards[1].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_scifi" src="{{ galleries.scifi.cards[2].image_url }}" style="width:99%" onclick="currentSlideSciFi(2)" alt="{{ galleries.scifi.cards[2].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_scifi" src="{{ galleries.scifi.cards[3].image_url }}" style="width:99%" onclick="currentSlideSciFi(3)" alt="{{ galleries.scifi.cards[3].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_scifi" src="{{ galleries.scifi.cards[4].image_url }}" style="width:99%" onclick="currentSlideSciFi(4)" alt="{{ galleries.scifi.cards[4].title }}">
+				    </div>    
+				    <div class="column">
+				    	<img class="demo cursor row_scifi" src="{{ galleries.scifi.cards[5].image_url }}" style="width:99%" onclick="currentSlideSciFi(5)" alt="{{ galleries.scifi.cards[5].title }}">
+				    </div>
+				</div>
+			</div>
+		</div>
+
+		<!-- HORROR -->
+		<div class="list-group-item">
+			<button class="accordion" style="font-size: 1.5rem; margin-bottom: -.2rem"><strong>{{ galleries.horror.page }}</strong></button>
+			<div class="container panel">
+				{% for card in galleries.horror.cards %}
+				<!-- <p>{{ key }}</p> -->
+				<div class="mySlides horror">
+					<!-- <p>{{ card }}</p> -->
+				    <div class="numbertext">{{ loop.index }} / 6</div>
+				    <div style="display: flex;">
+				    	<!-- Poster Image -->
+				    	<img src="{{ card.image_url }}" style="width: auto; height: 65vh; object-fit: cover;">
+				    	<!-- background image -->
+				    	<div style="background-image: url({{ card.image_url }}); 
+				    				background-repeat: no-repeat; 
+				    				background-size: cover; 
+				    				background-position: center center; 
+				    				width: auto; 
+				    				height: 65vh; 
+				    				object-fit: cover; 
+				    				opacity: 0.8; ">
+				    		<!-- Card content and black overlay -->
+				    		<div style="background-color: 
+				    					rgba(0, 0, 0, 0.75); 
+				    					width: auto; 
+				    					height: 65vh; 
+				    					object-fit: cover; 
+				    					color: white; 
+				    					display: flex; 
+				    					flex-direction: column; 
+				    					justify-content: center; /*padding: 30% 7%;*/">
+
+				    			<!-- Title Link -->
+				    			<div style="margin: 0 10%; width: 80%, height: 100%; padding-top: 10%;"><h4><a href="{{ url_for('browse_content', imdbID=card.imdbID) }}" style="color: white;">{{ card.title }}</a></h4></div>
+				    			<br>
+
+				    			<!-- Synopsis -->
+					    		<div style="margin: 0 10%; width: 80%, height: 100%;">{{ card.synop }}</div>
+
+					    		{% if card.type == "movie" %}
+					    		<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Directed by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+						    	{% elif card.type == "tv_show" %}
+						    	<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Created by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+					    		{% endif %}
+
+					    		<!-- Stars -->
+					    		{% if card.star is not none %}
+					    			<br>
+					    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Starring: {{ card.star }}</div>
+					    		{% else %}
+					    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+					    		{% endif %}
+					    		<div style="height: auto; flex: 1;"></div>
+				    		</div> <!-- end card content -->
+				    	</div> <!-- end right side content -->
+				    </div>
+				    <!-- <img src="img_woods_wide.jpg" style="width:100%"> -->
+			  	</div>
+			  	{% endfor %}
+			    
+				<a class="prev" onclick="plusSlidesHorror(-1)">❮</a>
+				<a class="next" onclick="plusSlidesHorror(1)">❯</a>
+
+				<div class="caption-container">
+				    <p id="captionHorror"></p>
+				</div>
+
+				<div class="row" style="padding: 0 2%">
+				    <div class="column">
+				    	<img class="demo cursor row_horror" src="{{ galleries.horror.cards[0].image_url }}" style="width:99%" onclick="currentSlideHorror(0)" alt="{{ galleries.horror.cards[0].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_horror" src="{{ galleries.horror.cards[1].image_url }}" style="width:99%" onclick="currentSlideHorror(1)" alt="{{ galleries.horror.cards[1].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_horror" src="{{ galleries.horror.cards[2].image_url }}" style="width:99%" onclick="currentSlideHorror(2)" alt="{{ galleries.horror.cards[2].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_horror" src="{{ galleries.horror.cards[3].image_url }}" style="width:99%" onclick="currentSlideHorror(3)" alt="{{ galleries.horror.cards[3].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_horror" src="{{ galleries.horror.cards[4].image_url }}" style="width:99%" onclick="currentSlideHorror(4)" alt="{{ galleries.horror.cards[4].title }}">
+				    </div>    
+				    <div class="column">
+				    	<img class="demo cursor row_horror" src="{{ galleries.horror.cards[5].image_url }}" style="width:99%" onclick="currentSlideHorror(5)" alt="{{ galleries.horror.cards[5].title }}">
+				    </div>
+				</div>
+			</div>
+		</div>
+
+		<!-- ROMANCE -->
+		<div class="list-group-item">
+			<button class="accordion" style="font-size: 1.5rem; margin-bottom: -.2rem"><strong>{{ galleries.romance.page }}</strong></button>
+			<div class="container panel">
+				{% for card in galleries.romance.cards %}
+				<!-- <p>{{ key }}</p> -->
+				<div class="mySlides romance">
+					<!-- <p>{{ card }}</p> -->
+				    <div class="numbertext">{{ loop.index }} / 6</div>
+				    <div style="display: flex;">
+				    	<!-- Poster Image -->
+				    	<img src="{{ card.image_url }}" style="width: auto; height: 65vh; object-fit: cover;">
+				    	<!-- background image -->
+				    	<div style="background-image: url({{ card.image_url }}); 
+				    				background-repeat: no-repeat; 
+				    				background-size: cover; 
+				    				background-position: center center; 
+				    				width: auto; 
+				    				height: 65vh; 
+				    				object-fit: cover; 
+				    				opacity: 0.8; ">
+				    		<!-- Card content and black overlay -->
+				    		<div style="background-color: 
+				    					rgba(0, 0, 0, 0.75); 
+				    					width: auto; 
+				    					height: 65vh; 
+				    					object-fit: cover; 
+				    					color: white; 
+				    					display: flex; 
+				    					flex-direction: column; 
+				    					justify-content: center; /*padding: 30% 7%;*/">
+
+				    			<!-- Title Link -->
+				    			<div style="margin: 0 10%; width: 80%, height: 100%; padding-top: 10%;"><h4><a href="{{ url_for('browse_content', imdbID=card.imdbID) }}" style="color: white;">{{ card.title }}</a></h4></div>
+				    			<br>
+
+				    			<!-- Synopsis -->
+					    		<div style="margin: 0 10%; width: 80%, height: 100%;">{{ card.synop }}</div>
+
+					    		{% if card.type == "movie" %}
+					    		<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Directed by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+						    	{% elif card.type == "tv_show" %}
+						    	<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Created by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+					    		{% endif %}
+
+					    		<!-- Stars -->
+					    		{% if card.star is not none %}
+					    			<br>
+					    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Starring: {{ card.star }}</div>
+					    		{% else %}
+					    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+					    		{% endif %}
+					    		<div style="height: auto; flex: 1;"></div>
+				    		</div> <!-- end card content -->
+				    	</div> <!-- end right side content -->
+				    </div>
+				    <!-- <img src="img_woods_wide.jpg" style="width:100%"> -->
+			  	</div>
+			  	{% endfor %}
+			    
+				<a class="prev" onclick="plusSlidesRomance(-1)">❮</a>
+				<a class="next" onclick="plusSlidesRomance(1)">❯</a>
+
+				<div class="caption-container">
+				    <p id="captionRomance"></p>
+				</div>
+
+				<div class="row" style="padding: 0 2%">
+				    <div class="column">
+				    	<img class="demo cursor row_romance" src="{{ galleries.romance.cards[0].image_url }}" style="width:99%" onclick="currentSlideRomance(0)" alt="{{ galleries.romance.cards[0].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_romance" src="{{ galleries.romance.cards[1].image_url }}" style="width:99%" onclick="currentSlideRomance(1)" alt="{{ galleries.romance.cards[1].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_romance" src="{{ galleries.romance.cards[2].image_url }}" style="width:99%" onclick="currentSlideRomance(2)" alt="{{ galleries.romance.cards[2].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_romance" src="{{ galleries.romance.cards[3].image_url }}" style="width:99%" onclick="currentSlideRomance(3)" alt="{{ galleries.romance.cards[3].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_romance" src="{{ galleries.romance.cards[4].image_url }}" style="width:99%" onclick="currentSlideRomance(4)" alt="{{ galleries.romance.cards[4].title }}">
+				    </div>    
+				    <div class="column">
+				    	<img class="demo cursor row_romance" src="{{ galleries.romance.cards[5].image_url }}" style="width:99%" onclick="currentSlideRomance(5)" alt="{{ galleries.romance.cards[5].title }}">
+				    </div>
+				</div>
+			</div>
+		</div>
+
+		<!-- ACTION -->
+		<div class="list-group-item">
+			<button class="accordion" style="font-size: 1.5rem; margin-bottom: -.2rem"><strong>{{ galleries.action.page }}</strong></button>
+			<div class="container panel">
+				{% for card in galleries.action.cards %}
+				<!-- <p>{{ key }}</p> -->
+				<div class="mySlides action">
+					<!-- <p>{{ card }}</p> -->
+				    <div class="numbertext">{{ loop.index }} / 6</div>
+				    <div style="display: flex;">
+				    	<!-- Poster Image -->
+				    	<img src="{{ card.image_url }}" style="width: auto; height: 65vh; object-fit: cover;">
+				    	<!-- background image -->
+				    	<div style="background-image: url({{ card.image_url }}); 
+				    				background-repeat: no-repeat; 
+				    				background-size: cover; 
+				    				background-position: center center; 
+				    				width: auto; 
+				    				height: 65vh; 
+				    				object-fit: cover; 
+				    				opacity: 0.8; ">
+				    		<!-- Card content and black overlay -->
+				    		<div style="background-color: 
+				    					rgba(0, 0, 0, 0.75); 
+				    					width: auto; 
+				    					height: 65vh; 
+				    					object-fit: cover; 
+				    					color: white; 
+				    					display: flex; 
+				    					flex-direction: column; 
+				    					justify-content: center; /*padding: 30% 7%;*/">
+
+				    			<!-- Title Link -->
+				    			<div style="margin: 0 10%; width: 80%, height: 100%; padding-top: 10%;"><h4><a href="{{ url_for('browse_content', imdbID=card.imdbID) }}" style="color: white;">{{ card.title }}</a></h4></div>
+				    			<br>
+
+				    			<!-- Synopsis -->
+					    		<div style="margin: 0 10%; width: 80%, height: 100%;">{{ card.synop }}</div>
+
+					    		{% if card.type == "movie" %}
+					    		<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Directed by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+						    	{% elif card.type == "tv_show" %}
+						    	<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Created by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+					    		{% endif %}
+
+					    		<!-- Stars -->
+					    		{% if card.star is not none %}
+					    			<br>
+					    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Starring: {{ card.star }}</div>
+					    		{% else %}
+					    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+					    		{% endif %}
+					    		<div style="height: auto; flex: 1;"></div>
+				    		</div> <!-- end card content -->
+				    	</div> <!-- end right side content -->
+				    </div>
+				    <!-- <img src="img_woods_wide.jpg" style="width:100%"> -->
+			  	</div>
+			  	{% endfor %}
+			    
+				<a class="prev" onclick="plusSlidesAction(-1)">❮</a>
+				<a class="next" onclick="plusSlidesAction(1)">❯</a>
+
+				<div class="caption-container">
+				    <p id="captionAction"></p>
+				</div>
+
+				<div class="row" style="padding: 0 2%">
+				    <div class="column">
+				    	<img class="demo cursor row_action" src="{{ galleries.action.cards[0].image_url }}" style="width:99%" onclick="currentSlideAction(0)" alt="{{ galleries.action.cards[0].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_action" src="{{ galleries.action.cards[1].image_url }}" style="width:99%" onclick="currentSlideAction(1)" alt="{{ galleries.action.cards[1].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_action" src="{{ galleries.action.cards[2].image_url }}" style="width:99%" onclick="currentSlideAction(2)" alt="{{ galleries.action.cards[2].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_action" src="{{ galleries.action.cards[3].image_url }}" style="width:99%" onclick="currentSlideAction(3)" alt="{{ galleries.action.cards[3].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_action" src="{{ galleries.action.cards[4].image_url }}" style="width:99%" onclick="currentSlideAction(4)" alt="{{ galleries.action.cards[4].title }}">
+				    </div>    
+				    <div class="column">
+				    	<img class="demo cursor row_action" src="{{ galleries.action.cards[5].image_url }}" style="width:99%" onclick="currentSlideAction(5)" alt="{{ galleries.action.cards[5].title }}">
+				    </div>
+				</div>
+			</div>
+		</div>
+
+		<!-- THRILLER -->
+		<div class="list-group-item">
+			<button class="accordion" style="font-size: 1.5rem; margin-bottom: -.2rem"><strong>{{ galleries.thriller.page }}</strong></button>
+			<div class="container panel">
+				{% for card in galleries.thriller.cards %}
+				<!-- <p>{{ key }}</p> -->
+				<div class="mySlides thriller">
+					<!-- <p>{{ card }}</p> -->
+				    <div class="numbertext">{{ loop.index }} / 6</div>
+				    <div style="display: flex;">
+				    	<!-- Poster Image -->
+				    	<img src="{{ card.image_url }}" style="width: auto; height: 65vh; object-fit: cover;">
+				    	<!-- background image -->
+				    	<div style="background-image: url({{ card.image_url }}); 
+				    				background-repeat: no-repeat; 
+				    				background-size: cover; 
+				    				background-position: center center; 
+				    				width: auto; 
+				    				height: 65vh; 
+				    				object-fit: cover; 
+				    				opacity: 0.8; ">
+				    		<!-- Card content and black overlay -->
+				    		<div style="background-color: 
+				    					rgba(0, 0, 0, 0.75); 
+				    					width: auto; 
+				    					height: 65vh; 
+				    					object-fit: cover; 
+				    					color: white; 
+				    					display: flex; 
+				    					flex-direction: column; 
+				    					justify-content: center; /*padding: 30% 7%;*/">
+
+				    			<!-- Title Link -->
+				    			<div style="margin: 0 10%; width: 80%, height: 100%; padding-top: 10%;"><h4><a href="{{ url_for('browse_content', imdbID=card.imdbID) }}" style="color: white;">{{ card.title }}</a></h4></div>
+				    			<br>
+
+				    			<!-- Synopsis -->
+					    		<div style="margin: 0 10%; width: 80%, height: 100%;">{{ card.synop }}</div>
+
+					    		{% if card.type == "movie" %}
+					    		<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Directed by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+						    	{% elif card.type == "tv_show" %}
+						    	<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Created by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+					    		{% endif %}
+
+					    		<!-- Stars -->
+					    		{% if card.star is not none %}
+					    			<br>
+					    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Starring: {{ card.star }}</div>
+					    		{% else %}
+					    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+					    		{% endif %}
+					    		<div style="height: auto; flex: 1;"></div>
+				    		</div> <!-- end card content -->
+				    	</div> <!-- end right side content -->
+				    </div>
+				    <!-- <img src="img_woods_wide.jpg" style="width:100%"> -->
+			  	</div>
+			  	{% endfor %}
+			    
+				<a class="prev" onclick="plusSlidesThriller(-1)">❮</a>
+				<a class="next" onclick="plusSlidesThriller(1)">❯</a>
+
+				<div class="caption-container">
+				    <p id="captionThriller"></p>
+				</div>
+
+				<div class="row" style="padding: 0 2%">
+				    <div class="column">
+				    	<img class="demo cursor row_thriller" src="{{ galleries.thriller.cards[0].image_url }}" style="width:99%" onclick="currentSlideThriller(0)" alt="{{ galleries.thriller.cards[0].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_thriller" src="{{ galleries.thriller.cards[1].image_url }}" style="width:99%" onclick="currentSlideThriller(1)" alt="{{ galleries.thriller.cards[1].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_thriller" src="{{ galleries.thriller.cards[2].image_url }}" style="width:99%" onclick="currentSlideThriller(2)" alt="{{ galleries.thriller.cards[2].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_thriller" src="{{ galleries.thriller.cards[3].image_url }}" style="width:99%" onclick="currentSlideThriller(3)" alt="{{ galleries.thriller.cards[3].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_thriller" src="{{ galleries.thriller.cards[4].image_url }}" style="width:99%" onclick="currentSlideThriller(4)" alt="{{ galleries.thriller.cards[4].title }}">
+				    </div>    
+				    <div class="column">
+				    	<img class="demo cursor row_thriller" src="{{ galleries.thriller.cards[5].image_url }}" style="width:99%" onclick="currentSlideThriller(5)" alt="{{ galleries.thriller.cards[5].title }}">
+				    </div>
+				</div>
+			</div>
+		</div>
+
+		<!-- DRAMA -->
+		<div class="list-group-item">
+			<button class="accordion" style="font-size: 1.5rem; margin-bottom: -.2rem"><strong>{{ galleries.drama.page }}</strong></button>
+			<div class="container panel">
+				{% for card in galleries.drama.cards %}
+				<!-- <p>{{ key }}</p> -->
+				<div class="mySlides drama">
+					<!-- <p>{{ card }}</p> -->
+				    <div class="numbertext">{{ loop.index }} / 6</div>
+				    <div style="display: flex;">
+				    	<!-- Poster Image -->
+				    	<img src="{{ card.image_url }}" style="width: auto; height: 65vh; object-fit: cover;">
+				    	<!-- background image -->
+				    	<div style="background-image: url({{ card.image_url }}); 
+				    				background-repeat: no-repeat; 
+				    				background-size: cover; 
+				    				background-position: center center; 
+				    				width: auto; 
+				    				height: 65vh; 
+				    				object-fit: cover; 
+				    				opacity: 0.8; ">
+				    		<!-- Card content and black overlay -->
+				    		<div style="background-color: 
+				    					rgba(0, 0, 0, 0.75); 
+				    					width: auto; 
+				    					height: 65vh; 
+				    					object-fit: cover; 
+				    					color: white; 
+				    					display: flex; 
+				    					flex-direction: column; 
+				    					justify-content: center; /*padding: 30% 7%;*/">
+
+				    			<!-- Title Link -->
+				    			<div style="margin: 0 10%; width: 80%, height: 100%; padding-top: 10%;"><h4><a href="{{ url_for('browse_content', imdbID=card.imdbID) }}" style="color: white;">{{ card.title }}</a></h4></div>
+				    			<br>
+
+				    			<!-- Synopsis -->
+					    		<div style="margin: 0 10%; width: 80%, height: 100%;">{{ card.synop }}</div>
+
+					    		{% if card.type == "movie" %}
+					    		<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Directed by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+						    	{% elif card.type == "tv_show" %}
+						    	<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Created by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+					    		{% endif %}
+
+					    		<!-- Stars -->
+					    		{% if card.star is not none %}
+					    			<br>
+					    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Starring: {{ card.star }}</div>
+					    		{% else %}
+					    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+					    		{% endif %}
+					    		<div style="height: auto; flex: 1;"></div>
+				    		</div> <!-- end card content -->
+				    	</div> <!-- end right side content -->
+				    </div>
+				    <!-- <img src="img_woods_wide.jpg" style="width:100%"> -->
+			  	</div>
+			  	{% endfor %}
+			    
+				<a class="prev" onclick="plusSlidesDrama(-1)">❮</a>
+				<a class="next" onclick="plusSlidesDrama(1)">❯</a>
+
+				<div class="caption-container">
+				    <p id="captionDrama"></p>
+				</div>
+
+				<div class="row" style="padding: 0 2%">
+				    <div class="column">
+				    	<img class="demo cursor row_drama" src="{{ galleries.drama.cards[0].image_url }}" style="width:99%" onclick="currentSlideDrama(0)" alt="{{ galleries.drama.cards[0].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_drama" src="{{ galleries.drama.cards[1].image_url }}" style="width:99%" onclick="currentSlideDrama(1)" alt="{{ galleries.drama.cards[1].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_drama" src="{{ galleries.drama.cards[2].image_url }}" style="width:99%" onclick="currentSlideDrama(2)" alt="{{ galleries.drama.cards[2].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_drama" src="{{ galleries.drama.cards[3].image_url }}" style="width:99%" onclick="currentSlideDrama(3)" alt="{{ galleries.drama.cards[3].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_drama" src="{{ galleries.drama.cards[4].image_url }}" style="width:99%" onclick="currentSlideDrama(4)" alt="{{ galleries.drama.cards[4].title }}">
+				    </div>    
+				    <div class="column">
+				    	<img class="demo cursor row_drama" src="{{ galleries.drama.cards[5].image_url }}" style="width:99%" onclick="currentSlideDrama(5)" alt="{{ galleries.drama.cards[5].title }}">
+				    </div>
+				</div>
+			</div>
+		</div>
+
+		<!-- MYSTERY -->
+		<div class="list-group-item">
+			<button class="accordion" style="font-size: 1.5rem; margin-bottom: -.2rem"><strong>{{ galleries.mystery.page }}</strong></button>
+			<div class="container panel">
+				{% for card in galleries.mystery.cards %}
+				<!-- <p>{{ key }}</p> -->
+				<div class="mySlides mystery">
+					<!-- <p>{{ card }}</p> -->
+				    <div class="numbertext">{{ loop.index }} / 6</div>
+				    <div style="display: flex;">
+				    	<!-- Poster Image -->
+				    	<img src="{{ card.image_url }}" style="width: auto; height: 65vh; object-fit: cover;">
+				    	<!-- background image -->
+				    	<div style="background-image: url({{ card.image_url }}); 
+				    				background-repeat: no-repeat; 
+				    				background-size: cover; 
+				    				background-position: center center; 
+				    				width: auto; 
+				    				height: 65vh; 
+				    				object-fit: cover; 
+				    				opacity: 0.8; ">
+				    		<!-- Card content and black overlay -->
+				    		<div style="background-color: 
+				    					rgba(0, 0, 0, 0.75); 
+				    					width: auto; 
+				    					height: 65vh; 
+				    					object-fit: cover; 
+				    					color: white; 
+				    					display: flex; 
+				    					flex-direction: column; 
+				    					justify-content: center; /*padding: 30% 7%;*/">
+
+				    			<!-- Title Link -->
+				    			<div style="margin: 0 10%; width: 80%, height: 100%; padding-top: 10%;"><h4><a href="{{ url_for('browse_content', imdbID=card.imdbID) }}" style="color: white;">{{ card.title }}</a></h4></div>
+				    			<br>
+
+				    			<!-- Synopsis -->
+					    		<div style="margin: 0 10%; width: 80%, height: 100%;">{{ card.synop }}</div>
+
+					    		{% if card.type == "movie" %}
+					    		<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Directed by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+						    	{% elif card.type == "tv_show" %}
+						    	<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Created by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+					    		{% endif %}
+
+					    		<!-- Stars -->
+					    		{% if card.star is not none %}
+					    			<br>
+					    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Starring: {{ card.star }}</div>
+					    		{% else %}
+					    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+					    		{% endif %}
+					    		<div style="height: auto; flex: 1;"></div>
+				    		</div> <!-- end card content -->
+				    	</div> <!-- end right side content -->
+				    </div>
+				    <!-- <img src="img_woods_wide.jpg" style="width:100%"> -->
+			  	</div>
+			  	{% endfor %}
+			    
+				<a class="prev" onclick="plusSlidesMystery(-1)">❮</a>
+				<a class="next" onclick="plusSlidesMystery(1)">❯</a>
+
+				<div class="caption-container">
+				    <p id="captionMystery"></p>
+				</div>
+
+				<div class="row" style="padding: 0 2%">
+				    <div class="column">
+				    	<img class="demo cursor row_mystery" src="{{ galleries.mystery.cards[0].image_url }}" style="width:99%" onclick="currentSlideMystery(0)" alt="{{ galleries.mystery.cards[0].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_mystery" src="{{ galleries.mystery.cards[1].image_url }}" style="width:99%" onclick="currentSlideMystery(1)" alt="{{ galleries.mystery.cards[1].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_mystery" src="{{ galleries.mystery.cards[2].image_url }}" style="width:99%" onclick="currentSlideMystery(2)" alt="{{ galleries.mystery.cards[2].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_mystery" src="{{ galleries.mystery.cards[3].image_url }}" style="width:99%" onclick="currentSlideMystery(3)" alt="{{ galleries.mystery.cards[3].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_mystery" src="{{ galleries.mystery.cards[4].image_url }}" style="width:99%" onclick="currentSlideMystery(4)" alt="{{ galleries.mystery.cards[4].title }}">
+				    </div>    
+				    <div class="column">
+				    	<img class="demo cursor row_mystery" src="{{ galleries.mystery.cards[5].image_url }}" style="width:99%" onclick="currentSlideMystery(5)" alt="{{ galleries.mystery.cards[5].title }}">
+				    </div>
+				</div>
+			</div>
+		</div>
+
+		<!-- CRIME -->
+		<div class="list-group-item">
+			<button class="accordion" style="font-size: 1.5rem; margin-bottom: -.2rem"><strong>{{ galleries.crime.page }}</strong></button>
+			<div class="container panel">
+				{% for card in galleries.crime.cards %}
+				<!-- <p>{{ key }}</p> -->
+				<div class="mySlides crime">
+					<!-- <p>{{ card }}</p> -->
+				    <div class="numbertext">{{ loop.index }} / 6</div>
+				    <div style="display: flex;">
+				    	<!-- Poster Image -->
+				    	<img src="{{ card.image_url }}" style="width: auto; height: 65vh; object-fit: cover;">
+				    	<!-- background image -->
+				    	<div style="background-image: url({{ card.image_url }}); 
+				    				background-repeat: no-repeat; 
+				    				background-size: cover; 
+				    				background-position: center center; 
+				    				width: auto; 
+				    				height: 65vh; 
+				    				object-fit: cover; 
+				    				opacity: 0.8; ">
+				    		<!-- Card content and black overlay -->
+				    		<div style="background-color: 
+				    					rgba(0, 0, 0, 0.75); 
+				    					width: auto; 
+				    					height: 65vh; 
+				    					object-fit: cover; 
+				    					color: white; 
+				    					display: flex; 
+				    					flex-direction: column; 
+				    					justify-content: center; /*padding: 30% 7%;*/">
+
+				    			<!-- Title Link -->
+				    			<div style="margin: 0 10%; width: 80%, height: 100%; padding-top: 10%;"><h4><a href="{{ url_for('browse_content', imdbID=card.imdbID) }}" style="color: white;">{{ card.title }}</a></h4></div>
+				    			<br>
+
+				    			<!-- Synopsis -->
+					    		<div style="margin: 0 10%; width: 80%, height: 100%;">{{ card.synop }}</div>
+
+					    		{% if card.type == "movie" %}
+					    		<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Directed by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+						    	{% elif card.type == "tv_show" %}
+						    	<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Created by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+					    		{% endif %}
+
+					    		<!-- Stars -->
+					    		{% if card.star is not none %}
+					    			<br>
+					    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Starring: {{ card.star }}</div>
+					    		{% else %}
+					    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+					    		{% endif %}
+					    		<div style="height: auto; flex: 1;"></div>
+				    		</div> <!-- end card content -->
+				    	</div> <!-- end right side content -->
+				    </div>
+				    <!-- <img src="img_woods_wide.jpg" style="width:100%"> -->
+			  	</div>
+			  	{% endfor %}
+			    
+				<a class="prev" onclick="plusSlidesCrime(-1)">❮</a>
+				<a class="next" onclick="plusSlidesCrime(1)">❯</a>
+
+				<div class="caption-container">
+				    <p id="captionCrime"></p>
+				</div>
+
+				<div class="row" style="padding: 0 2%">
+				    <div class="column">
+				    	<img class="demo cursor row_crime" src="{{ galleries.crime.cards[0].image_url }}" style="width:99%" onclick="currentSlideCrime(0)" alt="{{ galleries.crime.cards[0].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_crime" src="{{ galleries.crime.cards[1].image_url }}" style="width:99%" onclick="currentSlideCrime(1)" alt="{{ galleries.crime.cards[1].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_crime" src="{{ galleries.crime.cards[2].image_url }}" style="width:99%" onclick="currentSlideCrime(2)" alt="{{ galleries.crime.cards[2].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_crime" src="{{ galleries.crime.cards[3].image_url }}" style="width:99%" onclick="currentSlideCrime(3)" alt="{{ galleries.crime.cards[3].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_crime" src="{{ galleries.crime.cards[4].image_url }}" style="width:99%" onclick="currentSlideCrime(4)" alt="{{ galleries.crime.cards[4].title }}">
+				    </div>    
+				    <div class="column">
+				    	<img class="demo cursor row_crime" src="{{ galleries.crime.cards[5].image_url }}" style="width:99%" onclick="currentSlideCrime(5)" alt="{{ galleries.crime.cards[5].title }}">
+				    </div>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- ANIMATION -->
+		<div class="list-group-item">
+			<button class="accordion" style="font-size: 1.5rem; margin-bottom: -.2rem"><strong>{{ galleries.animation.page }}</strong></button>
+			<div class="container panel">
+				{% for card in galleries.animation.cards %}
+				<!-- <p>{{ key }}</p> -->
+				<div class="mySlides animation">
+					<!-- <p>{{ card }}</p> -->
+				    <div class="numbertext">{{ loop.index }} / 6</div>
+				    <div style="display: flex;">
+				    	<!-- Poster Image -->
+				    	<img src="{{ card.image_url }}" style="width: auto; height: 65vh; object-fit: cover;">
+				    	<!-- background image -->
+				    	<div style="background-image: url({{ card.image_url }}); 
+				    				background-repeat: no-repeat; 
+				    				background-size: cover; 
+				    				background-position: center center; 
+				    				width: auto; 
+				    				height: 65vh; 
+				    				object-fit: cover; 
+				    				opacity: 0.8; ">
+				    		<!-- Card content and black overlay -->
+				    		<div style="background-color: 
+				    					rgba(0, 0, 0, 0.75); 
+				    					width: auto; 
+				    					height: 65vh; 
+				    					object-fit: cover; 
+				    					color: white; 
+				    					display: flex; 
+				    					flex-direction: column; 
+				    					justify-content: center; /*padding: 30% 7%;*/">
+
+				    			<!-- Title Link -->
+				    			<div style="margin: 0 10%; width: 80%, height: 100%; padding-top: 10%;"><h4><a href="{{ url_for('browse_content', imdbID=card.imdbID) }}" style="color: white;">{{ card.title }}</a></h4></div>
+				    			<br>
+
+				    			<!-- Synopsis -->
+					    		<div style="margin: 0 10%; width: 80%, height: 100%;">{{ card.synop }}</div>
+
+					    		{% if card.type == "movie" %}
+					    		<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Directed by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+						    	{% elif card.type == "tv_show" %}
+						    	<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Created by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+					    		{% endif %}
+
+					    		<!-- Stars -->
+					    		{% if card.star is not none %}
+					    			<br>
+					    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Starring: {{ card.star }}</div>
+					    		{% else %}
+					    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+					    		{% endif %}
+					    		<div style="height: auto; flex: 1;"></div>
+				    		</div> <!-- end card content -->
+				    	</div> <!-- end right side content -->
+				    </div>
+				    <!-- <img src="img_woods_wide.jpg" style="width:100%"> -->
+			  	</div>
+			  	{% endfor %}
+			    
+				<a class="prev" onclick="plusSlidesAnimation(-1)">❮</a>
+				<a class="next" onclick="plusSlidesAnimation(1)">❯</a>
+
+				<div class="caption-container">
+				    <p id="captionAnimation"></p>
+				</div>
+
+				<div class="row" style="padding: 0 2%">
+				    <div class="column">
+				    	<img class="demo cursor row_animation" src="{{ galleries.animation.cards[0].image_url }}" style="width:99%" onclick="currentSlideAnimation(0)" alt="{{ galleries.animation.cards[0].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_animation" src="{{ galleries.animation.cards[1].image_url }}" style="width:99%" onclick="currentSlideAnimation(1)" alt="{{ galleries.animation.cards[1].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_animation" src="{{ galleries.animation.cards[2].image_url }}" style="width:99%" onclick="currentSlideAnimation(2)" alt="{{ galleries.animation.cards[2].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_animation" src="{{ galleries.animation.cards[3].image_url }}" style="width:99%" onclick="currentSlideAnimation(3)" alt="{{ galleries.animation.cards[3].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_animation" src="{{ galleries.animation.cards[4].image_url }}" style="width:99%" onclick="currentSlideAnimation(4)" alt="{{ galleries.animation.cards[4].title }}">
+				    </div>    
+				    <div class="column">
+				    	<img class="demo cursor row_animation" src="{{ galleries.animation.cards[5].image_url }}" style="width:99%" onclick="currentSlideAnimation(5)" alt="{{ galleries.animation.cards[5].title }}">
+				    </div>
+				</div>
+			</div>
+		</div>
+
+		<!-- ADVENTURE -->
+		<div class="list-group-item">
+			<button class="accordion" style="font-size: 1.5rem; margin-bottom: -.2rem"><strong>{{ galleries.adventure.page }}</strong></button>
+			<div class="container panel">
+				{% for card in galleries.adventure.cards %}
+				<!-- <p>{{ key }}</p> -->
+				<div class="mySlides adventure">
+					<!-- <p>{{ card }}</p> -->
+				    <div class="numbertext">{{ loop.index }} / 6</div>
+				    <div style="display: flex;">
+				    	<!-- Poster Image -->
+				    	<img src="{{ card.image_url }}" style="width: auto; height: 65vh; object-fit: cover;">
+				    	<!-- background image -->
+				    	<div style="background-image: url({{ card.image_url }}); 
+				    				background-repeat: no-repeat; 
+				    				background-size: cover; 
+				    				background-position: center center; 
+				    				width: auto; 
+				    				height: 65vh; 
+				    				object-fit: cover; 
+				    				opacity: 0.8; ">
+				    		<!-- Card content and black overlay -->
+				    		<div style="background-color: 
+				    					rgba(0, 0, 0, 0.75); 
+				    					width: auto; 
+				    					height: 65vh; 
+				    					object-fit: cover; 
+				    					color: white; 
+				    					display: flex; 
+				    					flex-direction: column; 
+				    					justify-content: center; /*padding: 30% 7%;*/">
+
+				    			<!-- Title Link -->
+				    			<div style="margin: 0 10%; width: 80%, height: 100%; padding-top: 10%;"><h4><a href="{{ url_for('browse_content', imdbID=card.imdbID) }}" style="color: white;">{{ card.title }}</a></h4></div>
+				    			<br>
+
+				    			<!-- Synopsis -->
+					    		<div style="margin: 0 10%; width: 80%, height: 100%;">{{ card.synop }}</div>
+
+					    		{% if card.type == "movie" %}
+					    		<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Directed by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+						    	{% elif card.type == "tv_show" %}
+						    	<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Created by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+					    		{% endif %}
+
+					    		<!-- Stars -->
+					    		{% if card.star is not none %}
+					    			<br>
+					    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Starring: {{ card.star }}</div>
+					    		{% else %}
+					    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+					    		{% endif %}
+					    		<div style="height: auto; flex: 1;"></div>
+				    		</div> <!-- end card content -->
+				    	</div> <!-- end right side content -->
+				    </div>
+				    <!-- <img src="img_woods_wide.jpg" style="width:100%"> -->
+			  	</div>
+			  	{% endfor %}
+			    
+				<a class="prev" onclick="plusSlidesAdventure(-1)">❮</a>
+				<a class="next" onclick="plusSlidesAdventure(1)">❯</a>
+
+				<div class="caption-container">
+				    <p id="captionAdventure"></p>
+				</div>
+
+				<div class="row" style="padding: 0 2%">
+				    <div class="column">
+				    	<img class="demo cursor row_adventure" src="{{ galleries.adventure.cards[0].image_url }}" style="width:99%" onclick="currentSlideAdventure(0)" alt="{{ galleries.adventure.cards[0].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_adventure" src="{{ galleries.adventure.cards[1].image_url }}" style="width:99%" onclick="currentSlideAdventure(1)" alt="{{ galleries.adventure.cards[1].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_adventure" src="{{ galleries.adventure.cards[2].image_url }}" style="width:99%" onclick="currentSlideAdventure(2)" alt="{{ galleries.adventure.cards[2].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_adventure" src="{{ galleries.adventure.cards[3].image_url }}" style="width:99%" onclick="currentSlideAdventure(3)" alt="{{ galleries.adventure.cards[3].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_adventure" src="{{ galleries.adventure.cards[4].image_url }}" style="width:99%" onclick="currentSlideAdventure(4)" alt="{{ galleries.adventure.cards[4].title }}">
+				    </div>    
+				    <div class="column">
+				    	<img class="demo cursor row_adventure" src="{{ galleries.adventure.cards[5].image_url }}" style="width:99%" onclick="currentSlideAdventure(5)" alt="{{ galleries.adventure.cards[5].title }}">
+				    </div>
+				</div>
+			</div>
+		</div>
+
+		<!-- FANTASY -->
+		<div class="list-group-item">
+			<button class="accordion" style="font-size: 1.5rem; margin-bottom: -.2rem"><strong>{{ galleries.fantasy.page }}</strong></button>
+			<div class="container panel">
+				{% for card in galleries.fantasy.cards %}
+				<!-- <p>{{ key }}</p> -->
+				<div class="mySlides fantasy">
+					<!-- <p>{{ card }}</p> -->
+				    <div class="numbertext">{{ loop.index }} / 6</div>
+				    <div style="display: flex;">
+				    	<!-- Poster Image -->
+				    	<img src="{{ card.image_url }}" style="width: auto; height: 65vh; object-fit: cover;">
+				    	<!-- background image -->
+				    	<div style="background-image: url({{ card.image_url }}); 
+				    				background-repeat: no-repeat; 
+				    				background-size: cover; 
+				    				background-position: center center; 
+				    				width: auto; 
+				    				height: 65vh; 
+				    				object-fit: cover; 
+				    				opacity: 0.8; ">
+				    		<!-- Card content and black overlay -->
+				    		<div style="background-color: 
+				    					rgba(0, 0, 0, 0.75); 
+				    					width: auto; 
+				    					height: 65vh; 
+				    					object-fit: cover; 
+				    					color: white; 
+				    					display: flex; 
+				    					flex-direction: column; 
+				    					justify-content: center; /*padding: 30% 7%;*/">
+
+				    			<!-- Title Link -->
+				    			<div style="margin: 0 10%; width: 80%, height: 100%; padding-top: 10%;"><h4><a href="{{ url_for('browse_content', imdbID=card.imdbID) }}" style="color: white;">{{ card.title }}</a></h4></div>
+				    			<br>
+
+				    			<!-- Synopsis -->
+					    		<div style="margin: 0 10%; width: 80%, height: 100%;">{{ card.synop }}</div>
+
+					    		{% if card.type == "movie" %}
+					    		<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Directed by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+						    	{% elif card.type == "tv_show" %}
+						    	<!-- Directors -->
+						    		{% if card.director is not none %}
+						    			<br>
+						    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Created by: {{ card.director }}</div>
+						    		{% else %}
+						    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+						    		{% endif %}
+					    		{% endif %}
+
+					    		<!-- Stars -->
+					    		{% if card.star is not none %}
+					    			<br>
+					    			<div style="margin: 0 10%; width: 80%, height: 100%; /*flex-basis: 30%*/">Starring: {{ card.star }}</div>
+					    		{% else %}
+					    			<div style="width: 80%, height: 100%; /*flex-basis: 30%*/"> </div>
+					    		{% endif %}
+					    		<div style="height: auto; flex: 1;"></div>
+				    		</div> <!-- end card content -->
+				    	</div> <!-- end right side content -->
+				    </div>
+				    <!-- <img src="img_woods_wide.jpg" style="width:100%"> -->
+			  	</div>
+			  	{% endfor %}
+			    
+				<a class="prev" onclick="plusSlidesFantasy(-1)">❮</a>
+				<a class="next" onclick="plusSlidesFantasy(1)">❯</a>
+
+				<div class="caption-container">
+				    <p id="captionFantasy"></p>
+				</div>
+
+				<div class="row" style="padding: 0 2%">
+				    <div class="column">
+				    	<img class="demo cursor row_fantasy" src="{{ galleries.fantasy.cards[0].image_url }}" style="width:99%" onclick="currentSlideFantasy(0)" alt="{{ galleries.fantasy.cards[0].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_fantasy" src="{{ galleries.fantasy.cards[1].image_url }}" style="width:99%" onclick="currentSlideFantasy(1)" alt="{{ galleries.fantasy.cards[1].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_fantasy" src="{{ galleries.fantasy.cards[2].image_url }}" style="width:99%" onclick="currentSlideFantasy(2)" alt="{{ galleries.fantasy.cards[2].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_fantasy" src="{{ galleries.fantasy.cards[3].image_url }}" style="width:99%" onclick="currentSlideFantasy(3)" alt="{{ galleries.fantasy.cards[3].title }}">
+				    </div>
+				    <div class="column">
+				    	<img class="demo cursor row_fantasy" src="{{ galleries.fantasy.cards[4].image_url }}" style="width:99%" onclick="currentSlideFantasy(4)" alt="{{ galleries.fantasy.cards[4].title }}">
+				    </div>    
+				    <div class="column">
+				    	<img class="demo cursor row_fantasy" src="{{ galleries.fantasy.cards[5].image_url }}" style="width:99%" onclick="currentSlideFantasy(5)" alt="{{ galleries.fantasy.cards[5].title }}">
+				    </div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<!-- <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script> -->
 	<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
 	<!-- <script src="typeahead.min.js"></script> -->
 	<script>
 		/* TAKEN FROM W3SCHOOLS: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_slideshow_gallery */
-		var slideIndex = 0;
-		showSlides(slideIndex);
+		// Comedy
+		var slideIndexComedy = 0;
+		showSlidesComedy(slideIndexComedy);
 
-		function plusSlides(n) {
-		  showSlides(slideIndex = (slideIndex - slideIndex%6) + (slideIndex+n)%6);
+		function plusSlidesComedy(n) {
+		  showSlidesComedy(slideIndexComedy = (slideIndexComedy - slideIndexComedy%6) + (slideIndexComedy+n)%6);
 		}
 
-		function currentSlide(n) {
-		  showSlides(slideIndex = n);
+		function currentSlideComedy(n) {
+		  showSlidesComedy(slideIndexComedy = n);
 		}
 
-		function showSlides(n) {
+		function showSlidesComedy(n) {
 		  var i;
-		  var slides = document.getElementsById("comedy");
-		  var dots = document.getElementsByClassName("demo");
-		  var captionText = document.getElementById("caption");
-		  if (n > slides.length-1) {slideIndex = 0}
-		  if (n < 0) {slideIndex = slides.length-1}
+		  var slides = document.getElementsByClassName("comedy");
+		  var dots = document.getElementsByClassName("row_comedy");
+		  var captionText = document.getElementById("captionComedy");
+		  if (n > slides.length-1) {slideIndexComedy = 0}
+		  if (n < 0) {slideIndexComedy = slides.length-1}
 		  for (i = 0; i < slides.length; i++) {
 		      slides[i].style.display = "none";
 		  }
 		  for (i = 0; i < dots.length; i++) {
 		      dots[i].className = dots[i].className.replace(" active", "");
 		  }
-		  slides[slideIndex].style.display = "block";
-		  dots[slideIndex].className += " active";
-		  captionText.innerHTML = dots[slideIndex].alt;
+		  slides[slideIndexComedy].style.display = "block";
+		  dots[slideIndexComedy].className += " active";
+		  captionText.innerHTML = dots[slideIndexComedy].alt;
+		}
+
+
+		// Sci-Fi
+		var slideIndexSciFi = 0;
+		showSlidesSciFi(slideIndexSciFi);
+
+		function plusSlidesSciFi(n) {
+		  showSlidesSciFi(slideIndexSciFi = (slideIndexSciFi - slideIndexSciFi%6) + (slideIndexSciFi+n)%6);
+		}
+
+		function currentSlideSciFi(n) {
+		  showSlidesSciFi(slideIndexSciFi = n);
+		}
+
+		function showSlidesSciFi(n) {
+		  var i;
+		  var slides = document.getElementsByClassName("scifi");
+		  var dots = document.getElementsByClassName("row_scifi");
+		  var captionText = document.getElementById("captionSciFi");
+		  if (n > slides.length-1) {slideIndexSciFi = 0}
+		  if (n < 0) {slideIndexSciFi = slides.length-1}
+		  for (i = 0; i < slides.length; i++) {
+		      slides[i].style.display = "none";
+		  }
+		  for (i = 0; i < dots.length; i++) {
+		      dots[i].className = dots[i].className.replace(" active", "");
+		  }
+		  slides[slideIndexSciFi].style.display = "block";
+		  dots[slideIndexSciFi].className += " active";
+		  captionText.innerHTML = dots[slideIndexSciFi].alt;
+		}
+
+
+		// Horror
+		var slideIndexHorror = 0;
+		showSlidesHorror(slideIndexHorror);
+
+		function plusSlidesHorror(n) {
+		  showSlidesHorror(slideIndexHorror = (slideIndexHorror - slideIndexHorror%6) + (slideIndexHorror+n)%6);
+		}
+
+		function currentSlideHorror(n) {
+		  showSlidesHorror(slideIndexHorror = n);
+		}
+
+		function showSlidesHorror(n) {
+		  var i;
+		  var slides = document.getElementsByClassName("horror");
+		  var dots = document.getElementsByClassName("row_horror");
+		  var captionText = document.getElementById("captionHorror");
+		  if (n > slides.length-1) {slideIndexHorror = 0}
+		  if (n < 0) {slideIndexHorror = slides.length-1}
+		  for (i = 0; i < slides.length; i++) {
+		      slides[i].style.display = "none";
+		  }
+		  for (i = 0; i < dots.length; i++) {
+		      dots[i].className = dots[i].className.replace(" active", "");
+		  }
+		  slides[slideIndexHorror].style.display = "block";
+		  dots[slideIndexHorror].className += " active";
+		  captionText.innerHTML = dots[slideIndexHorror].alt;
+		}
+
+
+		// Romance
+		var slideIndexRomance = 0;
+		showSlidesRomance(slideIndexRomance);
+
+		function plusSlidesRomance(n) {
+		  showSlidesRomance(slideIndexRomance = (slideIndexRomance - slideIndexRomance%6) + (slideIndexRomance+n)%6);
+		}
+
+		function currentSlideRomance(n) {
+		  showSlidesRomance(slideIndexRomance = n);
+		}
+
+		function showSlidesRomance(n) {
+		  var i;
+		  var slides = document.getElementsByClassName("romance");
+		  var dots = document.getElementsByClassName("row_romance");
+		  var captionText = document.getElementById("captionRomance");
+		  if (n > slides.length-1) {slideIndexRomance = 0}
+		  if (n < 0) {slideIndexRomance = slides.length-1}
+		  for (i = 0; i < slides.length; i++) {
+		      slides[i].style.display = "none";
+		  }
+		  for (i = 0; i < dots.length; i++) {
+		      dots[i].className = dots[i].className.replace(" active", "");
+		  }
+		  slides[slideIndexRomance].style.display = "block";
+		  dots[slideIndexRomance].className += " active";
+		  captionText.innerHTML = dots[slideIndexRomance].alt;
+		}
+
+
+		// Action
+		var slideIndexAction = 0;
+		showSlidesAction(slideIndexAction);
+
+		function plusSlidesAction(n) {
+		  showSlidesAction(slideIndexAction = (slideIndexAction - slideIndexAction%6) + (slideIndexAction+n)%6);
+		}
+
+		function currentSlideAction(n) {
+		  showSlidesAction(slideIndexAction = n);
+		}
+
+		function showSlidesAction(n) {
+		  var i;
+		  var slides = document.getElementsByClassName("action");
+		  var dots = document.getElementsByClassName("row_action");
+		  var captionText = document.getElementById("captionAction");
+		  if (n > slides.length-1) {slideIndexAction = 0}
+		  if (n < 0) {slideIndexAction = slides.length-1}
+		  for (i = 0; i < slides.length; i++) {
+		      slides[i].style.display = "none";
+		  }
+		  for (i = 0; i < dots.length; i++) {
+		      dots[i].className = dots[i].className.replace(" active", "");
+		  }
+		  slides[slideIndexAction].style.display = "block";
+		  dots[slideIndexAction].className += " active";
+		  captionText.innerHTML = dots[slideIndexAction].alt;
+		}
+
+
+		// Thriller
+		var slideIndexThriller = 0;
+		showSlidesThriller(slideIndexThriller);
+
+		function plusSlidesThriller(n) {
+		  showSlidesThriller(slideIndexThriller = (slideIndexThriller - slideIndexThriller%6) + (slideIndexThriller+n)%6);
+		}
+
+		function currentSlideThriller(n) {
+		  showSlidesThriller(slideIndexThriller = n);
+		}
+
+		function showSlidesThriller(n) {
+		  var i;
+		  var slides = document.getElementsByClassName("thriller");
+		  var dots = document.getElementsByClassName("row_thriller");
+		  var captionText = document.getElementById("captionThriller");
+		  if (n > slides.length-1) {slideIndexThriller = 0}
+		  if (n < 0) {slideIndexThriller = slides.length-1}
+		  for (i = 0; i < slides.length; i++) {
+		      slides[i].style.display = "none";
+		  }
+		  for (i = 0; i < dots.length; i++) {
+		      dots[i].className = dots[i].className.replace(" active", "");
+		  }
+		  slides[slideIndexThriller].style.display = "block";
+		  dots[slideIndexThriller].className += " active";
+		  captionText.innerHTML = dots[slideIndexThriller].alt;
+		}
+
+
+		// Drama
+		var slideIndexDrama = 0;
+		showSlidesDrama(slideIndexDrama);
+
+		function plusSlidesDrama(n) {
+		  showSlidesDrama(slideIndexDrama = (slideIndexDrama - slideIndexDrama%6) + (slideIndexDrama+n)%6);
+		}
+
+		function currentSlideDrama(n) {
+		  showSlidesDrama(slideIndexDrama = n);
+		}
+
+		function showSlidesDrama(n) {
+		  var i;
+		  var slides = document.getElementsByClassName("drama");
+		  var dots = document.getElementsByClassName("row_drama");
+		  var captionText = document.getElementById("captionDrama");
+		  if (n > slides.length-1) {slideIndexDrama = 0}
+		  if (n < 0) {slideIndexDrama = slides.length-1}
+		  for (i = 0; i < slides.length; i++) {
+		      slides[i].style.display = "none";
+		  }
+		  for (i = 0; i < dots.length; i++) {
+		      dots[i].className = dots[i].className.replace(" active", "");
+		  }
+		  slides[slideIndexDrama].style.display = "block";
+		  dots[slideIndexDrama].className += " active";
+		  captionText.innerHTML = dots[slideIndexDrama].alt;
+		}
+
+
+		// Mystery
+		var slideIndexMystery = 0;
+		showSlidesMystery(slideIndexMystery);
+
+		function plusSlidesMystery(n) {
+		  showSlidesMystery(slideIndexMystery = (slideIndexMystery - slideIndexMystery%6) + (slideIndexMystery+n)%6);
+		}
+
+		function currentSlideMystery(n) {
+		  showSlidesMystery(slideIndexMystery = n);
+		}
+
+		function showSlidesMystery(n) {
+		  var i;
+		  var slides = document.getElementsByClassName("mystery");
+		  var dots = document.getElementsByClassName("row_mystery");
+		  var captionText = document.getElementById("captionMystery");
+		  if (n > slides.length-1) {slideIndexMystery = 0}
+		  if (n < 0) {slideIndexMystery = slides.length-1}
+		  for (i = 0; i < slides.length; i++) {
+		      slides[i].style.display = "none";
+		  }
+		  for (i = 0; i < dots.length; i++) {
+		      dots[i].className = dots[i].className.replace(" active", "");
+		  }
+		  slides[slideIndexMystery].style.display = "block";
+		  dots[slideIndexMystery].className += " active";
+		  captionText.innerHTML = dots[slideIndexMystery].alt;
+		}
+
+
+		// Crime
+		var slideIndexCrime = 0;
+		showSlidesCrime(slideIndexCrime);
+
+		function plusSlidesCrime(n) {
+		  showSlidesCrime(slideIndexCrime = (slideIndexCrime - slideIndexCrime%6) + (slideIndexCrime+n)%6);
+		}
+
+		function currentSlideCrime(n) {
+		  showSlidesCrime(slideIndexCrime = n);
+		}
+
+		function showSlidesCrime(n) {
+		  var i;
+		  var slides = document.getElementsByClassName("crime");
+		  var dots = document.getElementsByClassName("row_crime");
+		  var captionText = document.getElementById("captionCrime");
+		  if (n > slides.length-1) {slideIndexCrime = 0}
+		  if (n < 0) {slideIndexCrime = slides.length-1}
+		  for (i = 0; i < slides.length; i++) {
+		      slides[i].style.display = "none";
+		  }
+		  for (i = 0; i < dots.length; i++) {
+		      dots[i].className = dots[i].className.replace(" active", "");
+		  }
+		  slides[slideIndexCrime].style.display = "block";
+		  dots[slideIndexCrime].className += " active";
+		  captionText.innerHTML = dots[slideIndexCrime].alt;
+		}
+
+
+		// Animation
+		var slideIndexAnimation = 0;
+		showSlidesAnimation(slideIndexAnimation);
+
+		function plusSlidesAnimation(n) {
+		  showSlidesAnimation(slideIndexAnimation = (slideIndexAnimation - slideIndexAnimation%6) + (slideIndexAnimation+n)%6);
+		}
+
+		function currentSlideAnimation(n) {
+		  showSlidesAnimation(slideIndexAnimation = n);
+		}
+
+		function showSlidesAnimation(n) {
+		  var i;
+		  var slides = document.getElementsByClassName("animation");
+		  var dots = document.getElementsByClassName("row_animation");
+		  var captionText = document.getElementById("captionAnimation");
+		  if (n > slides.length-1) {slideIndexAnimation = 0}
+		  if (n < 0) {slideIndexAnimation = slides.length-1}
+		  for (i = 0; i < slides.length; i++) {
+		      slides[i].style.display = "none";
+		  }
+		  for (i = 0; i < dots.length; i++) {
+		      dots[i].className = dots[i].className.replace(" active", "");
+		  }
+		  slides[slideIndexAnimation].style.display = "block";
+		  dots[slideIndexAnimation].className += " active";
+		  captionText.innerHTML = dots[slideIndexAnimation].alt;
+		}
+
+
+		// Adventure
+		var slideIndexAdventure = 0;
+		showSlidesAdventure(slideIndexAdventure);
+
+		function plusSlidesAdventure(n) {
+		  showSlidesAdventure(slideIndexAdventure = (slideIndexAdventure - slideIndexAdventure%6) + (slideIndexAdventure+n)%6);
+		}
+
+		function currentSlideAdventure(n) {
+		  showSlidesAdventure(slideIndexAdventure = n);
+		}
+
+		function showSlidesAdventure(n) {
+		  var i;
+		  var slides = document.getElementsByClassName("adventure");
+		  var dots = document.getElementsByClassName("row_adventure");
+		  var captionText = document.getElementById("captionAdventure");
+		  if (n > slides.length-1) {slideIndexAdventure = 0}
+		  if (n < 0) {slideIndexAdventure = slides.length-1}
+		  for (i = 0; i < slides.length; i++) {
+		      slides[i].style.display = "none";
+		  }
+		  for (i = 0; i < dots.length; i++) {
+		      dots[i].className = dots[i].className.replace(" active", "");
+		  }
+		  slides[slideIndexAdventure].style.display = "block";
+		  dots[slideIndexAdventure].className += " active";
+		  captionText.innerHTML = dots[slideIndexAdventure].alt;
+		}
+
+
+		// Fantasy
+		var slideIndexFantasy = 0;
+		showSlidesFantasy(slideIndexFantasy);
+
+		function plusSlidesFantasy(n) {
+		  showSlidesFantasy(slideIndexFantasy = (slideIndexFantasy - slideIndexFantasy%6) + (slideIndexFantasy+n)%6);
+		}
+
+		function currentSlideFantasy(n) {
+		  showSlidesFantasy(slideIndexFantasy = n);
+		}
+
+		function showSlidesFantasy(n) {
+		  var i;
+		  var slides = document.getElementsByClassName("fantasy");
+		  var dots = document.getElementsByClassName("row_fantasy");
+		  var captionText = document.getElementById("captionFantasy");
+		  if (n > slides.length-1) {slideIndexFantasy = 0}
+		  if (n < 0) {slideIndexFantasy = slides.length-1}
+		  for (i = 0; i < slides.length; i++) {
+		      slides[i].style.display = "none";
+		  }
+		  for (i = 0; i < dots.length; i++) {
+		      dots[i].className = dots[i].className.replace(" active", "");
+		  }
+		  slides[slideIndexFantasy].style.display = "block";
+		  dots[slideIndexFantasy].className += " active";
+		  captionText.innerHTML = dots[slideIndexFantasy].alt;
+		}
+
+
+		var acc = document.getElementsByClassName("accordion");
+		var i;
+
+		for (i = 0; i < acc.length; i++) {
+			acc[i].addEventListener("click", function() {
+			    this.classList.toggle("active");
+			    var panel = this.nextElementSibling;
+			    if (panel.style.maxHeight) {
+			    	panel.style.maxHeight = null;
+			    } else {
+			    	panel.style.maxHeight = panel.scrollHeight + "px";
+			    } 
+			});
 		}
 	</script>
 {% endblock %}

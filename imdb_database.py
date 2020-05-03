@@ -461,9 +461,10 @@ def superhero_imdb():
 Gets top 6 most popular items from IMDb to have in "browse-search.html"
 
 Input: string genre: genre on imdb, options are as follows: "comedy", "sci-fi", "horror", "romance", "action", "thriller", "drama", "mystery", "crime", "animation", "adventure", "fantasy"
-Returns:
+Returns: dictionary toRet: dictionary of values to put into genre gallery
 
 Created by Jessica 05.02
+05.03 - TOO SLOW, MAKING HARDCODE TABLE IN DATABASE INSTEAD
 '''
 def top_six_imdb(genre):
     # create url
@@ -518,6 +519,8 @@ def top_six_imdb(genre):
         
     return toRet
 
+
+
 '''
 test function to make debugging less heinous; remove when done
 '''
@@ -525,8 +528,8 @@ def test_main():
     # comedy_imdb()
     # scifi_imdb()
     # horror_imdb() 
-    romance_imdb() # INCOMPLETE
-    # action_imdb() # INCOMPLETE
+    # romance_imdb()
+    action_imdb() # INCOMPLETE
     # thriller_imdb() # INCOMPLETE
     # drama_imdb() # INCOMPLETE
     # mystery_imdb() # INCOMPLETE

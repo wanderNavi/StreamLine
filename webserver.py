@@ -197,10 +197,19 @@ def logout():
 @app.route('/browse', methods=('GET', 'POST'))
 def browse():
     # genre image galleries
-    galleries = {'comedy':{'page':'Comedy', 'cards':[]}, 'sci-fi':{'page':'Sci-Fi', 'cards':[]}, 'horror': {'page':'Horror', 'cards':[]}, 'romance': {'page':'Romance', 'cards':[]}, 'action': {'page':'Action', 'cards':[]}, 'thriller': {'page':'Thriller', 'cards':[]}, 'drama': {'page':'Drama', 'cards':[]}, 'mystery': {'page':'Mystery', 'cards':[]}, 'crime': {'page':'Crime', 'cards':[]}, 'animation': {'page':'Animation', 'cards':[]}, 'adventure': {'page':'Adventure', 'cards':[]}, 'fantasy':{'page':'Fantasy', 'cards':[]}}
+    galleries = {'comedy':{'page':'Comedy', 'cards':[]}, 'scifi':{'page':'Sci-Fi', 'cards':[]}, 'horror': {'page':'Horror', 'cards':[]}, 'romance': {'page':'Romance', 'cards':[]}, 'action': {'page':'Action', 'cards':[]}, 'thriller': {'page':'Thriller', 'cards':[]}, 'drama': {'page':'Drama', 'cards':[]}, 'mystery': {'page':'Mystery', 'cards':[]}, 'crime': {'page':'Crime', 'cards':[]}, 'animation': {'page':'Animation', 'cards':[]}, 'adventure': {'page':'Adventure', 'cards':[]}, 'fantasy':{'page':'Fantasy', 'cards':[]}}
 
-    for gen in galleries.keys():
-        galleries[gen]['cards'] = imdb_db.top_six_imdb(gen)
+    # getting hardcode items for galleries from database
+    conn = db.get_db()
+
+    for row in conn.execute('''SELECT * FROM browse_land''').fetchall():
+        galleries[row['genre']]['cards'].append({'type':row['type'],'imdbID':row['imdbID'], 'title':row['title'], 'synop': row['synop'], 'image_url': row['image_url'], 'director':row['direct_create'], 'star':row['star']})
+
+    conn.close()
+
+    # for gen in galleries.keys():
+    #     galleries[gen]['cards'] = imdb_db.top_six_imdb(gen)
+    # galleries['scifi'] = galleries.pop('sci-fi')
     # print(galleries)
 
     # search bar hit submit
@@ -219,7 +228,7 @@ def browse():
 
         for cont in exact_query:
             cleanYear = cont['year']
-            if cleanYear[1] == 'I': cleanYear = cleanYear[4:]
+            if len(cleanYear) >0 and cleanYear[1] == 'I': cleanYear = cleanYear[4:]
 
             cleanPoster = pi.get_poster_url(cont['imdbID'])
 
@@ -229,7 +238,7 @@ def browse():
         for cont in imdb_query:
             if cont['imdbID'] not in already_id:
                 cleanYear = cont['year']
-                if cleanYear[1] == 'I': 
+                if len(cleanYear) >0 and cleanYear[1] == 'I': 
                     cleanYear = cleanYear[cleanYear[4:].find("(")+4:]
 
                 cleanPoster = pi.get_poster_url(cont['imdbID'])
@@ -248,8 +257,9 @@ def browse_content(imdbID):
     # connect to database
     conn = db.get_db()
     # query for piece of content's row from the table "IMDb_Catalog"
-    imdb_query = conn.execute('''SELECT * FROM IMDb_Catalog WHERE imdbID = "{imdbID}"'''.format(imdbID=imdbID)).fetchone()
-    if imdb_query == None:
+    imdb_query = conn.execute('''SELECT * FROM IMDb_Catalog WHERE imdbID = "{cimdbID}"'''.format(cimdbID=imdbID)).fetchone()
+    # print(imdb_query)
+    if imdb_query is None:
         return render_template('browse-content-missing.html')
 
     # query for content in table "Parsed_Catalog"
@@ -274,9 +284,10 @@ def browse_content(imdbID):
         description = ""
     if description.find("See full summary") != -1:
         # shortcut for now
-        description = ""
+        # description = ""
         # need to retrieve and update table with correct summary. 
-        # plot_page = BeautifulSoup(requests.get("https://www.imdb.com/title/{imdbID}/plotsummary".format(imdbID=imdbID)).text, 'html.parser')
+        plot_page = BeautifulSoup(requests.get("https://www.imdb.com/title/{imdbID}/plotsummary".format(imdbID=imdbID)).text, 'html.parser')
+        description = plot_page.find(id='plot-summaries-content').text.strip()
     
     poster = pi.get_poster_url(imdbID)
 
@@ -295,10 +306,14 @@ def browse_content(imdbID):
     platforms = []
     individuals = dict()
 
+    # print("parsed:", parsed_query)
+
     # check if content wasn't in "Parsed_Catalog"
     if parsed_query == None:
         # adding to Parsed_Catalog table
-        utelly_call = sr.call_Utelly(imdbID, imdb_query['title'])
+        utelly_call = sr.call_Utelly(imdb_query['title'], imdbID)
+
+        print("Here?")
 
         if utelly_call == False:
             return render_template('browse-content-missing.html')
@@ -320,7 +335,7 @@ def browse_content(imdbID):
             nowhere = True
 
         # insert into database
-        conn.execute('''INSERT INTO Parsed_Catalog (imdbID, title, google_rent, google_buy, google_url, itunes_rent, itunes_buy, itunes_url, amazon_prime, netflix, hbo, hulu, nowhere) VALUES ("{imdbID}","{title},{google_rent}, {google_buy}, "{google_url}", {itunes_rent}, {itunes_buy}, "{itunes_url}", {amazon_prime}, {netflix}, {hbo}, {hulu}, {nowhere})'''.format(imdbID=imdbid,title=title,google_rent=utelly_call['individual']['google'][0],google_buy=utelly_call['individual']['google'][1],itunes_rent=utelly_call['individual']['itunes'][0],itunes_buy=utelly_call['individual']['itunes'][1],amazon_prime=utelly_call['subscription']['amazon prime'],netflix=utelly_call['subscription']['netflix'],hbo=utelly_call['subscription']['hbo'],hulu=utelly_call['subscription']['hulu'],nowhere=nowhere))
+        conn.execute('''INSERT INTO Parsed_Catalog (imdbID, title, google_rent, google_buy, google_url, itunes_rent, itunes_buy, itunes_url, amazon_prime, netflix, hbo, hulu, nowhere) VALUES ("{imdbID}","{title}",{google_rent}, {google_buy}, "{google_url}", {itunes_rent}, {itunes_buy}, "{itunes_url}", {amazon_prime}, {netflix}, {hbo}, {hulu}, {nowhere})'''.format(imdbID=imdbID,title=title,google_rent=utelly_call['individual']['google'][0],google_buy=utelly_call['individual']['google'][1],google_url="",itunes_rent=utelly_call['individual']['itunes'][0],itunes_buy=utelly_call['individual']['itunes'][1],itunes_url="",amazon_prime=utelly_call['subscription']['amazon prime'],netflix=utelly_call['subscription']['netflix'],hbo=utelly_call['subscription']['hbo'],hulu=utelly_call['subscription']['hulu'],nowhere=nowhere))
     else:
         if parsed_query['amazon_prime'] == True:
             platforms.append("Amazon Prime Video")
