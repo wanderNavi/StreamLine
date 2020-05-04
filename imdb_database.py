@@ -529,8 +529,8 @@ def test_main():
     # scifi_imdb()
     # horror_imdb() 
     # romance_imdb()
-    action_imdb() # INCOMPLETE
-    # thriller_imdb() # INCOMPLETE
+    # action_imdb() 
+    thriller_imdb() # INCOMPLETE
     # drama_imdb() # INCOMPLETE
     # mystery_imdb() # INCOMPLETE
     # crime_imdb() # INCOMPLETE

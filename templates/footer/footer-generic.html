@@ -21,11 +21,10 @@
     <body>
         <!-- Header -->
         <div class="header">
+            <a href="{{ url_for('browse') }}" class="logo">StreamLine</a>
             {% if g.user is not none %}
-                <a href="{{ url_for('profile_edit', username=g.user.username) }}" class="logo">StreamLine</a>
                 <a href="{{ url_for('profile_edit', username=g.user.username ) }}" style="float:right">My Account</a>
             {% else %}
-                <a href="{{ url_for('browse') }}" class="logo">StreamLine</a>
                 <a href="{{ url_for('sign_up') }}" style="float: right;">Sign Up</a>
                 <a href="{{ url_for('login') }}" style="float: right;">Login</a>
             {% endif %}
